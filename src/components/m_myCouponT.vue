@@ -70,10 +70,9 @@ export default {
     }
   },
   async mounted() {
-    var myCoupon = await this.$API.myCoupon({ state: 0 });
+    var myCoupon = await this.$API.myCoupon({ state: 1 });
     this.myCoupon = myCoupon.data.list;
-    // console.log(myCoupon);
-    console.log(myCoupon.data.list,0);
+    console.log(myCoupon,1);
 
     for (var i = 0; i < myCoupon.data.list.length; i++) {
       console.log(myCoupon.data.list[i].startTime.substring(0, 10));

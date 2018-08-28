@@ -2,7 +2,7 @@ var fileHost = 'https://huiti-img.oss-cn-shanghai.aliyuncs.com'
 export default {
     url: 'http://10.0.0.125:8080/huiti',
     // url: 'http://10.0.0.128:8080/huiti',
-    // 
+    //
     // url: 'http://www.qckj.link',
     uploadImageUrl: `${fileHost}`, //默认存在根目录，可根据需求改
     AccessKeySecret: 'GYyUHcqlyvWCGJ8QCsxOU9En2iD9Rw',

@@ -106,18 +106,16 @@
 </template>
 <script>
 import wx from "wx";
-
 export default {
   components: {},
   data() {
     return {};
   },
-  methods: {
- 
-  },
-   async mounted() {
-
-   }
+  methods: {},
+  async mounted() {
+    const statistics = await this.$API.statistics({});
+    console.log(statistics);
+  }
 };
 </script>
 <style lang="sass" scoped>
@@ -136,7 +134,7 @@ export default {
   font-size: 28px
   line-height: 80px
   .title
-    height: 80px 
+    height: 80px
     color: #fff
   .content
     display: flex
@@ -165,5 +163,5 @@ export default {
   padding-bottom: 20px
   .t_money
     font-size: 60px
-    padding-bottom: 50px 
+    padding-bottom: 50px
 </style>

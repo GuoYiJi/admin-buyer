@@ -7,7 +7,7 @@
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" v-model="value_input"  type="text" placeholder="请输入面值">
+        <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值">
       </div>
       <div class="grant">
         <span class="grant_text">发放总量：</span>
@@ -38,21 +38,21 @@
         </picker>
       </div>
       <div class="effect" @click="Receive">
-        <span class="text" >领取设置：</span>
+        <span class="text">领取设置：</span>
         <span class="settings">
           <span class="settings_text">未设置</span>
           <i class="img"></i>
         </span>
       </div>
       <div class="effect" @click="Use">
-        <span class="text" >使用设置：</span>
+        <span class="text">使用设置：</span>
         <span class="settings">
-          <span class="settings_text" v-if="(this.isLimitCount == '' || this.please_input == '')">未设置</span>
-          <span class="settings_text" v-if="(this.isLimitCount != '' || this.please_input != '')">已设置</span>
+          <span class="settings_text" v-if="(isLimitCount == 0 && please_input == 0)">未设置</span>
+          <span class="settings_text" v-if="(isLimitCount != 0 && please_input != 0)">已设置</span>
           <i class="img"></i>
         </span>
       </div>
-      <div class="btn"  @click="btn_1">
+      <div class="btn" @click="btn_1">
         <span class="btn_1">保存</span>
       </div>
     </form>
@@ -68,12 +68,12 @@ export default {
     return {
       date: "",
       date1: "",
-      isLimitCount: "",
-      please_input: "",
-      grant_input: '',
-      value_input: '',
-      head_input: '',
-      date: '',
+      isLimitCount: 0,
+      please_input: 0,
+      grant_input: "",
+      value_input: "",
+      head_input: "",
+      date: ""
     };
   },
   methods: {
@@ -87,7 +87,7 @@ export default {
     },
     async btn_1() {
       console.log(this);
-    
+
       wx.getStorage({
         key: "isLimitCount",
         success: function(res) {
@@ -108,26 +108,25 @@ export default {
         startTime: this.date,
         endTime: this.date1
       });
-      this.newCoupon = newCoupon.data
-      console.log(newCoupon)
-
-      
+      this.newCoupon = newCoupon.data;
+      console.log(newCoupon);
       wx.navigateBack({
         data: 1
       });
     },
     Use() {
-      this.$router.push("/pages/home/marketingMgt/Order/Order")
+      this.$router.push("/pages/home/marketingMgt/usageSettings/usageSettings");
+      // this.$router.push("/pages/home/marketingMgt/Order/Order")
     },
     Receive() {
-      this.$router.push("/pages/home/marketingMgt/settings/settings")
+      this.$router.push("/pages/home/marketingMgt/settings/settings");
     },
     couponsave() {
       // this.$router.push("/pages/home/marketingMgt/myCoupon")
     }
   },
   mounted() {
-    // console.log(this);
+    console.log(this);
   }
 };
 </script>

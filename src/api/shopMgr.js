@@ -36,5 +36,9 @@ export default class shopMgr {
   s_addMatch = params => http.post('api/goods/addMatchGoods', params)
   // 店铺信息修改
   warehouse = params => http.post('api/warehouse/updateShop', params)
+  // 查询店铺信息
+  selectWarehouse = params => http.post('api/warehouse/selectWarehouse', params)
+  // 查询统计信息
+  statistics = params => http.post('api/warehouse/home', params)
 
 }

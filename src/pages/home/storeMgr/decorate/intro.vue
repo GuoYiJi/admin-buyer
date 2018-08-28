@@ -26,6 +26,11 @@ export default {
         key: "remark",
         data: this.text
       });
+      setTimeout(() => {
+        wx.navigateBack({
+          data: 1
+        });
+      }, 300);
     }
   },
   mounted() {}

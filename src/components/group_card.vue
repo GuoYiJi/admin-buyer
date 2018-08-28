@@ -1,14 +1,16 @@
 <template>
   <div class="g_boxs">
     <div class="card_boxs shop-cards">
-      <div class="img_box"><p class="img_1"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"></p></div>
+      <div class="img_box">
+        <p class="img_1"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"></p>
+      </div>
       <div class="descs">
         <p class="d_texts">就爱上的回访记录卡山东客服了解奥斯卡代理费圣诞快乐房间卡萨老地方拉水电费可垃圾上单士大夫看见爱上的看法</p>
         <p class="d_times"> 货期:现货丨销量:123</p>
       </div>
       <p class="price">
         <span>售价:￥23</span>
-        <span class="sell">&nbsp;&nbsp;&nbsp;售价:￥23</span>         
+        <span class="sell">&nbsp;&nbsp;&nbsp;售价:￥23</span>
       </p>
       <i class="cancel_shop" v-if="cancel"></i>
     </div>
@@ -25,13 +27,9 @@ export default {
     }
   },
   data() {
-    return {
-
-    };
+    return {};
   },
-  methods: {
-    
-  },
+  methods: {},
   mounted() {}
 };
 </script>
@@ -43,10 +41,8 @@ export default {
   right: 12px
   top: 12px
   +icon(50px)
-  // background: #fff
   border-radius: 50px
 .g_boxs
-  // padding: 40px 0
   height: 422px
   width: 216px
 .card_boxs
@@ -57,22 +53,17 @@ export default {
     .img_1
       height: 300px
       width: 212px
-
-
-    
 .d_name
 	color: #e3e3e3
 	font-size: 14px
 .shop-cards
-	// width: 320px
 	position: relative
-	img 
+	img
 		width: 100%
 		border-radius: 4px
 .descs
   margin: 5px 0
   font-size: 20px
-  // height: 80px
 .d_texts
   color: #000
   font-size: 24px
