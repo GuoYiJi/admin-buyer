@@ -126,24 +126,23 @@ export default {
 
   },
   async mounted() {
-    console.log(11)
     this.shopNum = 0;
     const listData = await this.getNextPage();
-    console.log(listData);
+    // console.log(listData);
     this.orderList = this.orderList.concat(listData.data.list); 
     // console.log(this.orderList)
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
     for(var i=0;i<this.orderList.length;i++){
-      if(this.orderList[i].layer == 1 && this.orderList[i].state == 5){
+      if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
         this.sigleList.push(this.orderList[i])
         console.log(this.sigleList)
-      }else{
+      } else{
         this.noSigleList.push(this.orderList[i])
       }
     }
-    console.log(this.noSigleList)
+    // console.log(this.noSigleList)
   }
 };
 </script>

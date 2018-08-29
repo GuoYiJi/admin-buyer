@@ -23,134 +23,118 @@
       <!-- <div v-for="item in shopList">
         <div>{{item.deliverTime}}</div>
       </div> -->
-      <!-- <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  > -->
+      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
         <div class="scroll-box">
           <div class="box">
-            <p>
-              <!-- 拆单组件 -->
-              <delivery />
-            </p>
             <p >
-              <!-- 拼团组件 -->
               <CollageClose :closeOrder="closeOrder"/>
-            </p>
-            
-            <p>
-              <!-- 交易成功 -->
-              <payment/>
-            </p>
-            <p>
-              <!-- 退款组件 -->
-              <!-- <afterSales /> -->
             </p>
           </div>
         </div>
-        <!-- <div class="loading" v-if="canLoad">
+        <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
-        </div> -->
-      <!-- </scroll-view> -->
+        </div>
+      </scroll-view>
     </div>
   </div>
 </template>
 <script>
 import wx from "wx";
 import payment from "@/components/o_payment";
-import CollageClose from "@/components/L_collageClose";
 import delivery from "@/components/o_delivery";
-// import afterSales from "@/components/o_afterSales";
-// import loading from "@/commond/loading";
+import CollageClose from "@/components/L_collageClose";
+import loading from "@/commond/loading";
 export default {
   components: {
     payment,
     CollageClose,
     delivery,
-    // afterSales,
-    // loading
+    loading,
 
   },
-  data() {
+  data() {  
     return {
       searchIn: false,
       asceSale: true,
       ascePrice: true,
+      showLoad: false,
+      canLoad: true,
       tag: 1,
       shopNum: 0,
       items: this.default,
-      showLoad: false,
-      canLoad: true,
-      shopList: [],
-      groupOrder: [],
-      // noGrounpOrder: [],
-      nameID: '2',
-      allID: '1',
-      sumID: '5',
+      closeOrder: [],
 
     };
   },
-  props: {
-    closeOrder: {
-      type: Array,
-      default: []
-    },
-  },
+ 
   methods: {
-    handleTag(tag) {
+    async handleTag(tag) {
       this.tag = tag;
-      var type;
+      var type = 0 ;
       this.shopNum = 0;
+      // console.log(this.shopList)
+      
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
-        type = this.asceSale ? 2 : 3;
+        type = this.asceSale ? 3 : 4;
       }
       if (tag === 5) {
         this.ascePrice = !this.ascePrice;
-        type = this.ascePrice ? 4 : 5;
+        type = this.ascePrice ? 5 : 6;
       }
-      this.type = type;
+      console.log(type)
+      this.type = type
+      const listData = await this.getNextPage({
+        ob: type,
+        // state: 1
+      })
+
+      this.closeOrder = listData.data.list
+      console.log(this.closeOrder)
+      if(listData.data.list.length < this.pageSize) {
+        this.canLoad = false
+      }
     },
-    // getNextPage() {
-    //   var obj = {
-    //     pageSize: 20,
-    //     orderType: this.tag,
-    //   };
-    //   this.shopNum++;
-    //   obj.pageNumber = this.shopNum;
-    //   return this.$API.L_selectOrderPage(obj);
-    // },
-    // async lower(e) {
-    //   // console.log(e);
-    //   if (!this.canLoad) return;
-    //   if (this.showLoad) return;
-    //   this.showLoad = true;
-    //   const listData = await this.getNextPage();
-    //   setTimeout(() => {
-    //     if (listData.data.list.length < 20) {
-    //       this.canLoad = false;
-    //     }
-    //     this.shopList = this.shopList.concat(listData.data.list);
-    //     this.showLoad = false;
-    //   }, 2000);
-    // }
+    getNextPage() {
+      var obj = {
+        pageSize: 30,
+        orderType: 1,
+        state: 8
+        // state: this.tag
+      };
+      this.shopNum++;
+      obj.pageNumber = this.shopNum;
+      return this.$API.L_selectOrderPage(obj);
+    },
+    async lower(e) {
+      console.log(e);
+      if (!this.canLoad) return;
+      if (this.showLoad) return;
+      this.showLoad = true;
+      const listData = await this.getNextPage();
+      setTimeout(() => {
+        if (listData.data.list.length < 30) {
+          this.canLoad = false;
+        }
+        this.closeOrder = this.closeOrder.concat(listData.data.list);
+        this.showLoad = false;
+      }, 2000);
+    }
 
   },
   async mounted() {
-    console.log(this.noGrounpOrder)
-    // this.shopNum = 0;
-    // const listData = await this.getNextPage();
-    // this.shopList = listData.data.list;
-    // for(var i=0,l;l=this.shopList[i++];){
-    //     // if(this.shopList[i].isPing == 0){
-    //     //   this.noGrounpOrder.push(l)
-    //     // }else if(this.shopList[i].isPing == 0){
-    //     //   this.groupOrder.push(l)
-    //     // }
-       
-     
-    // }
-    // if (listData.data.list.length < 20) {
-    //   this.canLoad = false;
-    // }
+    console.log(11)
+    this.shopNum = 0;
+    const listData = await this.getNextPage();
+    console.log(listData);
+    this.closeOrder = this.closeOrder.concat(listData.data.list); 
+    // console.log(this.orderList)
+    console.log(this.closeOrder);
+    if (listData.data.list.length < 30) {
+      this.canLoad = false;
+    }
+  
   }
 };
 </script>

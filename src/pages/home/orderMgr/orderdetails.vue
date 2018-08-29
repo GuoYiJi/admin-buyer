@@ -46,30 +46,13 @@ export default {
     },
     // 页面触底执行
     onReachBottom() {
-        // var navData = this.navData;
-        // var qwe = {
-        //     picture:
-        //         "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-        //     title: "商品2商品2商品2商品2商品2商品2商品2商品2商品2商品2",
-        //     name: "档口名称",
-        //     type: "现货",
-        //     number: 9,
-        //     maShuo: "均码",
-        //     jianShuo: 4,
-        //     jianShuo1: 10,
-        //     jiage: 40
-        // };
-        // navData.push(qwe);
-        // this.navData = navData;
-        // this.shuoLiang();
+      
     },
     mounted() {
-        // var b = [];
-        // b = JSON.parse(this.$route.query.item)
         this.navData.push(JSON.parse(this.$route.query.item))
-        // b = JSON(this.$route.query.item)
-
-        // console.log(b)
+        // for(var i=0;i<this.navData.length;i++){
+        //     this.navData[i].orderGoods
+        // }
         console.log(this.navData)
     },
 

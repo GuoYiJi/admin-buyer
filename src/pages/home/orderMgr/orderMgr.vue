@@ -26,28 +26,29 @@
       </div>
       <!-- 代付款 -->
       <div v-else-if="tag == 2">
-        <orderOnPaly :noPlay="noPlay"/>
+        <orderOnPaly />
       </div>
       <!-- 拼单 -->
       <div v-else-if="tag == 3">
-        <orderIsPin :isPin="isPin"/>
+        <orderIsPin />
       </div>
-      <!-- 待发货 -->
+      <!-- 待发货  维修改  -->
       <div v-else-if="tag == 4">
-        <orderNoGoods :noGoods="noGoods"/>
+        <!-- <orderNoGoods :noGoods='noGoods'/> -->
+        <delivered />
       </div>
       <!-- 已发货 -->
       <div v-else-if="tag == 5">
-        <orderYesGoods :yesGoods="yesGoods"/>
+        <orderYesGoods />
       </div>
       <div v-else-if="tag == 6">
-        <orderYesGod :yesGod="yesGod"/>
+        <orderYesGod />
       </div>
       <div v-else-if="tag == 7">
-        <closeOrder :closeOrder="closeOrder"/>
+        <closeOrder />
       </div>
       <div v-else-if="tag == 8">
-        <orderRefund :shopListRefund="shopListRefund"/>
+        <orderRefund />
       </div>
     </div>
     <div class="loading" v-if="canLoad">
@@ -155,7 +156,7 @@ export default {
      },
     getNextPage() {
       var obj = {
-        pageSize: 10,
+        pageSize: 30,
         orderType: 1,
         // state: this.tag
       };
@@ -171,7 +172,7 @@ export default {
       this.showLoad = true;
       const listData = await this.getNextPage();
       setTimeout(() => {
-        if (listData.data.list.length < 10) {
+        if (listData.data.list.length < 30) {
           this.canLoad = false;
         }
         this.shopList = this.shopList.concat(listData.data.list);
@@ -181,10 +182,11 @@ export default {
 
   },
   async mounted() {
+    console.log(azz)
     this.shopNum = 0;
     const listData = await this.getNextPage();
     this.shopList = this.shopList.concat(listData.data.list); 
-    if (listData.data.list.length < 10) {
+    if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
     // console.log(this.shopList)
