@@ -87,7 +87,6 @@ export default {
     },
     async btn_1() {
       console.log(this);
-
       wx.getStorage({
         key: "isLimitCount",
         success: function(res) {
