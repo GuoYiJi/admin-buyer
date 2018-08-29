@@ -1,13 +1,8 @@
 var fileHost = 'https://huiti-img.oss-cn-shanghai.aliyuncs.com'
 export default {
-<<<<<<< HEAD
-    url: 'http://1929u21c31.imwork.net/huiti',
-=======
     // url: 'http://10.0.0.125:8080/huiti',
     url: 'http://1929u21c31.imwork.net/huiti',
-    // 
     // url: 'http://www.qckj.link',
->>>>>>> remotes/origin/Lqi
     uploadImageUrl: `${fileHost}`, //默认存在根目录，可根据需求改
     AccessKeySecret: 'GYyUHcqlyvWCGJ8QCsxOU9En2iD9Rw',
     OSSAccessKeyId: 'LTAIclEjqAkc2j94',
