@@ -1,19 +1,5 @@
 <template>
   <div class="g_boxs">
-    <div class="card_boxs shop-cards">
-      <div class="img_box">
-        <p class="img_1"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"></p>
-      </div>
-      <div class="descs">
-        <p class="d_texts">就爱上的回访记录卡山东客服了解奥斯卡代理费圣诞快乐房间卡萨老地方拉水电费可垃圾上单士大夫看见爱上的看法</p>
-        <p class="d_times"> 货期:现货丨销量:123</p>
-      </div>
-      <p class="price">
-        <span>售价:￥23</span>
-        <span class="sell">&nbsp;&nbsp;&nbsp;售价:￥23</span>
-      </p>
-      <i class="cancel_shop" v-if="cancel"></i>
-    </div>
   </div>
 </template>
 <script>

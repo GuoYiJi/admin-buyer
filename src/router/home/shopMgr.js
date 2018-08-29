@@ -76,6 +76,12 @@ const route = [
     config: {
       navigationBarTitleText: '搭配设置'
     }
+  },
+  {
+    path: '/pages/home/shopMgr/setNewMatch',
+    config: {
+      navigationBarTitleText: '创建搭配'
+    }
   }
 ]
 module.exports = route

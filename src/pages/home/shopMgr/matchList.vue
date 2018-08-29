@@ -29,7 +29,7 @@
       <p class="save" @click="confirm">确定{{groupNum}}</p>
     </div>
     <i-message id="message" />
-    
+
   </div>
 </template>
 <script>
@@ -80,7 +80,9 @@ export default {
       for(var i=0,l; l=this.shopList[i++];){
         if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
       }
-      this.$store.commit('ADDMATCH',arr)
+      this.$store.commit('ADDMATCH', arr)
+      // wx.setStorageSync('selectShopArr', arr);
+      // this.$router.back(-1);
       this.$router.push('/'+ $getUrl())
       // console.log(arr)
     },
@@ -102,7 +104,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -174,7 +176,7 @@ export default {
       this.groupPriceData.push(obj)
     }
 
-  
+
   },
   async mounted() {
     //判断是否
@@ -186,7 +188,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 
 };
@@ -210,7 +212,7 @@ export default {
 
 
 
- 
+
 .box
   padding: 2% 0 50px 0%
 .home
@@ -239,7 +241,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -250,18 +252,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

@@ -20,13 +20,13 @@ export default class shopMgr {
 
   searchBuyExplan = params => http.post('api/configure/getConfigByType', params)
 
-  //search type
+  // search type
   s_searchType = params => http.post('api/shop/spec/selectSpecAttributeList', params)
 
-  //edit group
+  // edit group
   // editGroup = params => http.post('api/goods/changeGroups', params)
 
-  //group 拼团
+  // group 拼团
   s_getShopGroup = params => http.post('api/shop/ping/selectPingGoods', params)
   s_createGroup = params => http.post('api/shop/ping/addPing', params)
   s_getCanGroup = params => http.post('api/shop/ping/selectCanPingGoods', params)
@@ -41,4 +41,6 @@ export default class shopMgr {
   // 查询统计信息
   statistics = params => http.post('api/warehouse/home', params)
 
+  // 更新搭配
+  editMatchGoods =params => http.post('api/goods/editMatchGoods', params)
 }

@@ -1,71 +1,72 @@
 <template>
-  <div class="home">
-    <scroll-view scroll-y style="height: 480px;">
-      <div class="item_b">
-        <!-- <div class="sb_box"> -->
-        <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
-          <div class="g_box clearfix" :style="{width: 242*4 + 384 + 'rpx'}">
-            <div class="g_left">
-              <div class="left_box" v-for="(item, index) in shopList" :key="index">
-                <div class="title">
-                  <p>
-                    <i class="i_new"></i>{{item.title}}系列</p>
+<div class="home">
+  <scroll-view scroll-y style="height: 480px;">
+    <div class="item_b">
+      <!-- <div class="sb_box"> -->
+      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
+        <div class="g_box clearfix" :style="{width: 242 * shopNum / 2 + 384 + 'rpx'}">
+          <div class="g_left">
+            <div class="left_box" v-for="(item, index) in shopList" :key="index">
+              <!-- 系列标题 -->
+              <div class="title">
+                <p>
+                  <i class="i_new"></i>{{item.title}}系列</p>
+              </div>
+              <!-- 大图 -->
+              <div class="card_box shop-card">
+                <div class="img_box">
+                  <p class="img_1"><img :src="item.matchGoods[0].images"></p>
                 </div>
-                <div class="card_box shop-card" v-for="(ite, inde) in item.matchGoods" :key="inde" v-if="inde == 0">
-                  <div class="img_box">
-                    <p class="img_1"><img v-if="inde == 0" :src="ite.image"></p>
-                  </div>
-                  <div class="desc" v-if="inde == 0">
-                    <p class="d_text">{{ite.name}}</p>
-                    <p class="d_time">货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</p>
-                  </div>
-                  <p class="price" v-if="inde == 0">
-                    <span>售价:￥{{ite.sellPrice}}</span>
-                    <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{ite.profit}}</span>
-                  </p>
+                <div class="desc">
+                  <p class="d_text">{{item.matchGoods[0].name}}</p>
+                  <p class="d_time">货期:{{item.matchGoods[0].delivery}}丨销量:{{item.matchGoods[0].sellCount}}</p>
                 </div>
+                <p class="price">
+                  <span>售价:￥{{item.matchGoods[0].sellPrice}}</span>
+                  <span class="sell">利润:￥{{item.matchGoods[0].profit}}</span>
+                </p>
               </div>
             </div>
-            <div class="g_right">
-              <div class="scard_box" :style="{width: 242*4 + 'rpx'}">
-                <div class="scard_box" v-for="(item, i) in shopList" :key="i">
-                  <div class="p_card" v-for="(ite, j) in item.matchGoods" :key="j">
-                    <div class="g_boxs">
-                      <div class="card_boxs shop-cards">
-                        <div class="img_box">
-                          <p class="img_1"><img :src="ite.images"></p>
-                        </div>
-                        <div class="descs">
-                          <p class="d_texts">{{ite.name}}</p>
-                          <p class="d_times">货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</p>
-                        </div>
-                        <p class="price">
-                          <span>售价:￥{{ite.sellPrice}}</span>
-                          <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{ite.profit}}</span>
-                        </p>
-                        <i class="cancel_shop" v-if="cancel"></i>
-                      </div>
+          </div>
+          <div class="g_right">
+            <!-- 小图 -->
+            <div class="scard_box" :style="{width: 242*1 + 'rpx'}" v-for="(item, i) in shopList" :key="i">
+              <div class="p_card" v-for="(ite, j) in item.matchGoods" :key="j" v-if="j > 0">
+                <div class="g_boxs">
+                  <div class="card_boxs shop-cards">
+                    <div class="img_box">
+                      <p class="img_1"><img :src="ite.images"></p>
                     </div>
+                    <div class="descs">
+                      <p class="d_texts">{{ite.name}}</p>
+                      <p class="d_times">货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</p>
+                    </div>
+                    <p class="price">
+                      <span>售价:￥{{ite.sellPrice}}</span>
+                      <span class="sell">利润:￥{{ite.profit}}</span>
+                    </p>
+                    <i class="cancel_shop" v-if="cancel"></i>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </scroll-view>
-        <!-- </div> -->
-        <div class="footer">
-          <p class="edit">编辑</p>
-          <p class="close">下架</p>
         </div>
+      </scroll-view>
+      <!-- </div> -->
+      <div class="footer">
+        <p class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', shopList, shopList[0].id, shopList[0].title, shopList[0].shopId)">编辑</p>
+        <p class="close">下架</p>
       </div>
-      <div class="bottom"></div>
-    </scroll-view>
-    <div class="create">
-      <p @click="toRoute('groupSetting')">
-        <btn :title="'创建搭配'" />
-      </p>
     </div>
+    <div class="bottom"></div>
+  </scroll-view>
+  <div class="create">
+    <p @click="pageTo('/pages/home/shopMgr/setNewMatch')">
+      <btn :title="'创建搭配'"/>
+    </p>
   </div>
+</div>
 </template>
 <script>
 import wx from "wx";
@@ -89,8 +90,20 @@ export default {
     };
   },
   methods: {
-    toRoute(path) {
-      this.$router.push("/pages/home/shopMgr/" + path);
+    pageTo(url) {
+      // wx.removeStorageSync('selectShopArr');
+      this.$router.push(url);
+    },
+    toEdit(url, shopList, id, title, shopId) {
+      this.$router.push({
+        path: url,
+        query: {
+          matchGoodsList: JSON.stringify(shopList[0].matchGoods),
+          id,
+          title,
+          shopId
+        }
+      });
     },
     searchShop(params) {
       params.pageSize = this.pageSize;
@@ -116,10 +129,12 @@ export default {
       }, 2000);
     }
   },
-  async mounted() {
+  async created() {
     this.shopNum = 0;
     const listData = await this.getNextPage({});
     this.shopList = listData.data.list;
+    this.shopNum = this.shopList[0].matchGoods.length;
+    console.log(this.shopNum);
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
@@ -181,6 +196,7 @@ export default {
       +icon(50px)
       border-radius: 50px
     .g_boxs
+      display: inline-block
       height: 422px
       width: 216px
     .card_boxs
@@ -208,16 +224,16 @@ export default {
       +singleFile
     .price
       color: #FF0000
-      font-weight: bold
-      font-size: 24px
+      font-size: 22px
       padding-top: 10px
       height: 24px
       line-height: 24px
       +singleFile
       text-align: left
       .sell
+        margin-left: 5px
         color: #333
-        font-size: 22px
+        font-size: 20px
         font-weight: 500
     .d_times
       font-size: 20px
