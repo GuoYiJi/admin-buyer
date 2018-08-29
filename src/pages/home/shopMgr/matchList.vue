@@ -205,15 +205,6 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
-.loading
-  height: 70px
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> 5460f465371b54e6246a1d84f9a69c44dd71cf69
 .box
   padding: 2% 0 50px 0%
 .home
