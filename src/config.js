@@ -1,5 +1,9 @@
 var fileHost = 'https://huiti-img.oss-cn-shanghai.aliyuncs.com'
 export default {
+<<<<<<< HEAD
+=======
+    url: 'http://1929u21c31.imwork.net/huiti',
+>>>>>>> 5460f465371b54e6246a1d84f9a69c44dd71cf69
     // url: 'http://10.0.0.125:8080/huiti',
     // url: 'http://10.0.0.128:8080/huiti',
     //

@@ -1,13 +1,17 @@
 <template>
   <div class="nav">
     <div class="please">
-      <picker class="please_text" @change="bindPickerChange" :value="index" :range="array">
+      <picker class="please_text" @change="bindPickerChange" :value="index" :range="array" v-if="(index == 0)">
         <view class="picker">
           <span class="picker_title">当前选择：</span>
           <span class="picker_text">{{array[index]}}</span>
           <i class="img"></i>
         </view>
       </picker>
+      <p class="select" v-if="(index == 1)" @click="toRoute">
+        <span class="sel-text">当前选择：</span>
+        <span class="sel-text1">选择商品</span>
+      </p>
     </div>
     <div class="line flex">
       <p class="name">仅原价购买时可用</p>
@@ -23,19 +27,38 @@ export default {
     return {
       switch1: false,
       array: ["全部商品", "部分商品"],
-      index: 0
+      index: 0,
+      isOriginalPrice: ""
     };
   },
   methods: {
     onChange({ mp: { detail } }) {
       this.switch1 = detail.value;
+      if (this.switch1 == false) {
+        this.isOriginalPrice = 0;
+        wx.setStorageSync("isOriginalPrice", this.isOriginalPrice);
+      } else if (this.switch1 == true) {
+        this.isOriginalPrice = 1;
+        wx.setStorageSync("isOriginalPrice", this.isOriginalPrice);
+      }
     },
     bindPickerChange(e) {
       console.log("picker发送选择改变，携带值为", e.mp.detail.value);
       this.index = e.mp.detail.value;
+    },
+    toRoute() {
+      this.$router.push("/pages/home/shopMgr/matchList");
     }
   },
-  mounted() {}
+  onShow() {
+    wx.setStorage({
+      key: "isOriginalPrice",
+      data: this.isOriginalPrice
+    });
+  },
+  mounted() {
+    this.index = 0;
+  }
 };
 </script>
 <style lang="sass" scoped>
@@ -48,7 +71,7 @@ export default {
   line-height: 110px
   text-align: left
   position: relative
-  padding: 0px 24px 
+  padding: 0px 24px
   margin: 20px 0
   background: #fff
   .name
@@ -82,5 +105,11 @@ export default {
         height: 29px
         margin-right: 60px
         margin-top: 7px
-
+  .select
+    display: inline-block
+    width: 100%
+    padding: 33px 0 0 25px
+    .sel-text1
+      float: right
+      padding-right: 55px
 </style>

@@ -205,23 +205,22 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
-  .save
-
 .loading
   height: 70px
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 5460f465371b54e6246a1d84f9a69c44dd71cf69
 .box
   padding: 2% 0 50px 0%
 .home
   height: 100%
 
 .scroll-box
-  // padding: 10px 0
   height: 800px
-  // overflow: auto
   p
     margin: 5px 0
 .option-icon
@@ -235,11 +234,7 @@ export default {
 .sort-select
   height: 100%
 .top-nav
-  // left: 0
-  // right: 0
-  // top: 180px
   background: #fff
-  // z-index: 9999
   text-align: center
   ul
     display: flex
