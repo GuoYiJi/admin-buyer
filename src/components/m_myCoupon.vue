@@ -61,7 +61,10 @@ export default {
       Invalid: 1,
       myCoupon: [],
       newendTime: [],
-      newcreateTime: []
+      newcreateTime: [],
+      isLimitCount: "",
+      please_input: "",
+      isOriginalPrice: "",
     };
   },
   methods: {
@@ -69,17 +72,44 @@ export default {
       this.$router.push("/pages/home/marketingMgt/details");
     }
   },
+  onShow() {
+    wx.removeStorageSync("isLimitCount");
+    wx.removeStorageSync("please_input");
+    wx.removeStorageSync("isOriginalPrice");
+    wx.removeStorage({
+      key: "isLimitCount",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+    wx.removeStorage({
+      key: "please_input",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+    wx.removeStorage({
+      key: "isOriginalPrice",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+  },
   async mounted() {
     var myCoupon = await this.$API.myCoupon({ state: 0 });
     this.myCoupon = myCoupon.data.list;
     // console.log(myCoupon);
-    console.log(myCoupon.data.list,0);
+    // console.log(myCoupon.data.list,0);
 
     for (var i = 0; i < myCoupon.data.list.length; i++) {
-      console.log(myCoupon.data.list[i].startTime.substring(0, 10));
-      console.log(myCoupon.data.list[i].endTime.substring(0, 10));
-      this.newendTime = myCoupon.data.list[i].startTime.split(" ")[0].toString();
-      this.newcreateTime = myCoupon.data.list[i].endTime.split(" ")[0].toString();
+      // console.log(myCoupon.data.list[i].startTime.substring(0, 10));
+      // console.log(myCoupon.data.list[i].endTime.substring(0, 10));
+      this.newendTime = myCoupon.data.list[i].startTime
+        .split(" ")[0]
+        .toString();
+      this.newcreateTime = myCoupon.data.list[i].endTime
+        .split(" ")[0]
+        .toString();
     }
     // for(var i=0; i<this.myCoupon.length; i++){
     //   let b = this.myCoupon[i].endTime

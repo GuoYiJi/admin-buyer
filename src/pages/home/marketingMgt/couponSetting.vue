@@ -40,15 +40,16 @@
       <div class="effect" @click="Receive">
         <span class="text">领取设置：</span>
         <span class="settings">
-          <span class="settings_text">未设置</span>
+          <span class="settings_text" v-if="(ling == '' )">未设置</span>
+          <span class="settings_text" v-if="(ling != '' )">已设置</span>
           <i class="img"></i>
         </span>
       </div>
       <div class="effect" @click="Use">
         <span class="text">使用设置：</span>
         <span class="settings">
-          <span class="settings_text" v-if="(isLimitCount == 0 && please_input == 0)">未设置</span>
-          <span class="settings_text" v-if="(isLimitCount != 0 && please_input != 0)">已设置</span>
+          <span class="settings_text" v-if="(isOriginalPrice =='')">未设置</span>
+          <span class="settings_text" v-if="(isOriginalPrice !='')">已设置</span>
           <i class="img"></i>
         </span>
       </div>
@@ -68,11 +69,13 @@ export default {
     return {
       date: "",
       date1: "",
-      isLimitCount: 0,
-      please_input: 0,
+      isLimitCount: "",
+      please_input: "",
+      isOriginalPrice: "",
       grant_input: "",
       value_input: "",
       head_input: "",
+      ling: "",
       date: ""
     };
   },
@@ -87,25 +90,21 @@ export default {
     },
     async btn_1() {
       console.log(this);
-      wx.getStorage({
-        key: "isLimitCount",
-        success: function(res) {
-          console.log(res.data);
-        }
-      });
-      wx.getStorage({
-        key: "please_input",
-        success: function(res) {
-          console.log(res.data);
-        }
-      });
-      // return;
+      this.isLimitCount = wx.getStorageSync("isLimitCount");
+      console.log(this.isLimitCount, "选择");
+      this.please_input = wx.getStorageSync("please_input");
+      console.log(this.please_input, "输入");
+      this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
+      console.log(this.isOriginalPrice, "xz");
+      return;
       var newCouponData = await this.$API.newCoupon({
         name: this.head_input,
         price: this.value_input,
         count: this.grant_input,
         startTime: this.date,
-        endTime: this.date1
+        endTime: this.date1,
+        isLimitCount: this.isLimitCount,
+        limitCount: this.please_input
       });
       this.newCoupon = newCoupon.data;
       console.log(newCoupon);
@@ -118,15 +117,41 @@ export default {
       // this.$router.push("/pages/home/marketingMgt/Order/Order")
     },
     Receive() {
+      // this.$router.push("/pages/home/marketingMgt/Order/Order")
       this.$router.push("/pages/home/marketingMgt/settings/settings");
     },
     couponsave() {
       // this.$router.push("/pages/home/marketingMgt/myCoupon")
+    },
+    huanc() {
+      this.isLimitCount = wx.getStorageSync("isLimitCount");
+      console.log(this.isLimitCount, "选择");
+      this.please_input = wx.getStorageSync("please_input");
+      console.log(this.please_input, "输入");
+      this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
+      console.log(this.isOriginalPrice, "xz");
+      if (this.isLimitCount == "" && this.please_input == "") {
+        this.ling = "";
+        console.log(this.ling);
+      }
+      if (this.isLimitCount != "" || this.please_input != "") {
+        this.ling = 1;
+        console.log(this.ling);
+      }
     }
   },
-  mounted() {
+  onShow() {
     console.log(this);
-  }
+    this.huanc();
+    wx.getStorageInfo({
+      success: function(res) {
+        console.log(res.keys);
+        console.log(res.currentSize);
+        console.log(res.limitSize);
+      }
+    });
+  },
+  mounted() {}
 };
 </script>
 <style lang="sass" scoped>

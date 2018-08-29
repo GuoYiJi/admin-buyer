@@ -9,16 +9,41 @@
 <script>
 import wx from "wx";
 export default {
-    components: {},
-    data() {
-        return {};
-    },
-    methods: {
-        toMyCoupon() {
-            this.$router.push("/pages/home/marketingMgt/myCoupon");
-        }
-    },
-    mounted() {}
+  components: {},
+  data() {
+    return {};
+  },
+  methods: {
+    toMyCoupon() {
+      this.$router.push("/pages/home/marketingMgt/myCoupon");
+    }
+  },
+  onShow() {
+    wx.getStorageInfo({
+      success: function(res) {
+        console.log(res.keys);
+      }
+    });
+    wx.removeStorage({
+      key: "please_input",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+    wx.removeStorage({
+      key: "isLimitCount",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+    wx.removeStorage({
+      key: "isOriginalPrice",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+  },
+  mounted() {}
 };
 </script>
 <style lang="sass" scoped>

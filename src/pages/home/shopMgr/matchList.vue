@@ -29,7 +29,7 @@
       <p class="save" @click="confirm">确定{{groupNum}}</p>
     </div>
     <i-message id="message" />
-    
+
   </div>
 </template>
 <script>
@@ -102,7 +102,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -174,7 +174,7 @@ export default {
       this.groupPriceData.push(obj)
     }
 
-  
+
   },
   async mounted() {
     //判断是否
@@ -186,7 +186,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 
 };
@@ -203,23 +203,15 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
-  .save
-
 .loading
   height: 70px
-
-
-
- 
 .box
   padding: 2% 0 50px 0%
 .home
   height: 100%
 
 .scroll-box
-  // padding: 10px 0
   height: 800px
-  // overflow: auto
   p
     margin: 5px 0
 .option-icon
@@ -233,13 +225,9 @@ export default {
 .sort-select
   height: 100%
 .top-nav
-  // left: 0
-  // right: 0
-  // top: 180px
   background: #fff
-  // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -250,18 +238,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>
