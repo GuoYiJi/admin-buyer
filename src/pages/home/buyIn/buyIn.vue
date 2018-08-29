@@ -39,60 +39,7 @@
           </ul>
         </div>
         <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
-          <div class="demo-container">
-            <div class="title">筛选</div>
-            <div class="item-box">
-              <div class="item">
-                <p class="i_title">大厦</p>
-                <ul class="s_item_box">
-                  <li  v-for="(item,numId) in stallInfo" :key="numId" class="s_item">{{item}}</li>
-                </ul>
-                <p class="more" >
-                  <span @click="toOpen('more1')" v-if="!more1">查看更多 <i class="goback"></i></span>
-                  <span @click="toClose('more1')" v-else>点击收起</span>
-                </p>
-              </div>
-              <div class="item">
-                <p class="i_title">档口</p>
-                <ul class="s_item_box"> 
-                  <li  v-for="(itemzz,dkId) in stallInfozzs" :key="dkId" class="s_item">{{itemzz}}</li>
-                  <!-- <li v-for="(item,dkId) in stallInfozzs" :key="dkId" class="s_item">{{item}}</li> -->
-                </ul>
-                <p class="more">查看更多<i class="goback"></i></p>
-              </div>
-              <div class="item">
-                <p class="i_title">货期情况</p>
-                <ul class="s_item_box">  
-                  <li class="s_item" v-for="(item,hqId) in delivery" :key="hqId">{{item}}</li>
-                </ul>
-                <p class="more">查看更多<i class="goback"></i></p>
-              </div>
-              <!-- <div class="item">
-                <p class="i_title">收货人</p>
-                <ul class="s_item_box">
-                  <li class="s_item">档口1</li>
-                  <li class="s_item">档口2</li>
-                  <li class="s_item">档口3</li>
-                  <li class="s_item">档口1</li>
-                </ul>
-                <p class="more">查看更多<i class="goback"></i></p>
-              </div>
-              <div class="item">
-                <p class="i_title">销量</p>
-                <ul class="s_item_box">
-                  <li class="s_item">档口1</li>
-                  <li class="s_item">档口2</li>
-                  <li class="s_item">档口3</li>
-                  <li class="s_item">档口1</li>
-                </ul>
-                <p class="more">查看更多<i class="goback"></i></p>
-              </div> -->
-            </div>
-            <div class="f_btn">
-              <p class="reset" @click="resetBut">重置</p>
-              <p class="confirm" @click="yesBut">确定</p>
-            </div>
-          </div>
+          <selsearch @comSearch="comSearch" />
         </i-drawer>
       <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
         <div class="scroll-box">
@@ -115,10 +62,10 @@
 import wx from "wx";
 import payment from "@/components/o_payment";
 import CollageBy from "@/components/L_collageBy";
-// import delivery from "@/components/o_delivery";
 import deliveryBy from "@/components/L_deliverBy";
 import afterSales from "@/components/o_afterSales";
 import loading from "@/commond/loading";
+import selsearch from '@/components/selectSearch'
 export default {
   components: {
     payment,
@@ -127,7 +74,8 @@ export default {
     afterSales,
     loading,
     deliveryBy,
-    CollageBy
+    CollageBy,
+    selsearch
   },
   data() {
     return {
@@ -230,6 +178,17 @@ export default {
         this.orderList = this.orderList.concat(listData.data.list);
         this.showLoad = false;
       }, 2000);
+    },
+    async comSearch(searchParams){
+      //searchParams 筛选的查询参数
+      this.toggleRight1()
+      this.selParam = searchParams
+      const listData = await this.getNextPage({ob: 0})
+      this.shopList = listData.data.list;
+      if (listData.data.list.length < this.pageSize) {
+        this.canLoad = false;
+      }
+
     }
   },
   async mounted() {

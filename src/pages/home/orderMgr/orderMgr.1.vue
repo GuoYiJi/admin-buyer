@@ -26,29 +26,28 @@
       </div>
       <!-- 代付款 -->
       <div v-else-if="tag == 2">
-        <orderOnPaly />
+        <orderOnPaly :noPlay="noPlay"/>
       </div>
       <!-- 拼单 -->
       <div v-else-if="tag == 3">
-        <orderIsPin />
+        <orderIsPin :isPin="isPin"/>
       </div>
-      <!-- 待发货  维修改  -->
+      <!-- 待发货 -->
       <div v-else-if="tag == 4">
-        <!-- <orderNoGoods :noGoods='noGoods'/> -->
-        <delivered />
+        <orderNoGoods :noGoods="noGoods"/>
       </div>
       <!-- 已发货 -->
       <div v-else-if="tag == 5">
-        <orderYesGoods />
+        <orderYesGoods :yesGoods="yesGoods"/>
       </div>
       <div v-else-if="tag == 6">
-        <orderYesGod />
+        <orderYesGod :yesGod="yesGod"/>
       </div>
       <div v-else-if="tag == 7">
-        <closeOrder />
+        <closeOrder :closeOrder="closeOrder"/>
       </div>
       <div v-else-if="tag == 8">
-        <orderRefund />
+        <orderRefund :shopListRefund="shopListRefund"/>
       </div>
     </div>
     <div class="loading" v-if="canLoad">
@@ -182,7 +181,6 @@ export default {
 
   },
   async mounted() {
-    console.log(azz)
     this.shopNum = 0;
     const listData = await this.getNextPage();
     this.shopList = this.shopList.concat(listData.data.list); 
