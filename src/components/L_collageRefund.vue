@@ -3,7 +3,7 @@
     <div v-for="(item,index) in noPassRefund" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.id}}</p>
+          <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">
             {{item.state==0?'申请退款':item.state==2?'退款成功':'拒绝退款'}}
             

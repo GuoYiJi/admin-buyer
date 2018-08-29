@@ -3,7 +3,7 @@
     <div v-for="(item,index) in noSigleList" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.id}}</p>
+          <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">
             {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}} 
             </p> 
@@ -29,7 +29,7 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close(item.id)">关闭订单</span>
+            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
@@ -91,41 +91,7 @@ export default {
     data() {
         return {
             btn: 0,
-            navData: [
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                }
-            ],
+            navData: [],
             groupOrderzz: [],
             sessionIdzz: '',
             url: '',
@@ -154,8 +120,8 @@ export default {
           const L_shopCloseData = await this.$API.L_shopClose({
             orderId: this.orderID,
           });
-          console.log(L_dealWithOrderData)
-          if(L_dealWithOrderData.code == 1){
+          console.log(L_shopCloseData)
+          if(L_shopCloseData.code == 1){
             wx.showToast({               
               title: '成功',               
               icon: 'success',  
@@ -182,8 +148,7 @@ export default {
     async mounted() {
       this.url = config.url+'/api/order/shopClose'
       console.log(this.url)
-      this.sessionIdzz = wx.getstoragesync('sessionId')
-      console.log(this.sessionIdzz)
+     
     }
 };
 </script>
@@ -306,7 +271,7 @@ page
   .closeTip
     opacity: 1 
     width: 550px
-    height: 350px
+    height: 260px
     margin: 0 auto
     background: #fff
     margin-top: 300rpx
@@ -320,10 +285,9 @@ page
       p
       .tipText
         margin: 40px
-
         // margin-top: 40px
     .confirm_but
-      margin-top: 80px
+      margin-top: 40px
       display: flex
       div
         width: 100%
