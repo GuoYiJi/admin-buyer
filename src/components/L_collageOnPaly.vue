@@ -4,7 +4,9 @@
       <div class="kuang">
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
-          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
+          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
+            <!--， 还差{{item.remark==null?'0':'0'}}人-->
+          </p>
         </div>
         <div class="middle">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
@@ -20,22 +22,17 @@
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" >
+          <div class="picture_1">
             <!-- <img class="imgTwo" :src="item.picture"> -->
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(btn==0)" class="see" @click="seePlay(item.id)">确认已支付</span>
-<<<<<<< HEAD
             <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
-=======
-            <span v-if="(btn==0)" class="close" @click="colsePlay(item.id)">关闭订单</span>
->>>>>>> Jchan
           </div>
         </div>
       </div>
     </div>
-<<<<<<< HEAD
     <!-- 关闭订单 -->
     <div class="closeTipAll" v-show="passhowYes">
       <div class="closeTip">
@@ -43,8 +40,12 @@
           <p class="tipText">是否确认关闭订单!</p>
         </div>
         <div class="confirm_but">
-          <div><button @click="passYesClose">取消</button></div>
-          <div><button @click="passYesBut">确定</button></div>
+          <div>
+            <button @click="passYesClose">取消</button>
+          </div>
+          <div>
+            <button @click="passYesBut">确定</button>
+          </div>
         </div>
       </div>
     </div>
@@ -55,118 +56,107 @@
           <p class="tipText">是否确认关闭订单!</p>
         </div>
         <div class="confirm_but">
-          <div><button @click="pasSeeClose">取消</button></div>
-          <div><button @click="pasSeeBut">确定</button></div>
+          <div>
+            <button @click="pasSeeClose">取消</button>
+          </div>
+          <div>
+            <button @click="pasSeeBut">确定</button>
+          </div>
         </div>
       </div>
     </div>
-=======
->>>>>>> Jchan
   </div>
 </template>
 <script>
 import wx from "wx";
 import config from "../config";
 export default {
-    components: {},
-    data() {
-        return {
-            btn: 0,
-            navData: [],
-            groupOrderzz: [],
-            url: '',
-            passhowYes: false,
-            pasSeePlay: false,
-            orderID: '',
-        };
+  components: {},
+  data() {
+    return {
+      btn: 0,
+      navData: [],
+      groupOrderzz: [],
+      url: "",
+      passhowYes: false,
+      pasSeePlay: false,
+      orderID: ""
+    };
+  },
+  props: {
+    onPlayList: {
+      type: Array,
+      default: []
+    }
+  },
+  methods: {
+    seePlay(id) {
+      this.pasSeePlay = true;
+      this.orderID = id;
     },
-    props: {
-      onPlayList: {
-        type: Array,
-        default: []
+    close(id) {
+      this.passhowYes = true;
+      this.orderID = id;
+    },
+    passYesClose() {
+      this.passhowYes = false;
+    },
+    async passYesBut() {
+      const L_shopCloseData = await this.$API.L_shopClose({
+        orderId: this.orderID
+      });
+      console.log(L_shopCloseData);
+      if (L_shopCloseData.code == 1) {
+        wx.showToast({
+          title: "成功",
+          icon: "success",
+          duration: 2000
+        });
+        this.passhowYes = false;
+      } else {
+        this.passhowYes = false;
       }
     },
-    methods: {
-<<<<<<< HEAD
-        seePlay(id){
-          this.pasSeePlay = true
-          this.orderID = id
-        },
-        close(id) {
-          this.passhowYes = true
-          this.orderID = id
-        },
-        passYesClose(){
-          this.passhowYes = false
-        },
-        async passYesBut(){
-          const L_shopCloseData = await this.$API.L_shopClose({
-            orderId: this.orderID,
-          });
-          console.log(L_shopCloseData)
-          if(L_shopCloseData.code == 1){
-            wx.showToast({               
-              title: '成功',               
-              icon: 'success',  
-              duration: 2000  
-            }) 
-            this.passhowYes = false
-          }else{
-            this.passhowYes = false
-          }
-        },
-        pasSeeClose(){
-          this.passhowYes = false
-        },
-        async pasSeeBut(){
-          const L_surePayData = await this.$API.L_surePay({
-            orderId: this.orderID,
-          });
-          console.log(L_surePayData)
-          if(L_surePayData.code == 1){
-            wx.showToast({               
-              title: '成功',               
-              icon: 'success',  
-              duration: 2000  
-            }) 
-            this.pasSeePlay = false
-          }else{
-            this.pasSeePlay = false
-          }
-=======
-       close() {
-            wx.showModal({
-                // title: "提示",
-                content: "确定关闭订单！",
-                success: function(res) {
-                    console.log(res);
-                    if (res.confirm) {
-                      console.log("用户点击确定");
-                      console.log(config.url)
-                    } else if (res.cancel) {
-                      console.log("用户点击取消");
-                    }
-                }
-            });
-
->>>>>>> Jchan
-        },
-        sanJiaoBut(item){
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
-        },
-        seeBut(id){
-          this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
-
-        }
+    pasSeeClose() {
+      this.passhowYes = false;
     },
-    mounted() {
-      this.url =  config.url+"/api/order /selectOrderPage"
+    async pasSeeBut() {
+      const L_surePayData = await this.$API.L_surePay({
+        orderId: this.orderID
+      });
+      console.log(L_surePayData);
+      if (L_surePayData.code == 1) {
+        wx.showToast({
+          title: "成功",
+          icon: "success",
+          duration: 2000
+        });
+        this.pasSeePlay = false;
+      } else {
+        this.pasSeePlay = false;
+      }
+    },
+    sanJiaoBut(item) {
+      this.$router.push({
+        path: "/pages/home/orderMgr/orderdetails",
+        query: { item: JSON.stringify(item) }
+      });
+    },
+    seeBut(id) {
+      this.$router.push({
+        path: "/pages/home/orderMgr/collage/collect",
+        query: { orderId: id }
+      });
     }
+  },
+  mounted() {
+    this.url = config.url + "/api/order /selectOrderPage";
+  }
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
 .kuang
   width: 702px
@@ -193,7 +183,7 @@ page
     border-bottom: 1px solid #f5f5f5
     line-height: 200px
     .picture
-      margin: 20px 0 0 20px 
+      margin: 20px 0 0 20px
       display: inline-block
       .imgOne
         width: 160px
@@ -260,7 +250,7 @@ page
         width: 130px
         height: 60px
         background: #fff
-        border-radius: 8px 
+        border-radius: 8px
         border: 1px solid #999999
         color: #999
         line-height: 60px
@@ -274,7 +264,7 @@ page
         color: #fff
         margin: 20px 20px 0 0
         line-height: 60px
-.closeTipAll 
+.closeTipAll
   background: rgba(0,0,0,0.4)
   // background-color: #000
   width: 100%
@@ -283,7 +273,7 @@ page
   top: 0
   z-index: 9999
   .closeTip
-    opacity: 1 
+    opacity: 1
     width: 550px
     height: 260px
     margin: 0 auto

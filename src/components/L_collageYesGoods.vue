@@ -4,7 +4,7 @@
       <div class="kuang">
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
-          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
+          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p>
         </div>
         <div class="middle">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
@@ -73,13 +73,8 @@ export default {
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
         },
-<<<<<<< HEAD
         seeLogistics(id){
           this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: id}})
-=======
-        seeLogistics(){
-          this.$router.push( {path:'/pages/home/orderMgr/mail/p_seeLogistics', query:{orderId: 2}})
->>>>>>> Jchan
         }
     },
     mounted() {
@@ -88,7 +83,7 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
 .kuang
   width: 702px
@@ -113,7 +108,7 @@ page
     border-bottom: 1px solid #f5f5f5
     line-height: 200px
     .picture
-      margin: 20px 0 0 20px 
+      margin: 20px 0 0 20px
       display: inline-block
       .imgOne
         width: 160px
@@ -180,7 +175,7 @@ page
         width: 130px
         height: 60px
         background: #fff
-        border-radius: 8px 
+        border-radius: 8px
         border: 1px solid #999999
         color: #999
         line-height: 60px
@@ -194,7 +189,7 @@ page
         color: #fff
         margin: 30px 20px 0 0
         line-height: 60px
-.closeTipAll 
+.closeTipAll
   background: rgba(0,0,0,0.4)
   // background-color: #000
   width: 100%
@@ -203,7 +198,7 @@ page
   top: 0
   z-index: 9999
   .closeTip
-    opacity: 1 
+    opacity: 1
     width: 550px
     height: 260px
     margin: 0 auto
