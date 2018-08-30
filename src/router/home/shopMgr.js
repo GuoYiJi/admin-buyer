@@ -86,8 +86,6 @@ const route = [{
       navigationBarTitleText: '创建搭配'
     }
   },
-<<<<<<< HEAD
-=======
   {
     path: '/pages/home/shopMgr/matchListMout',
     config: {
@@ -97,7 +95,6 @@ const route = [{
         'i-modal': '/iview/modal/index',
       }
     }
-  },
->>>>>>> afd6670f25398cf233a660004ca0fa080fe7dc4e
+  }
 ]
 module.exports = route
