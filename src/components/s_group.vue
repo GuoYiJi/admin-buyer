@@ -1,70 +1,46 @@
 <template>
 <div class="home">
-  <scroll-view scroll-y style="height: 480px;">
-    <div class="item_b">
-      <!-- <div class="sb_box"> -->
-      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
-        <div class="g_box clearfix" :style="{width: 242 * shopNum / 2 + 384 + 'rpx'}">
-          <div class="g_left">
-            <div class="left_box" v-for="(item, index) in shopList" :key="index">
-              <!-- 系列标题 -->
-              <div class="title">
-                <p>
-                  <i class="i_new"></i>{{item.title}}系列</p>
-              </div>
-              <!-- 大图 -->
-              <div class="card_box shop-card">
-                <div class="img_box">
-                  <p class="img_1"><img :src="item.matchGoods[0].images"></p>
-                </div>
-                <div class="desc">
-                  <p class="d_text">{{item.matchGoods[0].name}}</p>
-                  <p class="d_time">货期:{{item.matchGoods[0].delivery}}丨销量:{{item.matchGoods[0].sellCount}}</p>
-                </div>
-                <p class="price">
-                  <span>售价:￥{{item.matchGoods[0].sellPrice}}</span>
-                  <span class="sell">利润:￥{{item.matchGoods[0].profit}}</span>
-                </p>
-              </div>
-            </div>
+  <!-- <scroll-view class="scroll-y" scroll-y="true" style="height: 920px" v-for="(item, index) in shopList" :key="index"> -->
+  <div v-for="(item, index) in shopList" :key="index">
+    <scroll-view scroll-x="true" style="width: 100%">
+      <div class="scroll-x" :style="{width: 445 + 290 * shopNum + 'rpx'}">
+
+        <div class="left-box">
+          <div class="title">
+            <i class="icon"></i>
+            <span>{{item.title || '未设置标题'}}</span>
           </div>
-          <div class="g_right">
-            <!-- 小图 -->
-            <div class="scard_box" :style="{width: 242*1 + 'rpx'}" v-for="(item, i) in shopList" :key="i">
-              <div class="p_card" v-for="(ite, j) in item.matchGoods" :key="j" v-if="j > 0">
-                <div class="g_boxs">
-                  <div class="card_boxs shop-cards">
-                    <div class="img_box">
-                      <p class="img_1"><img :src="ite.images"></p>
-                    </div>
-                    <div class="descs">
-                      <p class="d_texts">{{ite.name}}</p>
-                      <p class="d_times">货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</p>
-                    </div>
-                    <p class="price">
-                      <span>售价:￥{{ite.sellPrice}}</span>
-                      <span class="sell">利润:￥{{ite.profit}}</span>
-                    </p>
-                    <i class="cancel_shop" v-if="cancel"></i>
-                  </div>
-                </div>
-              </div>
+          <div class="main-img">
+            <div class="border">
+              <i class="shop-img" :style="{background: 'url(' + item.matchGoods[0].images + ')'}"></i>
             </div>
+            <span class="title">{{item.matchGoods[0].name}}</span>
+            <span class="desc"> 货期:{{item.matchGoods[0].delivery}}丨销量:{{item.matchGoods[0].sellCount}}</span>
+            <span class="price"><strong>售价:￥{{item.matchGoods[0].sellPrice}}</strong>利润:￥{{item.matchGoods[0].profit}}</span>
           </div>
         </div>
-      </scroll-view>
-      <!-- </div> -->
-      <div class="footer">
-        <p class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', shopList, shopList[0].id, shopList[0].title, shopList[0].shopId)">编辑</p>
-        <p class="close">下架</p>
+        <div class="right-box" :style="{width: 290 * shopNum +50 +'rpx'}">
+          <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx >= 0">
+            <div class="border">
+              <i class="shop-img" :style="{background: 'url(' + ite.images + ')'}"></i>
+            </div>
+            <span class="title">{{ite.name}}</span>
+            <span class="desc"> 货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</span>
+            <span class="price"><strong>售价:￥{{ite.sellPrice}}</strong>利润:￥{{ite.profit}}</span>
+          </div>
+        </div>
       </div>
+    </scroll-view>
+    <div class="footer">
+      <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title, item.shopId)">编辑</button>
+      <button class="down">下架</button>
     </div>
-    <div class="bottom"></div>
-  </scroll-view>
+  </div>
+  <!-- </scroll-view> -->
+  <div class="white-space"></div>
   <div class="create">
-    <p @click="pageTo('/pages/home/shopMgr/setNewMatch')">
-      <btn :title="'创建搭配'"/>
-    </p>
+    <!-- <btn :title="'创建搭配'" @click="pageTo('/pages/home/shopMgr/setNewMatch')" /> -->
+    <button @click="pageTo('/pages/home/shopMgr/setNewMatch')">创建搭配</button>
   </div>
 </div>
 </template>
@@ -94,11 +70,12 @@ export default {
       // wx.removeStorageSync('selectShopArr');
       this.$router.push(url);
     },
-    toEdit(url, shopList, id, title, shopId) {
+    toEdit(url, matchGoodsList, id, title, shopId) {
+      console.log(matchGoodsList);
       this.$router.push({
         path: url,
         query: {
-          matchGoodsList: JSON.stringify(shopList[0].matchGoods),
+          matchGoodsList: JSON.stringify(matchGoodsList),
           id,
           title,
           shopId
@@ -133,7 +110,8 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage({});
     this.shopList = listData.data.list;
-    this.shopNum = this.shopList[0].matchGoods.length;
+    console.log(this.shopList);
+    this.shopNum = Math.round(this.shopList[0].matchGoods.length / 2);
     console.log(this.shopNum);
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
@@ -144,162 +122,157 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.sb_box
+
+// .home
+//   width: 100%
+//   min-height: 100%
+//   background-color: #ffffff
+.scroll-x
+  display: flex
+  width: 100%
+  padding: 40px 0
+  background-color: #ffffff
+  // height: 1200px
+  .left-box
+    width: 395px
+    overflow: hidden
+    div.title
+      width: 344px
+      height: 165px
+      margin: 0 25px
+      display: flex
+      align-items: center
+      justify-content: center
+      i.icon
+        display: inline-block
+        width: 34px
+        height: 31px
+        background: url("~@/assets/img/shopMgr/group_1.png") no-repeat center
+        background-size: 100% 100%
+        margin: auto 14px
+      span
+        color: #6EB1F5
+        font-size: 32px
+    .main-img
+      margin: 0 25px
+      width: 344px
+      overflow: hidden
+      display: flex
+      flex-wrap: wrap
+      .border
+        width: 344px
+        height: 458px
+        border: 2px solid #CCCCCC
+        padding: 16px 30px
+        i.shop-img
+          display: inline-block
+          width: 100%
+          height: 100%
+          background-repeat: no-repeat
+          background-position: center
+          background-size: 100% 100%
+      span.title
+        width: 100%
+        font-size: 30px
+        padding-top: 18px
+        +singleFile
+      span.desc
+        width: 100%
+        color: #999999
+        font-size: 26px
+      span.price
+        width: 100%
+        font-size: 28px
+        color: #333333
+        +singleFile
+        strong
+          font-size: 30px
+          color: #FF0000
+  .right-box
+    // float: left
+    display: flex
+    margin-left: 50px
+    flex-wrap: wrap
+    .item-img
+      display: flex
+      width: 270px
+      overflow: hidden
+      flex-wrap: wrap
+      margin: 0 10px 20px
+      .border
+        width: 270px
+        height: 416px
+        border: 2px solid #CCCCCC
+        padding: 16px 0
+        i.shop-img
+          display: inline-block
+          width: 100%
+          height: 100%
+          background-repeat: no-repeat
+          background-position: center
+          background-size: 100% 100%
+      span.title
+        width: 100%
+        font-size: 26px
+        padding-top: 10px
+      span.desc
+        width: 100%
+        color: #999999
+        font-size: 22px
+      span.price
+        width: 100%
+        font-size: 22px
+        color: #333333
+        strong
+          font-size: 24px
+          color: #FF0000
+.footer
+  width: 100%
+  // height: 110px
+  // line-height: 110px
+  // bottom: -110px
+  margin-top: 10px
+  padding: 10px 25px
+  display: flex
+  justify-content: flex-end
+  background-color: #ffffff
+  button
+    padding: 20px 40px
+    margin-right: 8px
+  button.edit
+    font-size: 32px
+    color: #F67C2F
+    background-color: #ffffff
+    border: 1px solid #F67C2F
+    text-align: center
+  button.down
+    font-size: 32px
+    color: #ffffff
+    border: none
+    background-color: #CCCCCC
+    text-align: center
+
+.white-space
+  width: 100%
+  height: 200px
+  background-color: #ffffff
 .create
+  width: 100%
+  height: 170px
+  display: flex
+  align-items: center
+  justify-content: center
   position: fixed
   bottom: 0
   left: 0
-  right: 0
-  padding: 20px 74px
-  background: #fff
-.scroll_box_content
-  height: 1000px
-  overflow: auto
-.home
-  background: #fff
-.footer
-  display: flex
-  justify-content: flex-end
-  padding: 20px 0
-  p
-    width: 140px
-    height: 70px
+  background-color: #ffffff
+  button
+    width: 80%
+    height: 90px
+    line-height: 90px
     text-align: center
-    line-height: 70px
-    border-radius: 4px
-    margin-right: 20px
-    box-sizing: border-box
-  .edit
-    color: #F67C2F
-    +border(1px,all,#F67C2F)
-  .close
-    color: #fff
-    background: #CCCCCC
-.left_box
-  position: absolute
-  top: 0
-  left: 20px
-  width: 344px
-.scard_box
-  display: flex
-  flex-wrap: wrap
-  .p_card
-    height: 444px
-    padding-right: 26px
-    padding-bottom: 20px
-    width: 216px
-    .cancel_shop
-      position: absolute
-      +bg-img('shopMgr/cancel.png')
-      right: 12px
-      top: 12px
-      +icon(50px)
-      border-radius: 50px
-    .g_boxs
-      display: inline-block
-      height: 422px
-      width: 216px
-    .card_boxs
-      padding-bottom: 4px
-      .img_box
-        +border(2px,all, #ccc)
-        padding: 16px 0px
-        .img_1
-          height: 300px
-          width: 212px
-    .d_name
-      color: #e3e3e3
-      font-size: 14px
-    .shop-cards
-      position: relative
-      img
-        width: 100%
-        border-radius: 4px
-    .descs
-      margin: 5px 0
-      font-size: 20px
-    .d_texts
-      color: #000
-      font-size: 24px
-      +singleFile
-    .price
-      color: #FF0000
-      font-size: 22px
-      padding-top: 10px
-      height: 24px
-      line-height: 24px
-      +singleFile
-      text-align: left
-      .sell
-        margin-left: 5px
-        color: #333
-        font-size: 20px
-        font-weight: 500
-    .d_times
-      font-size: 20px
-      color: #999
-      +singleFile
-      text-align: left
-.g_box
-  padding-top: 20px
-  +border(10px,bottom,#F5F5F5)
-  .g_left
-    float: left
-    width: 384px
-    height: 900px
-    position: relative
-    .title
-      height: 205px
-      line-height: 205px
-      color: #6EB1F5
-      text-align: center
-      .i_new
-        +icon(34px)
-        +bg-img('shopMgr/group_1.png')
-        margin-right: 14px
-    .card_box
-      .img_box
-        +border(2px,all, #ccc)
-        padding: 16px 30px
-        .img_1
-          height: 425px
-          width: 283px
-
-  .g_right
-    float: left
-.d_name
-	color: #e3e3e3
-	font-size: 14px
-.shop-card
-	position: relative
-	img
-		width: 100%
-		border-radius: 4px
-	.desc
-		overflow: hidden
-    margin: 5px 0
-		font-size: 25px
-		+desc
-		.d_text
-      +singleFile()
-      color: #000
-      font-size: 28px
-.price
-  color: #FF0000
-  font-weight: bold
-  font-size: 28px
-  padding-top: 10px
-  height: 24px
-  line-height: 24px
-  overflow: hidden
-  +singleFile
-  .sell
-    color: #333
-    font-size: 26px
-    font-weight: 500
-    +singleFile
-.d_time
-  font-size: 24px
-  color: #999
-  +singleFile
+    border-radius: 10px
+    font-size: 32px
+    color: #FFFFFF
+    background-color: #F67C2F
 </style>

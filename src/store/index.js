@@ -23,5 +23,4 @@ const store = new Vuex.Store({
   strict: debug
 })
 
-
 export default store

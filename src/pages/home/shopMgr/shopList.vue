@@ -29,7 +29,7 @@
       <p class="save" @click="confirm">确定{{groupNum}}</p>
     </div>
     <i-message id="message" />
-    
+
   </div>
 </template>
 <script>
@@ -61,20 +61,19 @@ export default {
       allCheck: false,
       //loading
       shopNum: 0,
-      shopList: [],
+      shopList: [],//商品列表
       showLoad: false,
       canLoad: true,
       pageSize: 20,
       type: 0,
-      selIds: [],
+      selIds: [],//选择的ids
       state: 1,
-      groupPriceData: []
+      groupPriceData: [],//选择的id和拼团价
     };
   },
   methods: {
     confirm(){
-      //校验选择拼团商品的价格
-
+      this.$router.push({path: '/pages/home/shopMgr/collage/collageMsg', query: {groupPriceData: JSON.stringify(this.groupPriceData), selIds: JSON.stringify(this.selIds)}})
     },
     async handleTag(tag){
       this.tag = tag
@@ -94,7 +93,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -150,23 +149,31 @@ export default {
       }
 
     },
-    switchSel(id,bool){
+    // 根据选中状态处理ids
+    switchSel(id, groupPrice, bool){
+      console.log(groupPrice);
       if(bool){
-        this.selIds.push(id)
+        this.selIds.push(id);
+        this.groupPriceData.push(groupPrice)
+        console.log(this.groupPriceData);
       }else {
         const start = this.selIds.indexOf(id)
         this.selIds.splice(start,1)
+        this.groupPriceData.splice(start, 1)
+        console.log(this.groupPriceData);
       }
-      console.log(this.selIds)
     },
+    // 设置拼团id和价格数组
+    // obj: {id: this.shop.id, price: this.groupPrice}
     setGroupPrice(obj){
-      for(var i=0,l; l=this.groupPriceData[i++];){
-        if(l.id == obj.id) return l.price = obj.price
-      }
-      this.groupPriceData.push(obj)
+      // for(var i=0,l; l=this.groupPriceData[i++];){
+      //   if(l.id == obj.id) return l.price = obj.price
+      // }
+      // this.groupPriceData.push(obj)
+      // console.log(this.groupPriceData);
     }
 
-  
+
   },
   async mounted() {
     console.log(this.shopList)
@@ -177,7 +184,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 
 };
@@ -201,7 +208,7 @@ export default {
 
 
 
- 
+
 .box
   padding: 2% 0 50px 0%
 .home
@@ -230,7 +237,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -241,18 +248,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

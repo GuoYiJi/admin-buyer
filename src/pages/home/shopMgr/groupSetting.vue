@@ -1,7 +1,9 @@
 <template>
 <div class="home">
+  <!-- 轻提示 -->
+  <i-toast id="toast" />
   <div class="title_box">
-    <input class="input_title" placeholder="请输入标题" v-model="title"/>
+    <input class="input_title" placeholder="请输入标题" v-model="title" />
   </div>
   <!-- 添加大图 -->
   <div class="add_shops">
@@ -15,7 +17,7 @@
       <span class="desc"> 货期:{{matchGoodsList[0].delivery}}丨销量:{{matchGoodsList[0].sellCount}}</span>
       <span class="sell"><strong>售价:￥{{matchGoodsList[0].sellPrice}}</strong> 利润:￥{{matchGoodsList[0].profit}}</span>
     </div>
-    <div class="shop-card add_shop" @click="toRoute('home/shopMgr/matchList', 1)" v-else>+添加商品</div>
+    <div class="shop-card add_shop" @click="toRoute('shopMgr/matchList')" v-else>+添加商品</div>
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
@@ -29,15 +31,15 @@
       <span class="desc">货期:{{item.delivery}}丨销量:{{item.sellCount}}</span>
       <span class="sell"><strong>售价:￥{{item.sellPrice}}</strong> 利润:￥{{item.profit}}</span>
     </div>
-    <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList', 1)">+添加商品</div>
+    <div class="shop-cards add_shop" @click="toRoute('shopMgr/matchList')">+添加商品</div>
   </div>
   <p class="bottom"></p>
-  <p class="save" @click="QD()">确定</p>
+  <p class="save" @click="submit()">确定</p>
 </div>
 </template>
 <script>
 import wx from "wx";
-import scard from "@/components/group_card";
+// import scard from "@/components/group_card";
 import mixin from "@/mixin";
 import {
   mapState
@@ -45,7 +47,7 @@ import {
 export default {
   mixins: [mixin],
   components: {
-    scard
+    // scard
   },
   data() {
     return {
@@ -60,8 +62,8 @@ export default {
     ...mapState(["shopMatch"])
   },
   methods: {
-    toRoute(path,shopNum){
-      this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
+    pageTo(url) {
+      this.$router.push(url)
     },
     toCancel(index) {
       console.log(index);
@@ -70,16 +72,25 @@ export default {
       // this.matchGoodsList[index] = null;
       // this.$set(this.matchGoodsList, index, {images: null,name: null, delivery: null, sellCount: null, sellPrice: null, profit: null });
     },
-    QD() {
+    submit() {
       // const s_addMatch = await API.s_addMatch();
-      this.$API.editMatchGoods({
-        id: this.id,
-        title: this.title,
-        shopId: this.shopId,
-        goodsIds: this.goodsIds.toString()
-      }).then(response => {
-        console.log(response);
-      })
+      if (!this.title) {
+        this.$Toast({
+          content: '未设置搭配标题',
+          type: 'warning',
+          selector: '#toast'
+        })
+      }else {
+        this.$API.editMatchGoods({
+          id: this.id,
+          title: this.title,
+          goodsIds: this.goodsIds.toString()
+        }).then(response => {
+          if(response.code === 1) {
+            this.$router.back(-1)
+          }
+        })
+      }
     }
   },
   mounted() {
@@ -87,15 +98,16 @@ export default {
       this.shopTop = this.$route.query.shopNum;
       console.log(this.shopTop);
     }
-    // console.log(this.$route.query.shopList);
+    console.log(this.$route.query.matchGoodsList);
     this.matchGoodsList = JSON.parse(this.$route.query.matchGoodsList);
     this.matchGoodsList.forEach(item => {
-      this.goodsIds.push(item.id);
+      this.goodsIds.push(item.goodsId);
     })
-    // console.log(this.goodsIds);
+    console.log(this.goodsIds);
+    // this.shopId = this.$route.query.shopId;
+    console.log(this.shopId);
     this.id = this.$route.query.id;
     this.title = this.$route.query.title;
-    this.shopId = this.$route.query.shopId;
   }
 };
 </script>
@@ -104,7 +116,7 @@ export default {
 .home
   padding: 20px 22px
   .title_box
-    width: 93%
+    width: 100%
     height: 200px
     border: 1px solid #CCCCCC
     margin: 0 auto
@@ -172,10 +184,12 @@ export default {
         text-align: left
         color: #999999
         font-size: 26px
+        +singleFile
       span.sell
         width: 100%
         color: #333333
         font-size: 28px
+        +singleFile
         strong
           display: inline-block
           color: #FF0000
@@ -186,15 +200,16 @@ export default {
     margin-top: 45px
     display: flex
     flex-wrap: wrap
-    justify-content: space-between
+    // justify-content: space-between
     .add_shop
       display: flex
       justify-content: center
       align-items: center
       border: 2px solid #CCCCCC
     .shop-cards
-      margin-top: 40px
+      margin: 40px 10px 0
       flex: 0 0 30%
+      display: flex
       min-height: 464px
       flex-wrap: wrap
       .img_box

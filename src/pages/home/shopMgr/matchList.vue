@@ -26,7 +26,7 @@
       </scroll-view>
     </div>
     <div class="footer">
-      <p class="save" @click="confirm">确定{{groupNum}}</p>
+      <p class="save" @click="confirm">确定{{shopMatch.length}}</p>
     </div>
     <i-message id="message" />
 
@@ -39,6 +39,7 @@ import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
 import { $getUrl } from '@/utils'
+import { mapState } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
@@ -47,9 +48,10 @@ export default {
     selsearch
   },
   computed: {
-    groupNum(){
-      return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
-    }
+    // groupNum(){
+    //   return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+    // }
+    ...mapState(["shopMatch"]),
   },
   data() {
     return {
@@ -80,9 +82,7 @@ export default {
       for(var i=0,l; l=this.shopList[i++];){
         if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
       }
-      this.$store.commit('ADDMATCH', arr)
-      // wx.setStorageSync('selectShopArr', arr);
-      // this.$router.back(-1);
+      this.$store.commit('ADDMATCH',arr)
       this.$router.push('/'+ $getUrl())
       // console.log(arr)
     },
@@ -124,6 +124,7 @@ export default {
       return this.$API.searchShopGroup(params)
       // return this.$API.s_getCanGroup(params)
     },
+    // 获取下页数据
     getNextPage(params) {
       this.shopNum++;
       //追加条件，根据tag追加
@@ -180,7 +181,6 @@ export default {
   },
   async mounted() {
     //判断是否
-
     this.shopNum = 0;
     const listData = await this.getNextPage({ob: 0,state: this.state});
     this.shopList = listData.data.list;
@@ -205,13 +205,23 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
+  .save
+
+.loading
+  height: 70px
+
+
+
+
 .box
   padding: 2% 0 50px 0%
 .home
   height: 100%
 
 .scroll-box
+  // padding: 10px 0
   height: 800px
+  // overflow: auto
   p
     margin: 5px 0
 .option-icon
@@ -225,7 +235,11 @@ export default {
 .sort-select
   height: 100%
 .top-nav
+  // left: 0
+  // right: 0
+  // top: 180px
   background: #fff
+  // z-index: 9999
   text-align: center
   ul
     display: flex

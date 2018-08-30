@@ -3,44 +3,52 @@
     <div class="search-box" >
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
-        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>  
+        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>
       </div>
     </div>
     <div class="nav">
       <div class="list">
-        <span 
-          v-for="(item,idx) in navData" 
-          :key="idx" 
-          class="item" 
-          :class="[tag === item.id && 'active']"  
+        <span
+          v-for="(item,idx) in navData"
+          :key="idx"
+          class="item"
+          :class="[tag === item.id && 'active']"
           @click="handleNav(item.id)"
         >{{item.text}}</span>
         <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
-      </div>  
+      </div>
     </div>
     <div class="content">
       <div v-if="tag == 1">
+        <!-- 全部 -->
         <all />
       </div>
       <div v-else-if="tag == 2">
+        <!-- 出售中 -->
         <selling />
       </div>
       <div v-else-if="tag == 3">
+        <!-- 仓库中 -->
         <stocking />
       </div>
       <div v-else-if="tag == 4">
+        <!-- 上新 -->
         <news />
       </div>
       <div v-else-if="tag == 5">
+        <!-- 热销 -->
         <hot />
       </div>
       <div v-else-if="tag == 6">
+        <!-- 折扣 -->
         <discount />
       </div>
       <div v-else-if="tag == 7">
+        <!-- 拼团 -->
         <collage />
       </div>
       <div v-else-if="tag == 8">
+        <!-- 搭配 -->
         <group />
       </div>
     </div>
@@ -127,10 +135,10 @@ export default {
       .search
         +bg-img('home/search.png')
         +icon(38px)
-        margin-top: 7px  
+        margin-top: 7px
     .search-icon
       position: absolute
-      left: 60px 
+      left: 60px
     .input-box
       background-color: #f5f5f5
       border-radius: 4px
@@ -143,7 +151,7 @@ export default {
 .active
   color: #F67C2F
   // font-weight: 600
-.nav 
+.nav
   overflow: hidden
   text-align: center
   background: #f5f5f5
@@ -151,10 +159,10 @@ export default {
   width: 100%
   padding-top: 1px;/*no*/
   box-shadow: 0px 4px 6px 0px rgba(0, 69, 162, 0.06);/*no*/
-  .list  
+  .list
     font-size: 26px
     color: #000
-    background: #f5f5f5    
+    background: #f5f5f5
     overflow-y: hidden
     overflow-x: auto
     height: 90px
@@ -162,10 +170,10 @@ export default {
     display: flex
     width: 100%
     .item
-      flex: 0 0 20%    
+      flex: 0 0 20%
       line-height: 70px
       box-sizing: border-box
-.line 
+.line
   display: block
   height: 1px;/*no*/
   width: 8%
@@ -175,5 +183,5 @@ export default {
   bottom: 23px
   margin: 0 6%
   transition: left .3s ease-in
-    
+
 </style>

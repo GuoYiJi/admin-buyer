@@ -11,7 +11,7 @@
         <p class="price">
           <span>售价:￥{{shop.sellPrice}}</span>
           <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
-          
+
         </p>
         <span class="more-icon" @click="toOpen('visible4')">编辑</span>
       </div>
@@ -22,8 +22,9 @@
         <p>利润：￥{{shop.profit}}</p>
         <div class="col_price">拼团价：<div class="p_input"><input v-model="groupPrice"  type="number"/></div>元</div>
       </div>
-      
+
     </i-modal>
+    <i-message id="message" />
   </div>
 </template>
 <script>
@@ -53,13 +54,20 @@ export default {
         return this.shop.images.split(',')[0]
       } else {
         return noImage
-      }  
+      }
     },
   },
   methods: {
     select(){
+      if(this.groupPrice == '') {
+        this.$Message({
+          content: '请先拼团价格',
+          type: 'warning'
+        })
+        return
+      }
       this.check = !this.check
-      this.$emit('switchSel', this.shop.id, this.check)
+      this.$emit('switchSel', this.shop.id, this.groupPrice, this.check)
     },
     comfirmGPrice(name){
       this.toClose(name)
@@ -70,12 +78,12 @@ export default {
           id: this.shop.id,
           price: this.groupPrice
         }
-        
+
         this.$emit('setGroupPrice',obj)
       }
-      
+
     }
-    
+
   }
 }
 </script>
@@ -106,7 +114,7 @@ export default {
 .active
   +select-active
 .order-shop-card
-  
+
 .more-icon
   +icon(40px)
   width: 70px
@@ -120,7 +128,7 @@ export default {
   font-size: 24px
 .sellnum
   font-size: 24px
-  color: #999 
+  color: #999
 .item-card
   display: flex
   text-align: left
@@ -140,7 +148,7 @@ export default {
       +moreLine(2)
       font-size: 28px
     .tips
-      padding-top: 8px 
+      padding-top: 8px
       color: #999
       span
         padding: 8px 9px 8px 5px
@@ -155,6 +163,6 @@ export default {
         font-size: 26px
         font-weight: 500
 
-    
+
 
 </style>

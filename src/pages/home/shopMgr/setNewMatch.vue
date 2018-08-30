@@ -15,7 +15,7 @@
       <span class="desc"> 货期:{{shopMatch[0].delivery}}丨销量:{{shopMatch[0].sellCount}}</span>
       <span class="sell"><strong>售价:￥{{shopMatch[0].sellPrice}}</strong> 利润:￥{{shopMatch[0].profit}}</span>
     </div>
-    <div class="shop-card add_shop" @click="pageTo('/pages/home/shopMgr/matchList')" v-else>+添加商品</div>
+    <div class="shop-card add_shop" @click="toRoute('home/shopMgr/matchList')" v-else>+添加商品</div>
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
@@ -29,10 +29,10 @@
       <span class="desc">货期:{{item.delivery}}丨销量:{{item.sellCount}}</span>
       <span class="sell"><strong>售价:￥{{item.sellPrice}}</strong> 利润:￥{{item.profit}}</span>
     </div>
-    <div class="shop-cards add_shop" @click="pageTo('/pages/home/shopMgr/matchList')">+添加商品</div>
+    <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList')">+添加商品</div>
   </div>
   <p class="bottom"></p>
-  <p class="save" @click="QD()">确定</p>
+  <p class="save" @click="submit()">确定</p>
 </div>
 </template>
 <script>
@@ -61,12 +61,12 @@ export default {
     ...mapState(["shopMatch"]),
   },
   methods: {
-    pageTo(url) {
-      this.$router.push(url);
-    },
-    toRoute(path,shopNum){
-      this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
-    },
+    // pageTo() {
+    //   this.$router.push('shopMgr/matchList');
+    // },
+    // toRoute(path,shopNum){
+    //   this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
+    // },
     toCancel(index) {
       console.log(index);
       // this.shopMatch.splice(index, 1);
@@ -76,7 +76,12 @@ export default {
       // this.matchGoodsList[index] = null;
       // this.$set(this.matchGoodsList, index, {images: null,name: null, delivery: null, sellCount: null, sellPrice: null, profit: null });
     },
-    QD() {
+    addShopList(){
+      // this.$router.push('/pages/home/shopMgr/matchList')
+      this.$router.push('/pages/')
+      // console.log(this.$router.push( '/pages/home/orderMgr/mail/delivery'))
+    },
+    submit() {
       // const s_addMatch = await API.s_addMatch();
       this.$API.s_addMatch({
         title: this.title,
@@ -87,13 +92,11 @@ export default {
     }
   },
   mounted() {
-    // console.log(this.shopMatch);
-    // if(this.shopMatch && this.shopMatch.length > 0) {
-    //   this.shopMatch.forEach(item => {
-    //     this.selectShopArr.push(item.id);
-    //   })
-    // }
-    // console.log(this.goodsIds);
+    console.log(this.shopMatch);
+    this.shopMatch.forEach((item, index) => {
+      this.goodsIds[index] = item.id;
+    })
+    console.log(this.goodsIds);
   }
 };
 </script>
@@ -102,10 +105,10 @@ export default {
 .home
   padding: 20px 22px
   .title_box
-    width: 93%
+    width: 100%
     height: 200px
     border: 1px solid #CCCCCC
-    margin: 0 auto
+    // margin: 0 auto
     overflow: hidden
     input
       width: 100%

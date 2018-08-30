@@ -45,6 +45,7 @@ const route = [
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
         'i-modal': '/iview/modal/index',
+        'i-message': '/iview/message/index',
       }
     }
   },{
@@ -74,7 +75,10 @@ const route = [
   },{
     path: '/pages/home/shopMgr/groupSetting',
     config: {
-      navigationBarTitleText: '搭配设置'
+      navigationBarTitleText: '搭配设置',
+      'usingComponents': {
+        'i-toast': '/iview/toast/index'
+      }
     }
   },
   {
@@ -82,6 +86,6 @@ const route = [
     config: {
       navigationBarTitleText: '创建搭配'
     }
-  }
+  },
 ]
 module.exports = route
