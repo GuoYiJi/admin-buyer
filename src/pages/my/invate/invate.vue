@@ -126,6 +126,8 @@ export default {
         position: absolute
         top: 80px
         right: 200px
+      button::after
+        border: none
     span
       padding: 10px 186px
       font-size: 28px
