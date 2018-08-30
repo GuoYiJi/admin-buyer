@@ -47,7 +47,7 @@ export default {
       this.index = e.mp.detail.value;
     },
     toRoute() {
-      this.$router.push("/pages/home/shopMgr/matchList");
+      this.$router.push("/pages/home/shopMgr/matchListMout");
     }
   },
   onShow() {
