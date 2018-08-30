@@ -8,7 +8,7 @@
                         <div class="title">{{itemss.name}}</div>
                         <div class="huo">
                             <text class="name">{{itemss.stallInfo3}}</text>
-                            <div class="type">货期:{{itemss.state}}</div>
+                            <div class="type">货期:{{itemss.delivery}}</div>
                             <span class="number">X{{itemss.num}}</span>
                         </div>
                         <div class="maShuo">{{itemss.skuCode}}/{{itemss.num}}件</div>
@@ -31,6 +31,7 @@ export default {
         return {
             shuoo: 0,
             navData: []
+            // navData: ''
         };
     },
     methods: {
@@ -46,30 +47,10 @@ export default {
     },
     // 页面触底执行
     onReachBottom() {
-        // var navData = this.navData;
-        // var qwe = {
-        //     picture:
-        //         "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-        //     title: "商品2商品2商品2商品2商品2商品2商品2商品2商品2商品2",
-        //     name: "档口名称",
-        //     type: "现货",
-        //     number: 9,
-        //     maShuo: "均码",
-        //     jianShuo: 4,
-        //     jianShuo1: 10,
-        //     jiage: 40
-        // };
-        // navData.push(qwe);
-        // this.navData = navData;
-        // this.shuoLiang();
+      
     },
     mounted() {
-        // var b = [];
-        // b = JSON.parse(this.$route.query.item)
         this.navData.push(JSON.parse(this.$route.query.item))
-        // b = JSON(this.$route.query.item)
-
-        // console.log(b)
         console.log(this.navData)
     },
 

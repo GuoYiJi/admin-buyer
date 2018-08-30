@@ -18,49 +18,49 @@
         <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
       </div>  
     </div>
-
-    <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
+    <!-- <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  > -->
     <div class="content">
       <div v-if="tag == 1">
         <orderMgr />
       </div>
       <!-- 代付款 -->
       <div v-else-if="tag == 2">
-        <orderOnPaly :noPlay="noPlay"/>
+        <orderOnPaly />
       </div>
       <!-- 拼单 -->
       <div v-else-if="tag == 3">
-        <orderIsPin :isPin="isPin"/>
+        <orderIsPin />
       </div>
-      <!-- 待发货 -->
+      <!-- 待发货  维修改  -->
       <div v-else-if="tag == 4">
-        <orderNoGoods :noGoods="noGoods"/>
+        <!-- <orderNoGoods :noGoods='noGoods'/> -->
+        <delivered />
       </div>
       <!-- 已发货 -->
       <div v-else-if="tag == 5">
-        <orderYesGoods :yesGoods="yesGoods"/>
+        <orderYesGoods />
       </div>
       <div v-else-if="tag == 6">
-        <orderYesGod :yesGod="yesGod"/>
+        <orderYesGod />
       </div>
       <div v-else-if="tag == 7">
-        <closeOrder :closeOrder="closeOrder"/>
+        <closeOrder />
       </div>
       <div v-else-if="tag == 8">
-        <orderRefund :shopListRefund="shopListRefund"/>
+        <orderRefund />
       </div>
     </div>
-    <div class="loading" v-if="canLoad">
+    <!-- <div class="loading" v-if="canLoad">
       <div v-if="showLoad"><loading  /></div>
-    </div>
-    </scroll-view>
+    </div> -->
+    <!-- </scroll-view> -->
   </div>
 </template>
 <script>
 import wx from "wx";
 import orderMgr from "@/components/o_orderMgr";
 import delivered from "@/components/o_delivered";
-import loading from "@/commond/loading";
+// import loading from "@/commond/loading";
 import orderOnPaly from "@/components/L_orderOnPaly";
 import orderIsPin from "@/components/L_orderIsPin";
 import orderNoGoods from "@/components/L_orderNoGoods";
@@ -73,7 +73,7 @@ export default {
   components: {
     orderMgr,
     delivered,
-    loading,
+    // loading,
     orderOnPaly,
     orderIsPin,
     orderNoGoods,
@@ -153,73 +153,73 @@ export default {
     toRoute(path) {
       this.$router.push("/pages/home/" + path);
      },
-    getNextPage() {
-      var obj = {
-        pageSize: 10,
-        orderType: 1,
-        // state: this.tag
-      };
-      this.shopNum++;
-      obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderPage(obj);
-    },
-    async lower(e) {
-      console.log(e);
-      if (!this.canLoad) return;
-      if (this.showLoad) return;
-      console.log(this.showLoad)
-      this.showLoad = true;
-      const listData = await this.getNextPage();
-      setTimeout(() => {
-        if (listData.data.list.length < 10) {
-          this.canLoad = false;
-        }
-        this.shopList = this.shopList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+    // getNextPage() {
+    //   var obj = {
+    //     pageSize: 30,
+    //     orderType: 1,
+    //     // state: this.tag
+    //   };
+    //   this.shopNum++;
+    //   obj.pageNumber = this.shopNum;
+    //   return this.$API.L_selectOrderPage(obj);
+    // },
+    // async lower(e) {
+    //   console.log(e);
+    //   if (!this.canLoad) return;
+    //   if (this.showLoad) return;
+    //   console.log(this.showLoad)
+    //   this.showLoad = true;
+    //   const listData = await this.getNextPage();
+    //   setTimeout(() => {
+    //     if (listData.data.list.length < 30) {
+    //       this.canLoad = false;
+    //     }
+    //     this.shopList = this.shopList.concat(listData.data.list);
+    //     this.showLoad = false;
+    //   }, 2000);
+    // }
 
   },
   async mounted() {
-    this.shopNum = 0;
-    const listData = await this.getNextPage();
-    this.shopList = this.shopList.concat(listData.data.list); 
-    if (listData.data.list.length < 10) {
-      this.canLoad = false;
-    }
-    // console.log(this.shopList)
-    for(var i=0;i<this.shopList.length;i++){
-      //未付款
-      if(this.shopList[i].state == 1){
-        // console.log(11111)
-        this.noPlay.push(this.shopList[i])
-        // console.log(this.noPlay)
-      }else if(this.shopList[i].state == 2){//取消
-        this.noOrder.push(this.shopList[i])
-        // console.log(this.noOrder)
-      }else if(this.shopList[i].state == 3){//已支付
-        this.yesPlay.push(this.shopList[i])
-        // console.log(this.yesPlay)
-      }else if(this.shopList[i].state == 4){//支付失败
-        this.noPlays.push(this.shopList[i])
-      }else if(this.shopList[i].state == 5){//未发货
-        this.noGoods.push(this.shopList[i])
-        // console.log(this.noGoods)
-      }else if(this.shopList[i].state == 6){//已发货
-        this.yesGoods.push(this.shopList[i])
-        // console.log(this.yesGoods)
-      }else if(this.shopList[i].state == 7){//交易成功
-        this.yesGod.push(this.shopList[i])
-      }else if(this.shopList[i].state == 8){//交易关闭
-        this.closeOrder.push(this.shopList[i])
-        // console.log(this.closeOrder)
-      }else if(this.shopList[i].state == 9){//拼单
-        this.isPin.push(this.shopList[i])
-      }else{
+    // this.shopNum = 0;
+    // const listData = await this.getNextPage();
+    // this.shopList = this.shopList.concat(listData.data.list); 
+    // if (listData.data.list.length < 30) {
+    //   this.canLoad = false;
+    // }
+    // // console.log(this.shopList)
+    // for(var i=0;i<this.shopList.length;i++){
+    //   //未付款
+    //   if(this.shopList[i].state == 1){
+    //     // console.log(11111)
+    //     this.noPlay.push(this.shopList[i])
+    //     // console.log(this.noPlay)
+    //   }else if(this.shopList[i].state == 2){//取消
+    //     this.noOrder.push(this.shopList[i])
+    //     // console.log(this.noOrder)
+    //   }else if(this.shopList[i].state == 3){//已支付
+    //     this.yesPlay.push(this.shopList[i])
+    //     // console.log(this.yesPlay)
+    //   }else if(this.shopList[i].state == 4){//支付失败
+    //     this.noPlays.push(this.shopList[i])
+    //   }else if(this.shopList[i].state == 5){//未发货
+    //     this.noGoods.push(this.shopList[i])
+    //     // console.log(this.noGoods)
+    //   }else if(this.shopList[i].state == 6){//已发货
+    //     this.yesGoods.push(this.shopList[i])
+    //     // console.log(this.yesGoods)
+    //   }else if(this.shopList[i].state == 7){//交易成功
+    //     this.yesGod.push(this.shopList[i])
+    //   }else if(this.shopList[i].state == 8){//交易关闭
+    //     this.closeOrder.push(this.shopList[i])
+    //     // console.log(this.closeOrder)
+    //   }else if(this.shopList[i].state == 9){//拼单
+    //     this.isPin.push(this.shopList[i])
+    //   }else{
 
-      }
+    //   }
 
-    }
+    // }
     
   }
 };

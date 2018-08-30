@@ -3,7 +3,7 @@
     <div class="list" v-for="(item,idx) in applyFor" :key="idx">
       <div class="kuang clearfix">
         <div class="title">
-          <text class="name">订单编号：{{item.content}}</text>
+          <text class="name">订单编号：{{item.orderNo}}</text>
           <text class="fuKuan">买家发起，仅退款</text>
         </div>
         <div class="img">
