@@ -8,9 +8,10 @@
           <i class="img"></i>
         </view>
       </picker>
-      <p class="select" v-if="(index == 1)" @click="toRoute">
+      <p class="select" v-if="(index == 1 )" @click="toRoute">
         <span class="sel-text">当前选择：</span>
-        <span class="sel-text1">选择商品</span>
+        <span class="sel-text1" v-if="(inde == '')">选择商品</span>
+        <span class="sel-text1" v-if="(inde != '')">{{inde}}件商品</span>
       </p>
     </div>
     <div class="line flex">
@@ -28,7 +29,9 @@ export default {
       switch1: false,
       array: ["全部商品", "部分商品"],
       index: 0,
-      isOriginalPrice: ""
+      isOriginalPrice: "",
+      inde: "",
+      selIds: ""
     };
   },
   methods: {
@@ -45,15 +48,37 @@ export default {
     bindPickerChange(e) {
       console.log("picker发送选择改变，携带值为", e.mp.detail.value);
       this.index = e.mp.detail.value;
+      if (this.index == 0) {
+        wx.setStorageSync("isAll", this.index);
+      } else if (this.index == 1) {
+        wx.setStorageSync("isAll", this.index);
+      }
     },
     toRoute() {
       this.$router.push("/pages/home/shopMgr/matchListMout");
     }
   },
   onShow() {
+    var that = this;
     wx.setStorage({
       key: "isOriginalPrice",
-      data: this.isOriginalPrice
+      data: that.isOriginalPrice
+    });
+    wx.setStorage({
+      key: "isAll",
+      data: that.index
+    });
+    wx.getStorage({
+      key: "selIds",
+      success: function(res) {
+        console.log(res.data);
+        that.selIds = res.data;
+        setTimeout(() => {
+          that.inde = that.selIds.length;
+          that.index = 1;
+          console.log(that.selIds.length);
+        }, 100);
+      }
     });
   },
   mounted() {

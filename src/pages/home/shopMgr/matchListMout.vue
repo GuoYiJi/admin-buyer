@@ -4,25 +4,41 @@
       <div class="top-nav">
         <ul>
           <li :class="[tag === 1 && 'nav-active']" @click="handleTag(1)">综合</li>
-          <li :class="[tag === 2 && 'nav-active']" @click="handleTag(2)">销量<div class="sort-box"><i class="sort-top" :class="asceSale && 'sort-active'"></i><i :class="!asceSale && 'sort-active'" class="sort-bottom"></i></div></li>
-          <li :class="[tag === 4 && 'nav-active']" @click="handleTag(4)">价格<div class="sort-box"><i class="sort-top" :class="ascePrice && 'sort-active'"></i><i :class="!ascePrice  && 'sort-active'" class="sort-bottom"></i></div></li>
-          <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
+          <li :class="[tag === 2 && 'nav-active']" @click="handleTag(2)">销量
+            <div class="sort-box">
+              <i class="sort-top" :class="asceSale && 'sort-active'"></i>
+              <i :class="!asceSale && 'sort-active'" class="sort-bottom"></i>
+            </div>
+          </li>
+          <li :class="[tag === 4 && 'nav-active']" @click="handleTag(4)">价格
+            <div class="sort-box">
+              <i class="sort-top" :class="ascePrice && 'sort-active'"></i>
+              <i :class="!ascePrice  && 'sort-active'" class="sort-bottom"></i>
+            </div>
+          </li>
+          <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选
+            <div class="sort-box">
+              <i class="option-icon"></i>
+            </div>
+          </li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 82%;" @scrolltolower="lower"  >
-      <div class="scroll-box">
-        <div class="box">
-          <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
-          </p>
+      <scroll-view scroll-y lower-threshold='80' style="height: 82%;" @scrolltolower="lower">
+        <div class="scroll-box">
+          <div class="box">
+            <p v-for="(shop,index) in shopList" :key="index">
+              <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            </p>
+          </div>
+          <div class="loading" v-if="canLoad">
+            <div v-if="showLoad">
+              <loading />
+            </div>
+          </div>
         </div>
-        <div class="loading" v-if="canLoad">
-          <div v-if="showLoad"><loading  /></div>
-        </div>
-      </div>
-      <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
-        <selsearch @comSearch="comSearch" />
-      </i-drawer>
+        <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
+          <selsearch @comSearch="comSearch" />
+        </i-drawer>
       </scroll-view>
     </div>
     <div class="footer">
@@ -33,12 +49,12 @@
   </div>
 </template>
 <script>
-import wx from "wx"
-import scard from '@/components/s_card'
+import wx from "wx";
+import scard from "@/components/s_cardMou";
 import loading from "@/commond/loading";
-import mixin from '@/mixin'
-import selsearch from '@/components/selectSearch'
-import { $getUrl } from '@/utils'
+import mixin from "@/mixin";
+import selsearch from "@/components/selectSearch";
+import { $getUrl } from "@/utils";
 export default {
   mixins: [mixin],
   components: {
@@ -47,8 +63,8 @@ export default {
     selsearch
   },
   computed: {
-    groupNum(){
-      return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+    groupNum() {
+      return this.selIds.length > 0 ? "(" + this.selIds.length + ")" : "";
     }
   },
   data() {
@@ -73,66 +89,73 @@ export default {
     };
   },
   methods: {
-    confirm(){
+    confirm() {
       //添加商品
-      if(this.selIds.length == 0) return this.handleError('请选择至少一件商品！')
-      let arr = []
-      for(var i=0,l; l=this.shopList[i++];){
-        if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
+      if (this.selIds.length == 0)
+        return this.handleError("请选择至少一件商品！");
+      let arr = [];
+      for (var i = 0, l; (l = this.shopList[i++]); ) {
+        if (this.selIds.indexOf(l.id) >= 0) arr.push(l);
       }
-      this.$store.commit('ADDMATCH', arr)
+      this.$store.commit("ADDMATCH", arr);
       // wx.setStorageSync('selectShopArr', arr);
-      // this.$router.back(-1);
-      this.$router.push('/'+ $getUrl())
+      wx.setStorage({
+        key: "selIds",
+        data: this.selIds
+      });
+      console.log(this.selIds);
+      this.$router.back(-1);
+      // return;
+      // this.$router.push("/" + $getUrl());
       // console.log(arr)
     },
-    async handleTag(tag){
-      this.tag = tag
-      var type = 0 ;
+    async handleTag(tag) {
+      this.tag = tag;
+      var type = 0;
       //refresh init
-      this.shopNum = 0
-      this.canLoad = true
-      this.showLoad = false
-      if(tag === 2){
+      this.shopNum = 0;
+      this.canLoad = true;
+      this.showLoad = false;
+      if (tag === 2) {
         //对销量sort
-        this.asceSale = !this.asceSale
-        type = this.asceSale ? 2 : 3
+        this.asceSale = !this.asceSale;
+        type = this.asceSale ? 2 : 3;
       }
-      if(tag === 4) {
-        this.ascePrice = !this.ascePrice
-        type = this.ascePrice ? 4 : 5
+      if (tag === 4) {
+        this.ascePrice = !this.ascePrice;
+        type = this.ascePrice ? 4 : 5;
       }
-      if(tag === 5) {
-        this.toggleRight1()
-        return
+      if (tag === 5) {
+        this.toggleRight1();
+        return;
       }
-      this.type = type
+      this.type = type;
       const listData = await this.getNextPage({
         ob: type,
         state: this.state
-      })
-      this.shopList = listData.data.list
-      if(listData.data.list.length < this.pageSize) {
-        this.canLoad = false
+      });
+      this.shopList = listData.data.list;
+      if (listData.data.list.length < this.pageSize) {
+        this.canLoad = false;
       }
     },
-    toggleRight1 () {
-      this.showRight1 = !this.showRight1
+    toggleRight1() {
+      this.showRight1 = !this.showRight1;
     },
-    searchShop(params){
-      params.pageSize = this.pageSize
-      return this.$API.searchShopGroup(params)
+    searchShop(params) {
+      params.pageSize = this.pageSize;
+      return this.$API.searchShopGroup(params);
       // return this.$API.s_getCanGroup(params)
     },
     getNextPage(params) {
       this.shopNum++;
       //追加条件，根据tag追加
-      if(this.tag == 5){
-        params = Object.assign(params, this.selParam)
+      if (this.tag == 5) {
+        params = Object.assign(params, this.selParam);
       }
 
       params.pageNumber = this.shopNum;
-      return this.searchShop(params)
+      return this.searchShop(params);
       // return this.$API.getAdr(obj);
     },
     async lower(e) {
@@ -140,7 +163,10 @@ export default {
       if (!this.canLoad) return;
       if (this.showLoad) return;
       this.showLoad = true;
-      const listData = await this.getNextPage({ob: this.type,state: this.state});
+      const listData = await this.getNextPage({
+        ob: this.type,
+        state: this.state
+      });
       setTimeout(() => {
         if (listData.data.list.length < this.pageSize) {
           this.canLoad = false;
@@ -149,48 +175,43 @@ export default {
         this.showLoad = false;
       }, 2000);
     },
-    async comSearch(searchParams){
+    async comSearch(searchParams) {
       //searchParams 筛选的查询参数
-      this.toggleRight1()
-      this.selParam = searchParams
-      const listData = await this.getNextPage({ob: 0,state: this.state})
+      this.toggleRight1();
+      this.selParam = searchParams;
+      const listData = await this.getNextPage({ ob: 0, state: this.state });
       this.shopList = listData.data.list;
       if (listData.data.list.length < this.pageSize) {
         this.canLoad = false;
       }
-
     },
-    switchSel(id,bool){
-      if(bool){
-        this.selIds.push(id)
-      }else {
-        const start = this.selIds.indexOf(id)
-        this.selIds.splice(start,1)
+    switchSel(id, bool) {
+      if (bool) {
+        this.selIds.push(id);
+      } else {
+        const start = this.selIds.indexOf(id);
+        this.selIds.splice(start, 1);
       }
-      console.log(this.selIds)
+      console.log(this.selIds);
     },
-    setGroupPrice(obj){
-      for(var i=0,l; l=this.groupPriceData[i++];){
-        if(l.id == obj.id) return l.price = obj.price
+    setGroupPrice(obj) {
+      for (var i = 0, l; (l = this.groupPriceData[i++]); ) {
+        if (l.id == obj.id) return (l.price = obj.price);
       }
-      this.groupPriceData.push(obj)
+      this.groupPriceData.push(obj);
     }
-
-
   },
   async mounted() {
     //判断是否
 
     this.shopNum = 0;
-    const listData = await this.getNextPage({ob: 0,state: this.state});
+    const listData = await this.getNextPage({ ob: 0, state: this.state });
     this.shopList = listData.data.list;
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
-
-  },
-
+    console.log(this.shopList);
+  }
 };
 </script>
 <style lang="sass" scoped>

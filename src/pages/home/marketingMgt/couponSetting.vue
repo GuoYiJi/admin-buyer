@@ -76,7 +76,9 @@ export default {
       value_input: "",
       head_input: "",
       ling: "",
-      date: ""
+      date: "",
+      isAll: "",
+      selIds: ""
     };
   },
   methods: {
@@ -96,7 +98,17 @@ export default {
       console.log(this.please_input, "输入");
       this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
       console.log(this.isOriginalPrice, "xz");
-      return;
+      // this.newCoupon = newCoupon.data;
+      // console.log(newCoupon);
+      this.ok();
+      console.log("qweascxc");
+      setTimeout(() => {
+        wx.navigateBack({
+          data: 1
+        });
+      }, 200);
+    },
+    async ok() {
       var newCouponData = await this.$API.newCoupon({
         name: this.head_input,
         price: this.value_input,
@@ -104,12 +116,9 @@ export default {
         startTime: this.date,
         endTime: this.date1,
         isLimitCount: this.isLimitCount,
-        limitCount: this.please_input
-      });
-      this.newCoupon = newCoupon.data;
-      console.log(newCoupon);
-      wx.navigateBack({
-        data: 1
+        limitCount: this.please_input,
+        originalGoodsIds: this.selIds,
+        isAll: this.isAll
       });
     },
     Use() {
@@ -129,7 +138,12 @@ export default {
       this.please_input = wx.getStorageSync("please_input");
       console.log(this.please_input, "输入");
       this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
-      console.log(this.isOriginalPrice, "xz");
+      console.log(this.isOriginalPrice, "原价");
+      this.selIds = wx.getStorageSync("selIds");
+      console.log(this.selIds, "商品");
+      this.isAll = wx.getStorageSync("isAll");
+      console.log(this.isAll, "全部");
+      // ----------------------------------------------
       if (this.isLimitCount == "" && this.please_input == "") {
         this.ling = "";
         console.log(this.ling);
