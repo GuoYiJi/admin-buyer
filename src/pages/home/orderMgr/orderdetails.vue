@@ -51,6 +51,12 @@ export default {
     },
     mounted() {
         this.navData.push(JSON.parse(this.$route.query.item))
+<<<<<<< HEAD
+=======
+        // for(var i=0;i<this.navData.length;i++){
+        //     this.navData[i].orderGoods
+        // }
+>>>>>>> Jchan
         console.log(this.navData)
     },
 

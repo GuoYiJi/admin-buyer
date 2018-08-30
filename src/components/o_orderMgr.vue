@@ -133,6 +133,10 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
+<<<<<<< HEAD
+=======
+    // console.log(listData);
+>>>>>>> Jchan
     this.orderList = this.orderList.concat(listData.data.list); 
     for(var i=0;i<this.orderList.length;i++){
       if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
@@ -142,9 +146,13 @@ export default {
         this.noSigleList.push(this.orderList[i])
       }
     }
+<<<<<<< HEAD
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
+=======
+    // console.log(this.noSigleList)
+>>>>>>> Jchan
   }
 };
 </script>

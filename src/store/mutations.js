@@ -13,6 +13,9 @@ export default {
   },
   ADDMATCH: (state,data) =>{
     state.shopMatch = data
+  },
+  SPLICEMATCH: (state, index) => {
+    state.shopMatch.splice(index, 1)
   }
 
 }

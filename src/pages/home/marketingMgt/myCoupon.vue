@@ -14,17 +14,16 @@
       </div>
       <div v-else-if="tag == 2">
         <p>
-          <myCoupon @click="toMyCoupon" />
+          <myCouponT @click="toMyCoupon" />
         </p>
       </div>
       <div v-else-if="tag == 3">
         <p>
-          <myCoupon @click="toMyCoupon" />
+          <myCouponTT @click="toMyCoupon" />
         </p>
       </div>
     </div>
-
-    <div class="foot"  @click="btn">
+    <div class="foot" @click="btn">
       <span class="btn">创建</span>
     </div>
   </div>
@@ -32,9 +31,13 @@
 <script>
 import wx from "wx";
 import myCoupon from "@/components/m_myCoupon";
+import myCouponT from "@/components/m_myCouponT";
+import myCouponTT from "@/components/m_myCouponTT";
 export default {
   components: {
-    myCoupon
+    myCoupon,
+    myCouponT,
+    myCouponTT
   },
   data() {
     return {
@@ -75,7 +78,7 @@ export default {
   height: 100%
   .active
     color: #F67C2F
-  .nav 
+  .nav
     overflow: hidden
     text-align: center
     background: #f5f5f5
@@ -83,10 +86,10 @@ export default {
     width: 100%
     padding-top: 1px
     box-shadow: 0px 4px 6px 0px rgba(0, 69, 162, 0.06)
-    .list  
+    .list
       font-size: 32px
       color: #000
-      background: #f5f5f5    
+      background: #f5f5f5
       overflow-y: hidden
       overflow-x: auto
       height: 90px
@@ -94,11 +97,11 @@ export default {
       display: flex
       width: 100%
       .item
-        // flex: 0 0 20%    
+        // flex: 0 0 20%
         flex: 1
         line-height: 70px
         box-sizing: border-box
-      .line 
+      .line
         display: block
         height: 4px;/*no*/
         width: 33%

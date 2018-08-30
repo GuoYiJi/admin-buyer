@@ -21,10 +21,15 @@
                 <span class="number">X{{itemzz.countNum}}</span>
                 <div >
                   <div class="maShuo">
+<<<<<<< HEAD
                     <scroll-view scroll-x="true" style=" width:80%  display: flex" >
                       <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
                     </scroll-view>
                     <span class="edit" @click="edit(itemzz,item.id)">编辑</span>
+=======
+                    <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    <span class="edit" @click="edit(itemzz)">编辑</span>
+>>>>>>> Jchan
                   </div>
                 </div> 
             </div>
@@ -95,7 +100,11 @@
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
+<<<<<<< HEAD
               <li class="s_item">{{itemss.num}}</li>
+=======
+              <li class="s_item">{{itemss.remainNum}}</li>
+>>>>>>> Jchan
               <li class="s_item i-input">
                 <div class="numAll">
                   <div class="numCut"> <button @click="subtract(idss)">-</button></div>
@@ -103,7 +112,11 @@
                     <!-- {{inputValueArr[idss]}} -->
                     <input type="text" value="0"  v-model="inputValueArr[idss]">
                     </div>
+<<<<<<< HEAD
                   <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
+=======
+                  <div class=" "><button @click="add(idss)">+</button></div>
+>>>>>>> Jchan
                 </div>
               </li>
               <li class="s_item">{{itemss.waitNum}}</li>
@@ -189,11 +202,15 @@ export default {
             appId: '',
             sexList: [],
             addurl: '',
+<<<<<<< HEAD
             inputValueArr: [],
             valueArr: [],
             orderIds: '',
             skuId: '',
             orderGoodsId: '',
+=======
+            inputValueArr: []
+>>>>>>> Jchan
             // count: 0,
             // items: []
         };
@@ -226,6 +243,7 @@ export default {
                 this.select = 0;
             }
         }, 
+<<<<<<< HEAD
         add(index,itemss){
           console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
@@ -248,21 +266,40 @@ export default {
             return;
           }
 
+=======
+        add(index){
+          // this.inputValueArr[index] += 1;
+          this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
+          console.log(this.inputValueArr)
+        },
+        subtract(index){
+          // this.inputValueArr[index] -= 1;
+>>>>>>> Jchan
           this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
           console.log(this.inputValueArr)
         },
         // 编辑弹窗保存
         save() {
+<<<<<<< HEAD
           console.log(this.idzz)
           let object = {
             sessionId: this.azzSessionId,
             shopId: this.appId,
             orderIds: this.orderIds,
+=======
+          let object = {
+            sessionId: this.azzSessionId,
+            shopId: this.appId,
+>>>>>>> Jchan
             orderDeliver:  
             [{
               num: this.value1,
               // canDeliverNumber: ,
+<<<<<<< HEAD
               skuId: this.orderIdzz
+=======
+              skuId: this.idzz
+>>>>>>> Jchan
             }],
           }
             var that = this;
@@ -285,14 +322,22 @@ export default {
                             console.log(res.data)
                             if(res.data.code == 1){
                               wx.showToast({
+<<<<<<< HEAD
                                 title: '保存成功',
+=======
+                                title: '发货成功',
+>>>>>>> Jchan
                                 icon: 'success',
                                 duration: 2000
                               })
                             }else{
                             }
                             
+<<<<<<< HEAD
                             // this.isShows = false
+=======
+                            this.isShows = false
+>>>>>>> Jchan
                           }
                         })
                         setTimeout(function() {
@@ -308,9 +353,14 @@ export default {
           this.isShow = false 
         },
         // 显示隐藏编辑弹窗
+<<<<<<< HEAD
         async edit(itemss,idNum) {
           this.orderIds = idNum
           console.log(idNum)
+=======
+        async edit(itemss) {
+          console.log(itemss)
+>>>>>>> Jchan
           this.isShow = !this.isShow;
           // this.skuCode = []
           // let vueNum =  this.value1
@@ -327,7 +377,11 @@ export default {
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
+<<<<<<< HEAD
             // console.log(skuCodeList)
+=======
+            console.log(skuCodeList)
+>>>>>>> Jchan
             let a  = this.numAllList.concat(skuCodeList)
             var canNumer = 0;
             for(var j=0;j<deliverList.length;j++){
@@ -336,12 +390,20 @@ export default {
               }
             }
             obj.canNumer = canNumer
+<<<<<<< HEAD
             obj.num = orderLisetArr[i].num
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
             obj.orderGoodsId = deliverList[i].orderGoodsId
             // console.log(obj)
+=======
+            obj.remainNum = orderLisetArr[i].remainNum
+            obj.id = orderLisetArr[i].id
+            obj.skuId = orderLisetArr[i].skuId
+            obj.waitNum = obj.remainNum -  obj.canNumer
+            console.log(obj)
+>>>>>>> Jchan
             array.push(obj)
           }
           this.orderDeliver = array
@@ -349,8 +411,12 @@ export default {
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
+<<<<<<< HEAD
           // console.log(this.idzz)
 
+=======
+      
+>>>>>>> Jchan
         },
         // 发布
         Deliver() {
@@ -367,7 +433,11 @@ export default {
               shopId: this.appId,
               orderDeliver:  
               [{
+<<<<<<< HEAD
                 orderGoodsId: this.orderGoodsId,
+=======
+                orderGoodsId: this.orderIdzz,
+>>>>>>> Jchan
                 canDeliverNumber: this.value1,
                 id: this.idzz
               }],
@@ -394,9 +464,15 @@ export default {
                   icon: 'success',
                   duration: 2000
                 })
+<<<<<<< HEAD
                 // this.isShows = false
               }else{
                 // this.isShows = false
+=======
+                this.isShows = false
+              }else{
+                this.isShows = false
+>>>>>>> Jchan
               }
             }
           })

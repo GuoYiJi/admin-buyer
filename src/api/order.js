@@ -24,10 +24,15 @@ export default class order {
     L_shopClose = params => http.post('api/order/shopClose', params)
         //api/order/surePayapi/order/surePay 确认收款
     L_surePay = params => http.post('api/order/surePay', params)
+<<<<<<< HEAD
         //async/api/order/selectLogistics 查看物流
     L_selectLogistics = params => http.post('api/order/selectLogistics', params)
         //api/goods/selectGoodsDetail 商品详情
     L_selectGoodsDetail = params => http.post('api/goods/selectGoodsDetail', params)
+=======
+        //api/goods/add
+    L_addOrder = params => http.post('api/goods/add', params)
+>>>>>>> Jchan
 
 
 

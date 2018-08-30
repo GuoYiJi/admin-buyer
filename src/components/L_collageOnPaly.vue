@@ -26,11 +26,16 @@
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(btn==0)" class="see" @click="seePlay(item.id)">确认已支付</span>
+<<<<<<< HEAD
             <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
+=======
+            <span v-if="(btn==0)" class="close" @click="colsePlay(item.id)">关闭订单</span>
+>>>>>>> Jchan
           </div>
         </div>
       </div>
     </div>
+<<<<<<< HEAD
     <!-- 关闭订单 -->
     <div class="closeTipAll" v-show="passhowYes">
       <div class="closeTip">
@@ -55,6 +60,8 @@
         </div>
       </div>
     </div>
+=======
+>>>>>>> Jchan
   </div>
 </template>
 <script>
@@ -80,6 +87,7 @@ export default {
       }
     },
     methods: {
+<<<<<<< HEAD
         seePlay(id){
           this.pasSeePlay = true
           this.orderID = id
@@ -125,6 +133,23 @@ export default {
           }else{
             this.pasSeePlay = false
           }
+=======
+       close() {
+            wx.showModal({
+                // title: "提示",
+                content: "确定关闭订单！",
+                success: function(res) {
+                    console.log(res);
+                    if (res.confirm) {
+                      console.log("用户点击确定");
+                      console.log(config.url)
+                    } else if (res.cancel) {
+                      console.log("用户点击取消");
+                    }
+                }
+            });
+
+>>>>>>> Jchan
         },
         sanJiaoBut(item){
           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})

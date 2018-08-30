@@ -73,8 +73,13 @@ export default {
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
         },
+<<<<<<< HEAD
         seeLogistics(id){
           this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: id}})
+=======
+        seeLogistics(){
+          this.$router.push( {path:'/pages/home/orderMgr/mail/p_seeLogistics', query:{orderId: 2}})
+>>>>>>> Jchan
         }
     },
     mounted() {

@@ -5,21 +5,21 @@
   </div>
   <!-- 添加大图 -->
   <div class="add_shops">
-    <div class="shop-card" v-if="matchGoodsList[0]">
+    <div class="shop-card" v-if="shopMatch[0]">
       <div class="img_box">
-        <i class="shopImg" :style="{background: 'url(' + matchGoodsList[0].images + ')'}">
+        <i class="shopImg" :style="{background: 'url(' + shopMatch[0].images + ')'}">
           <i class="cancel_shop" @click="toCancel(0)"></i>
         </i>
       </div>
-      <span class="name">{{matchGoodsList[0].name}}</span>
-      <span class="desc"> 货期:{{matchGoodsList[0].delivery}}丨销量:{{matchGoodsList[0].sellCount}}</span>
-      <span class="sell"><strong>售价:￥{{matchGoodsList[0].sellPrice}}</strong> 利润:￥{{matchGoodsList[0].profit}}</span>
+      <span class="name">{{shopMatch[0].name}}</span>
+      <span class="desc"> 货期:{{shopMatch[0].delivery}}丨销量:{{shopMatch[0].sellCount}}</span>
+      <span class="sell"><strong>售价:￥{{shopMatch[0].sellPrice}}</strong> 利润:￥{{shopMatch[0].profit}}</span>
     </div>
-    <div class="shop-card add_shop" @click="toRoute('home/shopMgr/matchList', 1)" v-else>+添加商品</div>
+    <div class="shop-card add_shop" @click="pageTo('/pages/home/shopMgr/matchList')" v-else>+添加商品</div>
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
-    <div class="shop-cards" v-for="(item,idx) in matchGoodsList" :key="idx" v-if="idx > 0">
+    <div class="shop-cards" v-for="(item,idx) in shopMatch" :key="idx" v-if="idx > 0">
       <div class="img_box">
         <i class="shopImg" :style="{background: 'url(' + item.images + ')'}">
           <i class="cancel_shop" @click="toCancel(idx)"></i>
@@ -29,7 +29,7 @@
       <span class="desc">货期:{{item.delivery}}丨销量:{{item.sellCount}}</span>
       <span class="sell"><strong>售价:￥{{item.sellPrice}}</strong> 利润:￥{{item.profit}}</span>
     </div>
-    <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList', 1)">+添加商品</div>
+    <div class="shop-cards add_shop" @click="pageTo('/pages/home/shopMgr/matchList')">+添加商品</div>
   </div>
   <p class="bottom"></p>
   <p class="save" @click="QD()">确定</p>
@@ -53,29 +53,33 @@ export default {
       id: '',
       title: '',
       shopId: '',
-      goodsIds: []
+      goodsIds: [],
+      selectShopArr: []
     };
   },
   computed: {
-    ...mapState(["shopMatch"])
+    ...mapState(["shopMatch"]),
   },
   methods: {
+    pageTo(url) {
+      this.$router.push(url);
+    },
     toRoute(path,shopNum){
       this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
     },
     toCancel(index) {
       console.log(index);
-      this.matchGoodsList.splice(index, 1);
+      // this.shopMatch.splice(index, 1);
+      this.$store.commit('SPLICEMATCH', index);
       this.goodsIds.splice(index, 1);
+      console.log(this.goodsIds);
       // this.matchGoodsList[index] = null;
       // this.$set(this.matchGoodsList, index, {images: null,name: null, delivery: null, sellCount: null, sellPrice: null, profit: null });
     },
     QD() {
       // const s_addMatch = await API.s_addMatch();
-      this.$API.editMatchGoods({
-        id: this.id,
+      this.$API.s_addMatch({
         title: this.title,
-        shopId: this.shopId,
         goodsIds: this.goodsIds.toString()
       }).then(response => {
         console.log(response);
@@ -83,19 +87,13 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query.shopNum) {
-      this.shopTop = this.$route.query.shopNum;
-      console.log(this.shopTop);
-    }
-    // console.log(this.$route.query.shopList);
-    this.matchGoodsList = JSON.parse(this.$route.query.matchGoodsList);
-    this.matchGoodsList.forEach(item => {
-      this.goodsIds.push(item.id);
-    })
+    // console.log(this.shopMatch);
+    // if(this.shopMatch && this.shopMatch.length > 0) {
+    //   this.shopMatch.forEach(item => {
+    //     this.selectShopArr.push(item.id);
+    //   })
+    // }
     // console.log(this.goodsIds);
-    this.id = this.$route.query.id;
-    this.title = this.$route.query.title;
-    this.shopId = this.$route.query.shopId;
   }
 };
 </script>
