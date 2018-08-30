@@ -6,4 +6,7 @@ export default class order {
   newCoupon = params => http.post('api/coupon/save', params)
   // 我的优惠券
   myCoupon = params => http.post('api/coupon/pageByCreate', params)
+  // 推广链接
+  prosave = params => http.post('api/form/save', params)
+  prometaList = params => http.post('api/form/metaList', params)
 }

@@ -23,7 +23,7 @@
       <!-- <div v-for="item in shopList">
         <div>{{item.deliverTime}}</div>
       </div> -->
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
+      <!-- <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  > -->
         <div class="scroll-box">
           <div class="box">
             <p>
@@ -32,39 +32,39 @@
             </p>
             <p >
               <!-- 拼团组件 -->
-              <!-- <Collage :shopList="shopList"/> -->
+              <CollageNoGoods :noGoods="noGoods"/>
             </p>
             
             <p>
               <!-- 交易成功 -->
-              <payment :orderRefund="orderRefund"/>
+              <payment/>
             </p>
             <p>
               <!-- 退款组件 -->
-              <afterSales />
+              <!-- <afterSales /> -->
             </p>
           </div>
         </div>
-        <div class="loading" v-if="canLoad">
+        <!-- <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
-        </div>
-      </scroll-view>
+        </div> -->
+      <!-- </scroll-view> -->
     </div>
   </div>
 </template>
 <script>
 import wx from "wx";
 import payment from "@/components/o_payment";
-import Collage from "@/components/o_collage";
-import delivery from "@/components/L_delivery";
-import afterSales from "@/components/o_afterSales";
+import CollageNoGoods from "@/components/L_collageNoGoods";
+// import delivery from "@/components/o_delivery";
+// import afterSales from "@/components/o_afterSales";
 // import loading from "@/commond/loading";
 export default {
   components: {
     payment,
-    Collage,
-    delivery,
-    afterSales,
+    CollageNoGoods,
+    // delivery,
+    // afterSales,
     // loading
 
   },
@@ -78,7 +78,7 @@ export default {
       items: this.default,
       showLoad: false,
       canLoad: true,
-      // shopList: [],
+      shopList: [],
       groupOrder: [],
       // noGrounpOrder: [],
       nameID: '2',
@@ -88,7 +88,7 @@ export default {
     };
   },
   props: {
-    orderRefund: {
+    noGoods: {
       type: Array,
       default: []
     },
@@ -109,51 +109,48 @@ export default {
       }
       this.type = type;
     },
-    getNextPage() {
-      var obj = {
-        pageSize: 20,
-        orderType: 1,
-        // state: this.tag
-      };
-      this.shopNum++;
-      obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderPage(obj);
-    },
-    getNextPageRefund() {
-      var obj = {
-        pageSize: 20,
-        orderType: 1,
-        // state: this.tag
-      };
-      this.shopNum++;
-      obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderRefund(obj);
-    },
-    async lower(e) {
-      // console.log(e);
-      if (!this.canLoad) return;
-      if (this.showLoad) return;
-      this.showLoad = true;
-      const listDatazz = await this.getNextPageRefund();
-      setTimeout(() => {
-        if (listDatazz.data.list.length < 20) {
-          this.canLoad = false;
-        }
-        this.shopList = this.shopList.concat(listDatazz.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+    // getNextPage() {
+    //   var obj = {
+    //     pageSize: 20,
+    //     orderType: this.tag,
+    //   };
+    //   this.shopNum++;
+    //   obj.pageNumber = this.shopNum;
+    //   return this.$API.L_selectOrderPage(obj);
+    // },
+    // async lower(e) {
+    //   // console.log(e);
+    //   if (!this.canLoad) return;
+    //   if (this.showLoad) return;
+    //   this.showLoad = true;
+    //   const listData = await this.getNextPage();
+    //   setTimeout(() => {
+    //     if (listData.data.list.length < 20) {
+    //       this.canLoad = false;
+    //     }
+    //     this.shopList = this.shopList.concat(listData.data.list);
+    //     this.showLoad = false;
+    //   }, 2000);
+    // }
 
   },
   async mounted() {
-    this.shopNum = 0;
-    const listDatazz = await this.getNextPageRefund();
-    this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
-    this.groupOrder = this.shopListRefund
-    console.log(this.groupOrder)
-    if (listDatazz.data.list.length < 20) {
-      this.canLoad = false;
-    }
+    // console.log(this.noGrounpOrder)
+    // this.shopNum = 0;
+    // const listData = await this.getNextPage();
+    // this.shopList = listData.data.list;
+    // for(var i=0,l;l=this.shopList[i++];){
+    //     // if(this.shopList[i].isPing == 0){
+    //     //   this.noGrounpOrder.push(l)
+    //     // }else if(this.shopList[i].isPing == 0){
+    //     //   this.groupOrder.push(l)
+    //     // }
+       
+     
+    // }
+    // if (listData.data.list.length < 20) {
+    //   this.canLoad = false;
+    // }
   }
 };
 </script>

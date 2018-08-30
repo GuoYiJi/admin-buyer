@@ -2,7 +2,7 @@
 <template>
   <!--订单内容带子订单-->
   <div class="nav">
-    <div class="list" v-for="(item,idx) in orderList" :key="idx">
+    <div class="list" v-for="(item,idx) in sigleList" :key="idx">
       <div class="kuang">
         <div class="title_1">
           <text class="name">订单编号：{{item.orderNo}}</text>
@@ -10,37 +10,29 @@
             {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} 
           </text>
         </div>
-        <!-- <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz"> -->
-         <img class="sPimg" :src="item.image"/>
+        <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
+         <img class="sPimg" :src="itemzz.image"/>
           <div class="textThad" >
             <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
-              <div class="title">{{item.name}}</div>
+              <div class="title">{{itemzz.name}}</div>
               <div class="huo">
-                <text class="name">{{item.stallInfo3}}</text>
-                <div class="type">货期:{{item.delivery}}</div>
-                <span class="number">X{{item.countNum}}</span>
+                <text class="name">{{itemzz.stallInfo3}}</text>
+                <div class="type">货期:{{itemzz.delivery}}</div>
+                <span class="number">X{{itemzz.countNum}}</span>
                 <div >
                   <div class="maShuo">
-<<<<<<< HEAD
-                    
-                    <scroll-view scroll-x="true" style=" width:80%  display: flex" >
-                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
-                    </scroll-view>
-                    <span class="edit" @click="edit(item,item.orderId)">编辑</span>
-=======
-                    <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
-                    <span class="edit" @click="edit(item)">编辑</span>
->>>>>>> Jchan
+                    <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    <span class="edit" @click="edit(itemzz.deliverList)">编辑</span>
                   </div>
                 </div> 
-            <!-- </div> -->
+            </div>
           </div>
          
         </div>
       </div>
       <div class="jiaGe">
         <div class="jiaGe_1" >
-          <span>共{{item.skuListSize}}个款，合计{{item.countNum}}件</span>
+          <span>共1个款，合计3件</span>
           <br/>
           <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
         </div>
@@ -49,20 +41,19 @@
       </div>
       <div class="type_1">
         <div class="title">
-          <span class="colour">颜色</span>
-          <span class="colour">码数</span>
+          <span class="colour">颜色码数</span>
           <span class="standby">待发数</span>
           <span class="shipments">发货件数</span>
           <span class="remaining">剩余件数</span>
         </div>
-        <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
-          <div class="title_2" v-for="(itemss,idss) in orderDeliver" :key="idss">
-            <span class="colour">{{itemss.color}}</span>
-            <span class="standby">{{itemss.size}}</span>
-            <span class="shipments">{{itemss.canNumer}}</span>
-            <span class="remaining">{{itemss.waitNum}}</span>
+        <div  v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
+          <div class="title_2" v-for="(itemss,idss) in itemzz.deliverList" :key="idss">
+            <span class="colour">{{itemss.skuCode}}</span>
+            <span class="standby">{{itemss.remainNum}}</span>
+            <span class="shipments">{{itemss.canDeliverNumber}}</span>
+            <span class="remaining">{{itemss.remainNum-itemss.canDeliverNumber}}</span>
           </div>
-        <!-- </div> -->
+        </div>
       </div>
       <div class="number_1">
         <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
@@ -88,8 +79,7 @@
       <div class="demo-container">
         <div class="title_s">
           <ul class="s_item_box">
-            <li class="s_item">码数</li>
-            <li class="s_item">码数</li>
+            <li class="s_item">颜色,码数</li>
             <li class="s_item">待发数</li>
             <li class="s_item i-input">发货件数</li>
             <li class="s_item">剩余件数</li>
@@ -98,33 +88,26 @@
         <div class="title_t" >
               
           <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
-            <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
-              <li class="s_item">{{itemss.color}}</li>
-              <li class="s_item">{{itemss.size}}</li>
-<<<<<<< HEAD
-              <li class="s_item">{{itemss.num}}</li>
-=======
+            <ul class="s_item_box" v-for="(itemss,idss) in goodsOrder" :key="idss">
+              <li class="s_item">{{itemss.skuCode}}</li>
               <li class="s_item">{{itemss.remainNum}}</li>
->>>>>>> Jchan
               <li class="s_item i-input">
-                <div class="numAll">
-                  <div class="numCut"> <button @click="subtract(idss)">-</button></div>
-                  <div class="numInput"> 
-                    <!-- {{inputValueArr[idss]}} -->
-                    <input type="text" value="0"  v-model="inputValueArr[idss]">
-                    </div>
-<<<<<<< HEAD
-                  <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
-=======
-                  <div class=" "><button @click="add(idss)">+</button></div>
->>>>>>> Jchan
-                </div>
+                  <div class="numAll">
+                    <div class="numCut"> <button @click="subtract(idss)">-</button></div>
+                    <div class="numInput"> 
+                      {{inputValueArr[idss]}}
+                      </div>
+                    <div class=" "><button @click="add(idss)">+</button></div>
+                  </div>
               </li>
-              <li class="s_item">{{itemss.waitNum}}</li>
+            
+
+              <li class="s_item">{{itemss.remainNum-itemss.canDeliverNumber}}</li>
             </ul>
           </scroll-view>
           <!-- </div>-->
         </div> 
+   
         <div class="foot">
           <span class="save" @click="save()">保存</span>
           <span class="cancel" @click="cancel()">取消</span>
@@ -194,8 +177,8 @@ export default {
             goodsOrder: [],
             skuCodeAllList: [],
             numAllList: [],
-            idzz: [],
-            orderIdzz: [],
+            idzz: '',
+            orderIdzz: '',
             orderDeliver: [],
             logisticsNo: '',
             azzSessionId: '',
@@ -203,17 +186,9 @@ export default {
             appId: '',
             sexList: [],
             addurl: '',
-<<<<<<< HEAD
             inputValueArr: [],
-            valueArr: [],
-            orderIds: '',
-            skuId: '',
-            orderGoodsId: '',
-=======
-            inputValueArr: []
->>>>>>> Jchan
-            // count: 0,
-            // items: []
+            orderPage: [],
+            sigleList: []
         };
     },
     methods: {
@@ -243,31 +218,12 @@ export default {
             } else if (this.select == 1) {
                 this.select = 0;
             }
-        }, 
-<<<<<<< HEAD
-        add(index,itemss){
-          console.log(itemss)
-          this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
-          this.value1 = this.inputValueArr[index]
-          console.log(this.value1)
-          // console.log(this.inputValueArr)
-          if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
-            this.orderIdzz= itemss.skuId
-            this.idzz= itemss.id
-            this.orderGoodsId= itemss.orderGoodsId
-            
-            console.log(this.idzz)
-          }
         },
-        subtract(index){
-          if(this.inputValueArr[index]  == 0){
-            this.idzz[index] = null
-            this.orderIdzz[index] = null
-            return;
-          }
-
-=======
+        // 发货组件
+        // handleChange1({ mp: { detail } }) {
+        //     this.value1 = detail.value;
+        //     console.log(this.value1)
+        // },  
         add(index){
           // this.inputValueArr[index] += 1;
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
@@ -275,32 +231,22 @@ export default {
         },
         subtract(index){
           // this.inputValueArr[index] -= 1;
->>>>>>> Jchan
           this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
           console.log(this.inputValueArr)
         },
+
+
+
         // 编辑弹窗保存
         save() {
-<<<<<<< HEAD
-          console.log(this.idzz)
           let object = {
             sessionId: this.azzSessionId,
             shopId: this.appId,
-            orderIds: this.orderIds,
-=======
-          let object = {
-            sessionId: this.azzSessionId,
-            shopId: this.appId,
->>>>>>> Jchan
             orderDeliver:  
             [{
               num: this.value1,
               // canDeliverNumber: ,
-<<<<<<< HEAD
-              skuId: this.orderIdzz
-=======
               skuId: this.idzz
->>>>>>> Jchan
             }],
           }
             var that = this;
@@ -323,22 +269,14 @@ export default {
                             console.log(res.data)
                             if(res.data.code == 1){
                               wx.showToast({
-<<<<<<< HEAD
-                                title: '保存成功',
-=======
                                 title: '发货成功',
->>>>>>> Jchan
                                 icon: 'success',
                                 duration: 2000
                               })
                             }else{
                             }
                             
-<<<<<<< HEAD
-                            // this.isShows = false
-=======
                             this.isShows = false
->>>>>>> Jchan
                           }
                         })
                         setTimeout(function() {
@@ -354,70 +292,35 @@ export default {
           this.isShow = false 
         },
         // 显示隐藏编辑弹窗
-<<<<<<< HEAD
-        async edit(itemss,idNum) {
-          this.orderIds = idNum
-          console.log(idNum)
-=======
         async edit(itemss) {
-          console.log(itemss)
->>>>>>> Jchan
           this.isShow = !this.isShow;
           // this.skuCode = []
-          // let vueNum =  this.value1
-          let orderLisetArr = itemss.skuList
-          let deliverList = itemss.deliverList
-          let array = [];
-
-          // this.idzz = orderLisetArr.id
-          // console.log(idzz)
-          // this.orderIdzz = orderLisetArr.skuId
-          // console.log(orderIdzz)
-          for(var i=0; i<orderLisetArr.length;i++){
-            let obj = {};
-            let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-            obj.color = skuCodeList[0];
-            obj.size = skuCodeList[1];
-<<<<<<< HEAD
-            // console.log(skuCodeList)
-=======
-            console.log(skuCodeList)
->>>>>>> Jchan
-            let a  = this.numAllList.concat(skuCodeList)
-            var canNumer = 0;
-            for(var j=0;j<deliverList.length;j++){
-              if(orderLisetArr[i].skuId == deliverList[j].skuId ){
-                  canNumer = deliverList[j].canDeliverNumber
-              }
-            }
-            obj.canNumer = canNumer
-<<<<<<< HEAD
-            obj.num = orderLisetArr[i].num
-            obj.id = orderLisetArr[i].id
-            obj.skuId = orderLisetArr[i].skuId
-            obj.waitNum = orderLisetArr[i].remainNum
-            obj.orderGoodsId = deliverList[i].orderGoodsId
-            // console.log(obj)
-=======
-            obj.remainNum = orderLisetArr[i].remainNum
-            obj.id = orderLisetArr[i].id
-            obj.skuId = orderLisetArr[i].skuId
-            obj.waitNum = obj.remainNum -  obj.canNumer
-            console.log(obj)
->>>>>>> Jchan
-            array.push(obj)
-          }
-          this.orderDeliver = array
-          console.log( this.orderDeliver)
-          this.orderDeliver.forEach((item, index) => {
+          let vueNum =  this.value1
+          this.idzz = itemss.id
+          this.orderIdzz = itemss.orderGoodsId
+          this.goodsOrder= itemss
+          this.goodsOrder.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
-<<<<<<< HEAD
-          // console.log(this.idzz)
-
-=======
-      
->>>>>>> Jchan
+          console.log(this.goodsOrder)
+          // //将字符串solit 在进行数组化在push  
+          // for(var i=0; i<this.goodsOrder.length; i++){
+          //   let skuCodeList = this.goodsOrder[i].skuCode
+          //   console.log(skuCodeList)
+          //   let skuCode = skuCodeList.split(',');
+          //   let numList = this.goodsOrder[i].num
+          //   let remainNum = this.goodsOrder[i].remainNum
+          //   this.numAllList = [numList,remainNum]
+          //   let a  = this.numAllList.concat(skuCode);
+          //   var b = {};
+          //   for(var i=0;i<a.length;i++){
+          //     b['a'+i] = a[i]
+          //   }
+          //   this.skuCodeAllList.push(b)
+          //   console.log(this.skuCodeAllList)
+          // }
+          // console.log(this.skuCodeAllList)
+          // return this.skuCodeAllList
         },
         // 发布
         Deliver() {
@@ -434,11 +337,7 @@ export default {
               shopId: this.appId,
               orderDeliver:  
               [{
-<<<<<<< HEAD
-                orderGoodsId: this.orderGoodsId,
-=======
                 orderGoodsId: this.orderIdzz,
->>>>>>> Jchan
                 canDeliverNumber: this.value1,
                 id: this.idzz
               }],
@@ -450,6 +349,10 @@ export default {
               }
             }
             console.log(JSON.stringify(object))
+          // const L_addChildren = await this.$API.L_addChildren({
+          //   orderDeliver: JSON.stringify(vueNum),
+          //   logistics: JSON.stringify(logisticsList) 
+          // });
           wx.request({
             url: this.url, //仅为示例，并非真实的接口地址
             data: JSON.stringify(object),
@@ -465,15 +368,9 @@ export default {
                   icon: 'success',
                   duration: 2000
                 })
-<<<<<<< HEAD
-                // this.isShows = false
-              }else{
-                // this.isShows = false
-=======
                 this.isShows = false
               }else{
                 this.isShows = false
->>>>>>> Jchan
               }
             }
           })
@@ -484,7 +381,7 @@ export default {
         }
     },
     props: {
-      orderList: {
+      sigleList: {
         type: Array,
         default: []  
       },
@@ -498,11 +395,27 @@ export default {
       
     },
     async mounted() {
-<<<<<<< HEAD
+  
+        const L_selectOrderPage = await this.$API.L_selectOrderPage({
+          //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
+          orderType: 1, 
+          state: 5
+        });
+        console.log(L_selectOrderPage)
+        this.orderPage = L_selectOrderPage.data
+        console.log(this.orderPage)
+        
+        for(var i=0;i<this.orderPage.length;i++){
+          if(this.orderPage[i].layer == 1 || this.orderPage[i].layer == -1){
+            this.sigleList.push(this.orderPage[i])
+            console.log(this.sigleList)
+          }else{
+            // this.noSigleList.push(this.noGoodszz[i])
+            return null
+          }
+        }
       
-=======
-      console.log(this.orderList)
->>>>>>> Jchan
+   
     },
 };
 </script>

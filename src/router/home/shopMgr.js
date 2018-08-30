@@ -1,5 +1,4 @@
-const route = [
-  {
+const route = [{
     path: '/pages/home/shopMgr/shopMgr',
     config: {
       navigationBarTitleText: '商品管理',
@@ -9,7 +8,7 @@ const route = [
         'i-message': '/iview/message/index',
       }
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/edit',
     config: {
       navigationBarTitleText: '编辑商品',
@@ -18,27 +17,27 @@ const route = [
         'i-modal': '/iview/modal/index',
       }
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/detail',
     config: {
       navigationBarTitleText: '商品详情'
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/search',
     config: {
       navigationBarTitleText: '商品搜索'
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/classify',
     config: {
       navigationBarTitleText: '分组'
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/classifyAll',
     config: {
       navigationBarTitleText: '分组'
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/shopList',
     config: {
       navigationBarTitleText: '商品列表',
@@ -48,7 +47,7 @@ const route = [
         'i-message': '/iview/message/index',
       }
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/matchList',
     config: {
       navigationBarTitleText: '商品列表',
@@ -59,7 +58,7 @@ const route = [
     }
   }
   //collage
-  ,{
+  , {
     path: '/pages/home/shopMgr/collage/collageMsg',
     config: {
       navigationBarTitleText: '创建拼团',
@@ -67,12 +66,12 @@ const route = [
         'i-message': '/iview/message/index',
       }
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/collage/confirmCollage',
     config: {
       navigationBarTitleText: '确认拼团信息'
     }
-  },{
+  }, {
     path: '/pages/home/shopMgr/groupSetting',
     config: {
       navigationBarTitleText: '搭配设置',
@@ -87,5 +86,18 @@ const route = [
       navigationBarTitleText: '创建搭配'
     }
   },
+<<<<<<< HEAD
+=======
+  {
+    path: '/pages/home/shopMgr/matchListMout',
+    config: {
+      navigationBarTitleText: '添加商品',
+      'usingComponents': {
+        'i-drawer': '/iview/drawer/index',
+        'i-modal': '/iview/modal/index',
+      }
+    }
+  },
+>>>>>>> afd6670f25398cf233a660004ca0fa080fe7dc4e
 ]
 module.exports = route
