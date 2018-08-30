@@ -26,8 +26,32 @@
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(btn==0)" class="see" @click="seePlay(item.id)">确认已支付</span>
-            <span v-if="(btn==0)" class="close" @click="colsePlay(item.id)">关闭订单</span>
+            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- 关闭订单 -->
+    <div class="closeTipAll" v-show="passhowYes">
+      <div class="closeTip">
+        <div class="closeTip_text">
+          <p class="tipText">是否确认关闭订单!</p>
+        </div>
+        <div class="confirm_but">
+          <div><button @click="passYesClose">取消</button></div>
+          <div><button @click="passYesBut">确定</button></div>
+        </div>
+      </div>
+    </div>
+    <!-- 确认已支付 -->
+    <div class="closeTipAll" v-show="pasSeePlay">
+      <div class="closeTip">
+        <div class="closeTip_text">
+          <p class="tipText">是否确认关闭订单!</p>
+        </div>
+        <div class="confirm_but">
+          <div><button @click="pasSeeClose">取消</button></div>
+          <div><button @click="pasSeeBut">确定</button></div>
         </div>
       </div>
     </div>
@@ -44,6 +68,9 @@ export default {
             navData: [],
             groupOrderzz: [],
             url: '',
+            passhowYes: false,
+            pasSeePlay: false,
+            orderID: '',
         };
     },
     props: {
@@ -53,21 +80,51 @@ export default {
       }
     },
     methods: {
-       close() {
-            wx.showModal({
-                // title: "提示",
-                content: "确定关闭订单！",
-                success: function(res) {
-                    console.log(res);
-                    if (res.confirm) {
-                      console.log("用户点击确定");
-                      console.log(config.url)
-                    } else if (res.cancel) {
-                      console.log("用户点击取消");
-                    }
-                }
-            });
-
+        seePlay(id){
+          this.pasSeePlay = true
+          this.orderID = id
+        },
+        close(id) {
+          this.passhowYes = true
+          this.orderID = id
+        },
+        passYesClose(){
+          this.passhowYes = false
+        },
+        async passYesBut(){
+          const L_shopCloseData = await this.$API.L_shopClose({
+            orderId: this.orderID,
+          });
+          console.log(L_shopCloseData)
+          if(L_shopCloseData.code == 1){
+            wx.showToast({               
+              title: '成功',               
+              icon: 'success',  
+              duration: 2000  
+            }) 
+            this.passhowYes = false
+          }else{
+            this.passhowYes = false
+          }
+        },
+        pasSeeClose(){
+          this.passhowYes = false
+        },
+        async pasSeeBut(){
+          const L_surePayData = await this.$API.L_surePay({
+            orderId: this.orderID,
+          });
+          console.log(L_surePayData)
+          if(L_surePayData.code == 1){
+            wx.showToast({               
+              title: '成功',               
+              icon: 'success',  
+              duration: 2000  
+            }) 
+            this.pasSeePlay = false
+          }else{
+            this.pasSeePlay = false
+          }
         },
         sanJiaoBut(item){
           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
@@ -192,5 +249,70 @@ page
         color: #fff
         margin: 20px 20px 0 0
         line-height: 60px
+.closeTipAll 
+  background: rgba(0,0,0,0.4)
+  // background-color: #000
+  width: 100%
+  height: 100%
+  position: fixed
+  top: 0
+  z-index: 9999
+  .closeTip
+    opacity: 1 
+    width: 550px
+    height: 260px
+    margin: 0 auto
+    background: #fff
+    margin-top: 300rpx
+    .closeTip_text
+      padding: 10px
+      text-align: center
+      textarea
+        text-align: left
+        width: 530px
+        height: 200px
+      p
+      .tipText
+        margin: 40px
+        // margin-top: 40px
+    .confirm_but
+      margin-top: 40px
+      display: flex
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+
+    .closeTip_but
+      display: flex
+      margin-top: 20px
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
 
 </style>

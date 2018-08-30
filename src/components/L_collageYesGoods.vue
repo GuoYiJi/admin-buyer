@@ -74,7 +74,7 @@ export default {
 
         },
         seeLogistics(){
-          this.$router.push( {path:'/pages/home/orderMgr/mail/p_seeLogistics', query:{orderId: 2}})
+          this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: 2}})
         }
     },
     mounted() {
@@ -189,5 +189,70 @@ page
         color: #fff
         margin: 30px 20px 0 0
         line-height: 60px
+.closeTipAll 
+  background: rgba(0,0,0,0.4)
+  // background-color: #000
+  width: 100%
+  height: 100%
+  position: fixed
+  top: 0
+  z-index: 9999
+  .closeTip
+    opacity: 1 
+    width: 550px
+    height: 260px
+    margin: 0 auto
+    background: #fff
+    margin-top: 300rpx
+    .closeTip_text
+      padding: 10px
+      text-align: center
+      textarea
+        text-align: left
+        width: 530px
+        height: 200px
+      p
+      .tipText
+        margin: 40px
+        // margin-top: 40px
+    .confirm_but
+      margin-top: 40px
+      display: flex
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+
+    .closeTip_but
+      display: flex
+      margin-top: 20px
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
 
 </style>

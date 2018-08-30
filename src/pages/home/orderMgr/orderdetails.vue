@@ -8,7 +8,7 @@
                         <div class="title">{{itemss.name}}</div>
                         <div class="huo">
                             <text class="name">{{itemss.stallInfo3}}</text>
-                            <div class="type">货期:{{itemss.state}}</div>
+                            <div class="type">货期:{{itemss.delivery}}</div>
                             <span class="number">X{{itemss.num}}</span>
                         </div>
                         <div class="maShuo">{{itemss.skuCode}}/{{itemss.num}}件</div>
@@ -30,7 +30,8 @@ export default {
     data() {
         return {
             shuoo: 0,
-            navData: []
+            // navData: []
+            navData: ''
         };
     },
     methods: {
@@ -49,11 +50,13 @@ export default {
       
     },
     mounted() {
-        this.navData.push(JSON.parse(this.$route.query.item))
+        // this.navData.push(JSON.parse(this.$route.query.item))
+        this.navData = this.$route.params.item
+        console.log(this.navData)
         // for(var i=0;i<this.navData.length;i++){
         //     this.navData[i].orderGoods
         // }
-        console.log(this.navData)
+        // console.log(this.navData)
     },
 
 };

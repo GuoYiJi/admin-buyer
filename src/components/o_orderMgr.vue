@@ -20,10 +20,7 @@
           </li>
         </ul>
       </div>
-      <!-- <div v-for="item in shopList">
-        <div>{{item.deliverTime}}</div>
-      </div> -->
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
+      <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  >
         <div class="scroll-box">
           <div class="box">
             <p>
@@ -33,15 +30,6 @@
             <p >
               <!-- 拼团组件 -->
               <Collage :noSigleList="noSigleList"/>
-            </p>
-            
-            <p>
-              <!-- 交易成功 -->
-              <!-- <payment/> -->
-            </p>
-            <p>
-              <!-- 退款组件 -->
-              <!-- <afterSales /> -->
             </p>
           </div>
         </div>
@@ -84,24 +72,35 @@ export default {
   },
  
   methods: {
-    handleTag(tag) {
+    async handleTag(tag) {
       this.tag = tag;
-      var type;
+      var type = 0 ;
       this.shopNum = 0;
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
-        type = this.asceSale ? 2 : 3;
+        type = this.asceSale ? 3 : 4;
       }
       if (tag === 5) {
         this.ascePrice = !this.ascePrice;
-        type = this.ascePrice ? 4 : 5;
+        type = this.ascePrice ? 5 : 6;
       }
-      this.type = type;
+      console.log(type)
+      this.type = type
+      const listData = await this.getNextPage({
+        orderType: type,
+        // state: 1
+      })
+
+      this.orderList = listData.data.list
+      console.log(this.orderList)
+      if(listData.data.list.length < this.pageSize) {
+        this.canLoad = false
+      }
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 5,
         orderType: 1,
         // state: this.tag
       };
@@ -109,14 +108,20 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    async lower(e) {
+    //滚动下拉事件
+    lowerlower(e) {
       console.log(e);
+      console.log(111111);
       if (!this.canLoad) return;
       if (this.showLoad) return;
       this.showLoad = true;
-      const listData = await this.getNextPage();
+      let listData = {}
+      this.getNextPage().then(response => {
+        listData = response;
+        console.log(listData)
+      });
       setTimeout(() => {
-        if (listData.data.list.length < 30) {
+        if (listData.data.list.length < 5) {
           this.canLoad = false;
         }
         this.orderList = this.orderList.concat(listData.data.list);
@@ -128,12 +133,7 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
-    // console.log(listData);
     this.orderList = this.orderList.concat(listData.data.list); 
-    // console.log(this.orderList)
-    if (listData.data.list.length < 30) {
-      this.canLoad = false;
-    }
     for(var i=0;i<this.orderList.length;i++){
       if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
         this.sigleList.push(this.orderList[i])
@@ -142,7 +142,9 @@ export default {
         this.noSigleList.push(this.orderList[i])
       }
     }
-    // console.log(this.noSigleList)
+    if (listData.data.list.length < 5) {
+      this.canLoad = false;
+    }
   }
 };
 </script>

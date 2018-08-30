@@ -46,44 +46,13 @@
         </div>
       </div>
     </div>
-    <!-- <div v-for="(item,index) in navData" :key="index">
-      <div class="kuang">
-        <div class="head">
-          <p class="order">订单编号：{{item.title}}</p>
-          <p class="state">拼团中，还差{{item.maShuo}}人</p>
-        </div>
-        <div class="middle">
-          <div class="picture">
-            <img class="imgOne" :src="item.picture">
-          </div>
-          <i class="sanJiao" @click="sanJiaoBut"></i>
-        </div>
-        <div class="jieShuan">
-          <div class="quantity">共{{item.kuan}}个款，合计{{item.jian}}件</div>
-          <div class="money">订单金额：
-            <p class="money1">{{item.money}}元</p>
-          </div>
-          <div class="phone">收货人:{{item.name}} {{item.phone}}</div>
-        </div>
-        <div class="foot">
-          <div class="picture_1">
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
-          </div>
-          <div class="btn">
-            <span v-if="(btn==0)" class="see" @click="seeBut">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
-            <span v-if="(btn==1)" class="collage">查看子拼团</span>
-          </div>
-        </div>
-      </div>
-    </div> -->
+ 
   </div>
 </template>
 <script>
 import wx from "wx";
 import config from "@/config";
+
 export default {
     components: {
 
@@ -135,8 +104,8 @@ export default {
 
         },
         sanJiaoBut(item){
-          console.log(item)
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+          console.log(123)
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})

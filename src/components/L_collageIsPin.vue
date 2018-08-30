@@ -54,19 +54,29 @@ export default {
       }
     },
     methods: {
-        close() {
-            wx.showModal({
-                // title: "提示",
-                content: "确定关闭订单！",
-                success: function(res) {
-                    console.log(res);
-                    if (res.confirm) {
-                        console.log("用户点击确定");
-                    } else if (res.cancel) {
-                        console.log("用户点击取消");
-                    }
-                }
-            });
+        close(id) {
+          this.passhowYes = true
+          this.orderID = id
+
+        },
+        passYesClose(){
+          this.passhowYes = false
+        },
+        async passYesBut(){
+          const L_shopCloseData = await this.$API.L_shopClose({
+            orderId: this.orderID,
+          });
+          console.log(L_shopCloseData)
+          if(L_shopCloseData.code == 1){
+            wx.showToast({               
+              title: '成功',               
+              icon: 'success',  
+              duration: 2000  
+            }) 
+            this.passhowYes = false
+          }else{
+            this.passhowYes = false
+          }
         },
         sanJiaoBut(item){
           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})

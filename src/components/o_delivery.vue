@@ -22,7 +22,7 @@
                 <div >
                   <div class="maShuo">
                     <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
-                    <span class="edit" @click="edit(itemzz)">编辑</span>
+                    <span class="edit" @click="edit(itemzz,item.id)">编辑</span>
                   </div>
                 </div> 
             </div>
@@ -93,7 +93,7 @@
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
-              <li class="s_item">{{itemss.remainNum}}</li>
+              <li class="s_item">{{itemss.num}}</li>
               <li class="s_item i-input">
                 <div class="numAll">
                   <div class="numCut"> <button @click="subtract(idss)">-</button></div>
@@ -101,7 +101,7 @@
                     <!-- {{inputValueArr[idss]}} -->
                     <input type="text" value="0"  v-model="inputValueArr[idss]">
                     </div>
-                  <div class=" "><button @click="add(idss)">+</button></div>
+                  <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
                 </div>
               </li>
               <li class="s_item">{{itemss.waitNum}}</li>
@@ -178,8 +178,8 @@ export default {
             goodsOrder: [],
             skuCodeAllList: [],
             numAllList: [],
-            idzz: '',
-            orderIdzz: '',
+            idzz: [],
+            orderIdzz: [],
             orderDeliver: [],
             logisticsNo: '',
             azzSessionId: '',
@@ -187,7 +187,11 @@ export default {
             appId: '',
             sexList: [],
             addurl: '',
-            inputValueArr: []
+            inputValueArr: [],
+            valueArr: [],
+            orderIds: '',
+            skuId: '',
+            orderGoodsId: '',
             // count: 0,
             // items: []
         };
@@ -220,26 +224,43 @@ export default {
                 this.select = 0;
             }
         }, 
-        add(index){
-          // this.inputValueArr[index] += 1;
+        add(index,itemss){
+          console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
-          console.log(this.inputValueArr)
+          this.value1 = this.inputValueArr[index]
+          console.log(this.value1)
+          // console.log(this.inputValueArr)
+          if( this.inputValueArr[index] > 0 ){
+            console.log(111111111111111111111111111)
+            this.orderIdzz= itemss.skuId
+            this.idzz= itemss.id
+            this.orderGoodsId= itemss.orderGoodsId
+            
+            console.log(this.idzz)
+          }
         },
         subtract(index){
-          // this.inputValueArr[index] -= 1;
+          if(this.inputValueArr[index]  == 0){
+            this.idzz[index] = null
+            this.orderIdzz[index] = null
+            return;
+          }
+
           this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
           console.log(this.inputValueArr)
         },
         // 编辑弹窗保存
         save() {
+          console.log(this.idzz)
           let object = {
             sessionId: this.azzSessionId,
             shopId: this.appId,
+            orderIds: this.orderIds,
             orderDeliver:  
             [{
               num: this.value1,
               // canDeliverNumber: ,
-              skuId: this.idzz
+              skuId: this.orderIdzz
             }],
           }
             var that = this;
@@ -262,14 +283,14 @@ export default {
                             console.log(res.data)
                             if(res.data.code == 1){
                               wx.showToast({
-                                title: '发货成功',
+                                title: '保存成功',
                                 icon: 'success',
                                 duration: 2000
                               })
                             }else{
                             }
                             
-                            this.isShows = false
+                            // this.isShows = false
                           }
                         })
                         setTimeout(function() {
@@ -285,8 +306,9 @@ export default {
           this.isShow = false 
         },
         // 显示隐藏编辑弹窗
-        async edit(itemss) {
-          console.log(itemss)
+        async edit(itemss,idNum) {
+          this.orderIds = idNum
+          console.log(idNum)
           this.isShow = !this.isShow;
           // this.skuCode = []
           // let vueNum =  this.value1
@@ -303,7 +325,7 @@ export default {
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
-            console.log(skuCodeList)
+            // console.log(skuCodeList)
             let a  = this.numAllList.concat(skuCodeList)
             var canNumer = 0;
             for(var j=0;j<deliverList.length;j++){
@@ -312,11 +334,12 @@ export default {
               }
             }
             obj.canNumer = canNumer
-            obj.remainNum = orderLisetArr[i].remainNum
+            obj.num = orderLisetArr[i].num
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
-            obj.waitNum = obj.remainNum -  obj.canNumer
-            console.log(obj)
+            obj.waitNum = orderLisetArr[i].remainNum
+            obj.orderGoodsId = deliverList[i].orderGoodsId
+            // console.log(obj)
             array.push(obj)
           }
           this.orderDeliver = array
@@ -324,7 +347,8 @@ export default {
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
-      
+          // console.log(this.idzz)
+
         },
         // 发布
         Deliver() {
@@ -341,7 +365,7 @@ export default {
               shopId: this.appId,
               orderDeliver:  
               [{
-                orderGoodsId: this.orderIdzz,
+                orderGoodsId: this.orderGoodsId,
                 canDeliverNumber: this.value1,
                 id: this.idzz
               }],
@@ -368,9 +392,9 @@ export default {
                   icon: 'success',
                   duration: 2000
                 })
-                this.isShows = false
+                // this.isShows = false
               }else{
-                this.isShows = false
+                // this.isShows = false
               }
             }
           })
