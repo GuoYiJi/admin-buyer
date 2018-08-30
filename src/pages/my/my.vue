@@ -25,7 +25,7 @@
           </p>
         </div>
       </div>
-      <div class="line" @click="toRoute('my/connect')">
+      <!-- <div class="line" @click="toRoute('my/connect')">
         <div class="content">
           <p class="title">
             <i class="icon my3"></i>汇提客服</p>
@@ -33,8 +33,8 @@
             <i class="goin"></i>
           </p>
         </div>
-      </div>
-      <div class="line" @click="toRoute('my/setting/setting')">
+      </div> -->
+      <!-- <div class="line" @click="toRoute('my/setting/setting')">
         <div class="content">
           <p class="title">
             <i class="icon my4"></i>设置</p>
@@ -42,7 +42,7 @@
             <i class="goin"></i>
           </p>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="footer">
       <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">

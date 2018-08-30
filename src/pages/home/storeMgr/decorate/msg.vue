@@ -14,12 +14,14 @@
       <div class="line b_line" @click="toRoute('decorate/cover')">
         <!-- <i class="i_s3 i-icon"></i> -->
         <p class="input">店铺封面</p>
-        <p class="blur">未设置</p>
+        <p class="blur" v-if="FMimg == ''">未设置</p>
+        <p class="blur" v-if="FMimg != ''">已设置</p>
       </div>
       <div class="line" @click="toRoute('decorate/intro')">
         <!-- <i class="i_s4 i-icon"></i> -->
         <p class="input">店铺简介</p>
-        <p class="blur">未设置</p>
+        <p class="blur" v-if="remark == ''">未设置</p>
+        <p class="blur" v-if="remark != ''">已设置</p>
       </div>
       <!-- <div class="line" @click="toRoute('decorate/viewTemplet')">
         <p class="input">店铺装修模板</p>
@@ -112,6 +114,11 @@ export default {
         sheng: this.region[0],
         shi: this.region[1],
         qu: this.region[2]
+      });
+      wx.showToast({
+        title: "成功",
+        icon: "success",
+        duration: 2000
       });
       console.log(warehouse);
     },

@@ -41,8 +41,7 @@ export default {
   data() {
     return {
       //search 1 上新 2.爆款 3.特价 4.拼团 5.搭配
-      groupTag: 4,
-
+      // groupTag: 4,
       tag: 1,
       shopNum: 0,
       shopList: [],
@@ -51,7 +50,7 @@ export default {
       pageSize: 20,
       type: 0,
       state: 0
-      
+
     };
   },
   methods: {
@@ -65,7 +64,9 @@ export default {
       return this.searchShop(params)
     },
     async handleTag(tag) {
+      this.tag = tag;
       this.state = tag
+      console.log(this.state);
       var type = 0 ;
       //refresh init
       this.shopNum = 0
@@ -74,7 +75,7 @@ export default {
       const listData = await this.getNextPage({
         ob: type,
         state: this.state,
-        labelId: this.groupTag
+        // labelId: this.groupTag
       })
       this.shopList = listData.data.list
       if(listData.data.list.length < this.pageSize) {
@@ -93,7 +94,7 @@ export default {
       const listData = await this.getNextPage({
         ob: this.type,
         state: this.state,
-        labelId: this.groupTag
+        // labelId: this.groupTag
       });
       setTimeout(() => {
         if (listData.data.list.length < this.pageSize) {
@@ -110,7 +111,7 @@ export default {
     const listData = await this.getNextPage({
       ob: 0,
       state: this.state,
-      labelId: this.groupTag
+      // labelId: this.groupTag
     });
     console.log(listData)
     this.shopList = listData.data.list;
@@ -118,7 +119,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 };
 </script>
@@ -152,7 +153,7 @@ export default {
   height: 900px
   overflow: auto
   p
-    margin-bottom: 8px 
+    margin-bottom: 8px
 .option-icon
   +bg-img('shopMgr/option.png')
   +icon(32px)
@@ -171,7 +172,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -182,18 +183,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>
