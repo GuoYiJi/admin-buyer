@@ -13,7 +13,7 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            <scard ref="scard" edit="true" :key="index" :check="shopMatch.some(item => item.id === shop.id )" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -26,7 +26,7 @@
       </scroll-view>
     </div>
     <div class="footer">
-      <p class="save" @click="confirm">确定{{shopMatch.length}}</p>
+      <p class="save" @click="confirm">确定({{shopMatch.length}})</p>
     </div>
     <i-message id="message" />
 
@@ -69,21 +69,24 @@ export default {
       canLoad: true,
       pageSize: 20,
       type: 0,
+      status: 0,//0-编辑, 1-添加
       selIds: [],
-      state: 1,
-      groupPriceData: []
+      state: '',
+      groupPriceData: [],
     };
   },
   methods: {
+    //确定, 把选中的数据覆盖shopMatch
     confirm(){
       //添加商品
       if(this.selIds.length == 0) return this.handleError('请选择至少一件商品！')
-      let arr = []
-      for(var i=0,l; l=this.shopList[i++];){
-        if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
-      }
-      this.$store.commit('ADDMATCH',arr)
-      this.$router.push('/'+ $getUrl())
+      // let arr = []
+      // for(var i=0,l; l=this.shopList[i++];){
+      //   if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
+      // }
+      // this.$store.commit('PUSHMATCH', arr)
+      this.$router.back(-1);
+      // this.$router.push('/'+ $getUrl())
       // console.log(arr)
     },
     async handleTag(tag){
@@ -161,19 +164,43 @@ export default {
       }
 
     },
-    switchSel(id,bool){
+    //取消选中操作, 删除此位置的数据
+    switchSel(id,bool, shop){
+      // console.log(shop);
       if(bool){
+        // const index = 0;
+        // this.shopMatch.forEach((item, index) => {
+        //   if(item.goodsId === id) {
+        //     index = index
+        //   }
+        // })
+        // console.log(index);
+        //往shopMatch添值
+        this.$store.commit('PUSHMATCH', shop)
         this.selIds.push(id)
+        // console.log(this.shopMatch);
       }else {
         const start = this.selIds.indexOf(id)
+        // console.log(this.shopMatch.indexOf(id));
+        this.shopMatch.forEach((item, index) => {
+          if(item.goodsId === shop.id) {
+            this.$store.commit('SPLICEMATCH', index)
+          }
+        })
+        // console.log(compareIndex);
+
+        // console.log(this.shopMatch);
         this.selIds.splice(start,1)
       }
       console.log(this.selIds)
+      console.log(this.shopMatch);
     },
+    //选中操作
     setGroupPrice(obj){
       for(var i=0,l; l=this.groupPriceData[i++];){
         if(l.id == obj.id) return l.price = obj.price
       }
+      // this.$store.commit('SPLICEMATCH', ADDMATCH)
       this.groupPriceData.push(obj)
     }
 
@@ -188,7 +215,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-
+    console.log(this.shopMatch);
   },
 
 };

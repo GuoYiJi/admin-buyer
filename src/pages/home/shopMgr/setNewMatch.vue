@@ -1,5 +1,6 @@
 <template>
 <div class="home">
+  <i-toast id="toast" />
   <div class="title_box">
     <input class="input_title" placeholder="请输入标题" v-model="title"/>
   </div>
@@ -39,9 +40,7 @@
 import wx from "wx";
 import scard from "@/components/group_card";
 import mixin from "@/mixin";
-import {
-  mapState
-} from "vuex";
+import { mapState } from "vuex";
 export default {
   mixins: [mixin],
   components: {
@@ -53,12 +52,19 @@ export default {
       id: '',
       title: '',
       shopId: '',
-      goodsIds: [],
+      // goodsIds: [],
       selectShopArr: []
     };
   },
   computed: {
     ...mapState(["shopMatch"]),
+    goodsIds() {
+      let arr = []
+      this.shopMatch.forEach((item, index) => {
+        arr[index] = item.id
+      })
+      return arr;
+    }
   },
   methods: {
     // pageTo() {
@@ -83,21 +89,33 @@ export default {
     },
     submit() {
       // const s_addMatch = await API.s_addMatch();
-      this.$API.s_addMatch({
-        title: this.title,
-        goodsIds: this.goodsIds.toString()
-      }).then(response => {
-        console.log(response);
-      })
+      if(!this.title) {
+        this.$Toast({
+            content: '未设置系列标题',
+            type: 'error'
+        })
+      }else if(this.shopMatch.length > 9){
+        this.$Toast({
+            content: '最多添加9个商品, 请检查',
+            type: 'error'
+        })
+      }else {
+        this.$API.s_addMatch({
+          title: this.title,
+          goodsIds: this.goodsIds.toString()
+        }).then(response => {
+          console.log(response);
+        })
+      }
     }
   },
-  mounted() {
-    console.log(this.shopMatch);
-    this.shopMatch.forEach((item, index) => {
-      this.goodsIds[index] = item.id;
-    })
-    console.log(this.goodsIds);
-  }
+  // updated() {
+  //   console.log(this.shopMatch);
+  //   this.shopMatch.forEach((item, index) => {
+  //     this.goodsIds[index] = item.id;
+  //   })
+  //   console.log(this.goodsIds);
+  // }
 };
 </script>
 <style lang="sass" scoped>
@@ -196,6 +214,7 @@ export default {
     .shop-cards
       margin-top: 40px
       flex: 0 0 30%
+      display: flex
       min-height: 464px
       flex-wrap: wrap
       .img_box
@@ -226,16 +245,18 @@ export default {
         font-size: 26px
         color: #000
         overflow: hidden
-        // +singleFile
+        +singleFile
       span.desc
         width: 100%
         text-align: left
         color: #999999
         font-size: 22px
+        +singleFile
       span.sell
         width: 100%
         color: #333333
         font-size: 23px
+        +singleFile
         strong
           display: inline-block
           color: #FF0000
@@ -248,6 +269,7 @@ export default {
     height: 98px
     line-height: 98px
     font-size: 32px
+    color: #FFFFFF
     background-color: #F67C2F
     text-align: center
 </style>

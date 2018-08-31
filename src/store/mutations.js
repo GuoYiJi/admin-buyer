@@ -16,6 +16,10 @@ export default {
   },
   SPLICEMATCH: (state, index) => {
     state.shopMatch.splice(index, 1)
+    // state.shopMatch[index] = {goodsId: '0'}
+  },
+  PUSHMATCH: (state, item) => {
+    state.shopMatch.push(item)
   }
 
 }
