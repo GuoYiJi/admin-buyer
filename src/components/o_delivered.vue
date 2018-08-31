@@ -29,13 +29,12 @@
         <div class="scroll-box">
           <div class="box">
             <p>
-              <!-- 拆单组件 -->
+              <!-- 发货组件 -->
               <delivery :sigleList="sigleList"/>
             </p>
-            <p >
-              <!-- 拼团组件 -->
+            <!-- <p >
               <CollageNoGoods :noGoodszz="noGoodszz"/>
-            </p>
+            </p> -->
           </div>
         </div>
         <div class="loading" v-if="canLoad">
@@ -105,8 +104,15 @@ export default {
                 this.toggleRight1();
             }
             this.type = type;
+            
         },
-        toggleRight1() {
+        async toggleRight1() {
+            
+          const L_selectDeliver = await this.$API.L_selectDeliverName({
+            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
+            // orderType: 1, 
+          });
+          console.log(L_selectDeliver)
             this.isShows = !this.isShows;
         },
         toEdit() {
@@ -119,14 +125,8 @@ export default {
         selectedNav(index) {
             this.btn = index;
         },
-        async confirmBut(){
-          console.log(111)
-          const L_selectDeliver = await this.$API.L_selectDeliverName({
-            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
-            // orderType: 1, 
-          });
-          console.log(L_selectDeliver)
-          this.isShows = false
+        confirmBut(){
+            this.isShows = !this.isShows;
         },
       getNextPage() {
         var obj = {
@@ -161,20 +161,21 @@ export default {
       const listData = await this.getNextPage();
       console.log(listData);
       this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
+      this.sigleList = this.noGoodszz 
       // console.log(this.orderList)
       console.log(this.noGoodszz);
       if (listData.data.list.length < 30) {
         this.canLoad = false;
       }
-      for(var i=0;i<this.noGoodszz.length;i++){
-        if(this.noGoodszz[i].layer == 1 || this.noGoodszz[i].layer == -1){
-          this.sigleList.push(this.noGoodszz[i])
-          console.log(this.sigleList)
-        }else{
-          // this.noSigleList.push(this.noGoodszz[i])
-          return null
-        }
-      }
+      // for(var i=0;i<this.noGoodszz.length;i++){
+      //   if(this.noGoodszz[i].layer == 1 || this.noGoodszz[i].layer == -1){
+      //     this.sigleList.push(this.noGoodszz[i])
+      //     console.log(this.sigleList)
+      //   }else{
+      //     // this.noSigleList.push(this.noGoodszz[i])
+      //     return null
+      //   }
+      // }
     
   }
 };

@@ -22,7 +22,7 @@
                 <div >
                   <div class="maShuo">
                     
-                    <scroll-view scroll-x="true" style=" width:80%  display: flex" >
+                    <scroll-view scroll-x="true" style=" width:180px  " >
                       <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
                     </scroll-view>
                     <span class="edit" @click="edit(item,item.orderId)">编辑</span>
@@ -92,7 +92,6 @@
         </div>
         <div class="title_t" >
               
-          <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
@@ -109,7 +108,6 @@
               </li>
               <li class="s_item">{{itemss.waitNum}}</li>
             </ul>
-          </scroll-view>
           <!-- </div>-->
         </div> 
         <div class="foot">
@@ -234,7 +232,6 @@ export default {
           console.log(this.value1)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
@@ -495,6 +492,7 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
+        margin-left: 10px
   .jiaGe 
     // height: 70px
     width: 100%
@@ -507,11 +505,11 @@ page
       margin: 20px
     .text
       display: inline-block
-      right: 100px;
+      right: 100px
       top: 20px
       position: absolute
     .jiaGet
-      right: 30px;
+      right: 30px
       top: 20px
       position: absolute
       display: inline-block
@@ -745,10 +743,6 @@ page
             button
               width: 80px
               height: 40px
-
-
-
-          
 
   .foot 
     width: 100%

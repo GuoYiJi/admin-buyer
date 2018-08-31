@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="footer">
-      <p><btn :title="'保存'"/></p>
+      <p @click="butFooter"><btn :title="'保存'" /></p>
     </div>
   </div>
 </template>
@@ -24,7 +24,8 @@ export default {
   },
   data() {
     return {
-      'switch1': false
+      'switch1': false,
+      templateId: ''
     };
   },
   methods: {
@@ -40,9 +41,18 @@ export default {
       Object.keys(data).forEach(key => {
         this[key] = data[key]
       })
+    },
+    async butFooter(){
+  
+      const L_changeExpressData = await this.$API.L_changeExpress({
+        templateId: this.templateId,
+      });
+      console.log(L_changeExpressData)
     }
   },
-  mounted() {}
+  mounted() {
+    this.templateId= this.$route.query.templateId
+  }
 };
 </script>
 <style lang="sass" scoped>

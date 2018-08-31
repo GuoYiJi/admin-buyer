@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="user_head"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"/></p>
+      <p class="user_head"><img :src="this.headimg"/></p>
       <p class="t_name">发生交电话费</p>
     </div>
     <div class="center">
@@ -50,13 +50,16 @@ export default {
   components: {},
   data() {
     return {
-      nav: 2
+      nav: 2,
+      headimg: ''
     };
   },
   methods: {},
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
+    this.headimg = wx.getStorage('avatar')
+    console.log(this.headimg)
   }
 };
 </script>

@@ -28,6 +28,12 @@ export default class order {
     L_selectLogistics = params => http.post('api/order/selectLogistics', params)
         //api/goods/selectGoodsDetail 商品详情
     L_selectGoodsDetail = params => http.post('api/goods/selectGoodsDetail', params)
+        ///api/freight/findFreight
+    L_findFreight = params => http.post('api/freight/findFreight', params)
+        //api/warehouse/changeExpress
+    L_changeExpress = params => http.post('api/warehouse/changeExpress', params)
+
+
 
 
 
