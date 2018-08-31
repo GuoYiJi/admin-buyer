@@ -24,7 +24,7 @@
         <div class="scroll-box">
           <div class="box">
             <p>
-              <!-- 拆单组件 -->
+              <!-- 发货组件 -->
               <delivery :sigleList="sigleList"/>
             </p>
             <p >

@@ -47,9 +47,11 @@
         <div class="nav">
           <p class="title_1">收货人</p>
           <div class="btn">
-            <span v-for="(item, index) in navList" :key="index">
-              <span class="brn_1" :class="[btn == index && 'btn-active']" @click="selectedNav(index)">{{item}}</span>
-            </span>
+            <scroll-view scroll-y="true" style="height:80%" >
+              <span v-for="(item, index) in selectReceiptName" :key="index">
+                <span class="brn_1" :class="[btn == index && 'btn-active']" @click="selectedNav(item.receiptName)">{{item.receiptName}}</span>
+              </span> 
+            </scroll-view>
           </div>
           <p class="more">查看更多
             <i class="goback"></i>
@@ -83,6 +85,7 @@ export default {
         onPlayList: [],
         noGoodszz: [],
         sigleList: [],//可拆单的数组
+        selectReceiptName: [],
 
       };
     },
@@ -112,8 +115,9 @@ export default {
             //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
             // orderType: 1, 
           });
-          console.log(L_selectDeliver)
-            this.isShows = !this.isShows;
+          this.selectReceiptName = L_selectDeliver.data.list
+
+          this.isShows = !this.isShows;
         },
         toEdit() {
             this.edit = true;
@@ -125,8 +129,14 @@ export default {
         selectedNav(index) {
             this.btn = index;
         },
-        confirmBut(){
-            this.isShows = !this.isShows;
+        async confirmBut(){
+          const listData = await this.getNextPage({
+            receiptName: this.btn
+          });
+          this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
+          this.sigleList = this.noGoodszz 
+          console.log(this.sigleList)
+           this.isShows = !this.isShows;
         },
       getNextPage() {
         var obj = {
@@ -167,15 +177,6 @@ export default {
       if (listData.data.list.length < 30) {
         this.canLoad = false;
       }
-      // for(var i=0;i<this.noGoodszz.length;i++){
-      //   if(this.noGoodszz[i].layer == 1 || this.noGoodszz[i].layer == -1){
-      //     this.sigleList.push(this.noGoodszz[i])
-      //     console.log(this.sigleList)
-      //   }else{
-      //     // this.noSigleList.push(this.noGoodszz[i])
-      //     return null
-      //   }
-      // }
     
   }
 };

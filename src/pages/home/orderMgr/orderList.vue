@@ -12,11 +12,11 @@
       </div>
       <div class="line b_line" >
         <p class="input">市场档口：<span>{{goodsDetailData.stallInfo1}}</span></p>
-        <p class="blur"></p>
+        <!-- <p class="blur"></p> -->
       </div>
       <div class="line b_line">
-        <p class="input">采购说明：</p>
-        <p class="blur input_p_left"> {{goodsDetailData.buyExplan}}</p>
+        <p class="input">采购说明：<span>{{goodsDetailData.buyExplan}}</span></p>
+        <!-- <p class="blur input_p_left"> </p> -->
       </div>
       <div class="line b_line" >
         <p class="input"> 成本价：</span>{{goodsDetailData.costPrice}}元</span></p>
@@ -29,36 +29,36 @@
     </div>
     <div class="line-box">
       <div class="line b_line" >
-        <p class="input">货期排单：</p>
-        <p class="blur">{{goodsDetailData.delivery}}</p>
+        <p class="input">货期排单：<span>{{goodsDetailData.delivery}}</span></p>
+        <!-- <p class="blur"></p> -->
       </div>
       <div class="line b_line"  >
-        <p class="input">品类：</p>
-        <p class="blur"> {{goodsDetailData.labelInfo}}</p>
+        <p class="input">品类：<span> {{goodsDetailData.labelInfo}}</span></p>
+        <p class="blur"></p>
       </div>
       <div class="line b_line shopType" >
         <p class="input">规格与库存：</p>
-        <div class="blur">
-          <div >
-            点击选择规格与库存  
+        <div class="blur" v-for="(itemSku,idSku) in skuList" :key="idSku">
+          <div v-for="(itemszz,idSkuzz) in itemSkuzz" :key="idSkuzz">
+            {{itemszz.skuList}}  
           </div>
         </div>
       </div>
       <div class="line b_line" >
         <p class="input">版型：</p>
-        <p class="blur">紧身</p>
+        <p class="blur"></p>
       </div>
       <div class="line b_line">
         <p class="input">面料类型：</p>
-        <p class="blur">棉质</p> 
+        <p class="blur"></p> 
       </div>
       <div class="line b_line"  >
-        <p class="input">商品分组</p>
-        <p class="blur input_p_left">上新、热销</p>
+        <p class="input">商品分组：</p>
+        <p class="blur input_p_left" ><span v-for="(itemGroup,idGroup) in groupList" :key="idGroup">{{itemGroup.name}}</span></p>
       </div>
-      <div class="line b_line" @click="toOpen('showTag')">
-        <p class="input">商品标签</p>
-        <p class="blur input_p_left">商家认证；优质采购</p>
+      <div class="line b_line"  v-for="(itemTag,idTag) in tagsList" :key="idTag">
+        <p class="input">商品分类：<span>{{itemTag.name}}</span></p>
+        <!-- <p class="blur input_p_left"></p> -->
       </div>
       <div class="line b_line" >
         <p class="input">转售：</p>
@@ -92,17 +92,23 @@ export default {
       goodsDetailData: [],
       L_selectDetail: [],
       warehouseData: [],
-      orderGoodsList: []//保存商品清单详情
+      orderGoodsList: [],//保存商品清单详情
+      goodsId: '',//保存goodsId
+      groupList: [],
+      labelList: [],
+      skuList: [],
+      tagsList: [],
 
     };
   },
   computed: {
   },
   async mounted() {
+    this.goodsId = this.$route.query.goodsId
     const L_selectGoodsDetailData = await this.$API.L_selectGoodsDetail({
-        goodsId: this.$route.query.goodsId
+        goodsId: this.goodsId
       });
-    console.lg(L_selectGoodsDetailData)
+    console.log(L_selectGoodsDetailData)
     this.goodsDetailData = L_selectGoodsDetailData.data
     console.log(this.goodsDetailData)
     this.L_selectDetail = L_selectGoodsDetailData.data
@@ -110,6 +116,13 @@ export default {
     this.warehouseData = this.L_selectDetail.warehouse
     this.pingUserData = this.L_selectDetail.pingUser
     this.orderGoodsList =  this.L_selectDetail.orderGoods
+    this.groupList =  this.L_selectDetail.groupList
+ 
+    this.labelList =  this.L_selectDetail.labelList
+    this.skuList =  this.L_selectDetail.sku
+    console.log(this.skuList)
+    this.tagsList =  this.L_selectDetail.tagsList
+    
     console.log( this.orderGoodsList)
 
   }
@@ -309,7 +322,7 @@ export default {
   position: relative
   .input
     height: 100% 
-    padding-right: 8px
+    // padding-right: 8px
     color: #999
     .red
       color: #FF0000

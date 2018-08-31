@@ -58,12 +58,14 @@
         <!-- </div> -->
       </div>
       <div class="number_1">
-        <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
-          <div class="completed_1">子订单编号
-            {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
-          ：{{childrenzz.orderNo}}</div>
-          <i class="sanjiao"></i>
-        </div>
+        <scroll-view scroll-y lower-threshold='80' style="height: 80%;  overflow-y: hidden;">
+          <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+            <div class="completed_1">子订单编号
+              {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
+            ：{{childrenzz.orderNo}}</div>
+            <i class="sanjiao"></i>
+          </div>
+        </scroll-view>
       </div>
       <div class="btn">
         <div class="collage_1">

@@ -7,8 +7,8 @@ export default class order {
     L_selectOrderDetail = params => http.post('api/order/selectOrderDetail', params)
         //售后列表
     L_selectOrderRefund = params => http.post('api/order/refund/selectOrderRefund', params)
-        //筛选
-    L_selectDeliverName = params => http.post('api/order/selectDeliverName', params)
+        //筛选发货人
+    L_selectDeliverName = params => http.post('api/order/selectReceiptName', params)
         // 拆单
     L_addChildren = params => http.post('api/order/addChildren', params)
         //发货

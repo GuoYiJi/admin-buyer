@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <scroll-view scroll-y="true" style="height: 80% " >
-      <div class="content" v-for="(item,idxx) in areaIdAll" :key="idxx">
-        <div class="adr-card" @click="selectAct(item.id,item)">
+      <div class="content">
+        <div class="adr-card" @click="selectAct(item.id,item)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
             <div class="user">
               <p class="name">{{item.name}}</p>
             </div>

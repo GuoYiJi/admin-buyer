@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="user_head"><img :src="this.headimg"/></p>
+      <p class="user_head"><img :src="headimg"/></p>
       <!-- <p class="t_name">发生交电话费</p> -->
       <open-data class="t_name" type="userNickName"></open-data>
     </div>

@@ -11,8 +11,8 @@
         <div class="address">
           收货地址:{{warehouseData.value}}{{warehouseData.address}}
         </div>
-        <div class="remark">
-          备注:包装好点
+        <div class="remark" v-if="L_selectDetail">
+          备注:{{L_selectDetail.remark}}
         </div>
       </div>
     </div>
@@ -23,8 +23,8 @@
       <text class="fuKuan" v-if="(select == 0)">拼团成功，待发货</text>
     </div>
     <div class="list" v-for="(item,idx) in orderGoodsSku" :key="idx">
-       <!-- @click="orderListArr(item.goodsId)" -->
-      <div class="kuang" >
+      
+      <div class="kuang"  @click="orderListArr(item.goodsId)">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -67,35 +67,6 @@
         <text class="jiaGet">{{item.price}}元</text>
       </div>
     </div>
-    <!-- <div class="number_1" v-if="(select == 2)">
-      <div class="completed">
-        <div class="completed_1">子订单编号（已完成）：12345678</div>
-        <i class="sanjiao"></i>
-      </div>
-      <div class="incomplete">
-        <div class="incomplete_1">子订单编号（待收货）：12345678</div>
-        <i class="sanjiao"></i>
-      </div>
-    </div>
-    <div class="jieShuan">
-      <div class="price">
-        <span class="price_1">商品总价</span>
-        <span class="price_2">￥299.00</span>
-      </div>
-      <div class="coupon">
-        <span class="coupon_1">优惠券抵扣</span>
-        <span class="coupon_2">-￥6.99</span>
-      </div>
-      <div class="freight">
-        <span class="freight_1">运费</span>
-        <span class="freight_2">+￥6.00</span>
-      </div>
-      <i class="xuXian"></i>
-      <div class="orderNumber">订单编号：2018062712345678904</div>
-      <div class="orderTime">下单时间：2018-06-16 12:27:12</div>
-      <div class="Payment">支付时间：2018-06-16 12:27:12</div>
-      <div class="collage">拼团时间：2018-06-16 12:27:12</div>
-    </div> -->
     <!-- 撑开下面按钮 -->
     <div style="height: 50px; width: 100%;"></div>
     <div class="foot">
@@ -278,15 +249,13 @@ export default {
                 this.select = 0;
             }
         },
+        orderListArr(id){
+          console.log(id)
+          this.$router.push({path:'/pages/home/orderMgr/orderList',query:{goodsId: id}})
+        },
         // 发货组件
         handleChange1({ mp: { detail } }) {
             this.value1 = detail.value;
-        },
-        handleChange2({ mp: { detail } }) {
-            this.value2 = detail.value;
-        },
-        handleChange3({ mp: { detail } }) {
-            this.value3 = detail.value;
         },
         add(index,itemss){
           console.log(itemss)

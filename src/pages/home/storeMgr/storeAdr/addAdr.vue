@@ -113,7 +113,8 @@ export default {
       }
 
       // this.handleError('添加成功','success')
-      this.$router.push("/" + $getUrl());
+      // this.$router.push("/" + $getUrl());
+      this.$router.back(-1)
     },
     bindRegionChange(e) {
       this.region = e.mp.detail.value;

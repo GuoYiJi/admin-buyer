@@ -77,6 +77,8 @@ export default {
     //   this.nav = num
     // }
   },
+  created() {
+  },
   async mounted() {
     const statistics = await this.$API.statistics({});
     console.log(statistics);

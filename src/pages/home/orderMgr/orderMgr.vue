@@ -40,12 +40,15 @@
       <div v-else-if="tag == 5">
         <orderYesGoods />
       </div>
+      <!-- 已完成 -->
       <div v-else-if="tag == 6">
         <orderYesGod />
       </div>
+      <!-- 已关闭 -->
       <div v-else-if="tag == 7">
         <closeOrder />
       </div>
+      <!-- 售后 -->
       <div v-else-if="tag == 8">
         <orderRefund />
       </div>
@@ -181,6 +184,7 @@ export default {
 
   },
   async mounted() {
+    // debugger
     // this.shopNum = 0;
     // const listData = await this.getNextPage();
     // this.shopList = this.shopList.concat(listData.data.list); 
