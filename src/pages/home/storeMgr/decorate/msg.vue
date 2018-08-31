@@ -14,12 +14,14 @@
       <div class="line b_line" @click="toRoute('decorate/cover')">
         <!-- <i class="i_s3 i-icon"></i> -->
         <p class="input">店铺封面</p>
-        <p class="blur">未设置</p>
+        <p class="blur" v-if="FMimg == ''">未设置</p>
+        <p class="blur" v-if="FMimg != ''">已设置</p>
       </div>
       <div class="line" @click="toRoute('decorate/intro')">
         <!-- <i class="i_s4 i-icon"></i> -->
         <p class="input">店铺简介</p>
-        <p class="blur">未设置</p>
+        <p class="blur" v-if="remark == ''">未设置</p>
+        <p class="blur" v-if="remark != ''">已设置</p>
       </div>
       <!-- <div class="line" @click="toRoute('decorate/viewTemplet')">
         <p class="input">店铺装修模板</p>
@@ -60,7 +62,7 @@
 <script>
 import wx from "wx";
 import btn from "@/components/btn.vue";
-// import config from "@/config";
+import config from "@/config";
 import uploadImg from "@/plugins/uploadImg";
 export default {
   components: {
@@ -113,53 +115,61 @@ export default {
         shi: this.region[1],
         qu: this.region[2]
       });
+      wx.showToast({
+        title: "成功",
+        icon: "success",
+        duration: 2000
+      });
       console.log(warehouse);
+    },
+    uploadImg(tempFilePath, callback) {
+      var that = this;
+      wx.uploadFile({
+        url: config.uploadImageUrl,
+        filePath: tempFilePath,
+        name: "file",
+        formData: {
+          name: tempFilePath.substring(10),
+          key: "img/${filename}",
+          policy: config.imgPolicy,
+          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+          success_action_status: "200",
+          signature: config.imgSignature
+        },
+        success: function(res) {
+          console.log(res);
+          if (res.statusCode == 400) {
+            that.handleError("上传的图片大小不能超过2m!");
+          } else if (res.statusCode == 200) {
+            if (that.maxNum && that.imgList.length >= that.maxNum) {
+              that.handleError("不能超过15张图片噢！");
+              return;
+            }
+            callback(
+              config.uploadImageUrl + "/img" + tempFilePath.substring(10)
+            );
+          }
+        },
+        fail: function(err) {
+          console.log(err);
+        }
+      });
     }
-    // uploadImg(tempFilePath,callback) {
-    //   var that = this;
-    //   wx.uploadFile({
-    //     url: config.uploadImageUrl,
-    //     filePath: tempFilePath,
-    //     name: "file",
-    //     formData: {
-    //       name: tempFilePath.substring(10),
-    //       key: "img/${filename}",
-    //       policy: config.imgPolicy,
-    //       OSSAccessKeyId: "6MKOqxGiGU4AUk44",
-    //       success_action_status: "200",
-    //       signature: config.imgSignature
-    //     },
-    //     success: function(res) {
-    //       console.log(res);
-    //       if (res.statusCode == 400) {
-    //         that.handleError("上传的图片大小不能超过2m!");
-    //       } else if (res.statusCode == 200) {
-    //         if(that.maxNum && that.imgList.length >= that.maxNum){
-    //           that.handleError('不能超过15张图片噢！')
-    //           return
-    //         }
-    //         callback(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
-    //       }
-    //     },
-    //     fail: function(err) {
-    //       console.log(err);
-    //     }
-    //   });
-    // }
   },
   onShow() {
+    var that = this;
     wx.getStorage({
       key: "FMimg",
       success: function(res) {
         console.log(res.data);
-        this.FMimg = res.data;
+        that.FMimg = res.data;
       }
     });
     wx.getStorage({
       key: "remark",
       success: function(res) {
         console.log(res.data);
-        this.remark = res.data;
+        that.remark = res.data;
       }
     });
   },
@@ -167,6 +177,7 @@ export default {
     this.name = "";
     this.companyName = "";
     this.address = "";
+    this.region = [];
     console.log(this);
   }
 };

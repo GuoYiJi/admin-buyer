@@ -2,8 +2,8 @@
   <div class="home">
     <div class="user-img" @click="toRoute('decorate/msg')">
       <i class="i_store"></i>
-      <p class="name">咸鱼小姐的小店</p>
-      <img class="upload" src="https://img.yzcdn.cn/2.jpg" />
+      <p class="name">{{selectWarehouse.name}}</p>
+      <img class="upload" :src="selectWarehouse.img" />
     </div>
     <div class="line-box">
       <div class="line b_line" @click="toRoute('sendWay/sendWay')">
@@ -26,7 +26,9 @@ import wx from "wx";
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      selectWarehouse: ""
+    };
   },
   methods: {
     toRoute(file) {
@@ -37,7 +39,11 @@ export default {
     wx.removeStorageSync("FMimg");
     wx.removeStorageSync("remark");
   },
-  mounted() {}
+  async mounted() {
+    const selectWarehouse = await this.$API.selectWarehouse({});
+    this.selectWarehouse = selectWarehouse.data;
+    console.log(this.selectWarehouse);
+  }
 };
 </script>
 <style lang="sass" scoped>

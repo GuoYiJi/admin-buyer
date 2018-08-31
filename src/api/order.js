@@ -32,11 +32,6 @@ export default class order {
     L_findFreight = params => http.post('api/freight/findFreight', params)
         //api/warehouse/changeExpress
     L_changeExpress = params => http.post('api/warehouse/changeExpress', params)
-
-
-
-
-
-
-
+        //api/goods/add
+    L_addOrder = params => http.post('api/goods/add', params)
 }

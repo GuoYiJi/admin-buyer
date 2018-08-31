@@ -7,7 +7,7 @@
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" v-model="value_input"  type="text" placeholder="请输入面值">
+        <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值">
       </div>
       <div class="grant">
         <span class="grant_text">发放总量：</span>
@@ -38,21 +38,22 @@
         </picker>
       </div>
       <div class="effect" @click="Receive">
-        <span class="text" >领取设置：</span>
+        <span class="text">领取设置：</span>
         <span class="settings">
-          <span class="settings_text">未设置</span>
+          <span class="settings_text" v-if="(ling == '' )">未设置</span>
+          <span class="settings_text" v-if="(ling != '' )">已设置</span>
           <i class="img"></i>
         </span>
       </div>
       <div class="effect" @click="Use">
-        <span class="text" >使用设置：</span>
+        <span class="text">使用设置：</span>
         <span class="settings">
-          <span class="settings_text" v-if="(this.isLimitCount == '' || this.please_input == '')">未设置</span>
-          <span class="settings_text" v-if="(this.isLimitCount != '' || this.please_input != '')">已设置</span>
+          <span class="settings_text" v-if="(isOriginalPrice =='')">未设置</span>
+          <span class="settings_text" v-if="(isOriginalPrice !='')">已设置</span>
           <i class="img"></i>
         </span>
       </div>
-      <div class="btn"  @click="btn_1">
+      <div class="btn" @click="btn_1">
         <span class="btn_1">保存</span>
       </div>
     </form>
@@ -70,10 +71,14 @@ export default {
       date1: "",
       isLimitCount: "",
       please_input: "",
-      grant_input: '',
-      value_input: '',
-      head_input: '',
-      date: '',
+      isOriginalPrice: "",
+      grant_input: "",
+      value_input: "",
+      head_input: "",
+      ling: "",
+      date: "",
+      isAll: "",
+      selIds: ""
     };
   },
   methods: {
@@ -87,48 +92,80 @@ export default {
     },
     async btn_1() {
       console.log(this);
-    
-      wx.getStorage({
-        key: "isLimitCount",
-        success: function(res) {
-          console.log(res.data);
-        }
-      });
-      wx.getStorage({
-        key: "please_input",
-        success: function(res) {
-          console.log(res.data);
-        }
-      });
-      // return;
+      this.isLimitCount = wx.getStorageSync("isLimitCount");
+      console.log(this.isLimitCount, "选择");
+      this.please_input = wx.getStorageSync("please_input");
+      console.log(this.please_input, "输入");
+      this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
+      console.log(this.isOriginalPrice, "xz");
+      // this.newCoupon = newCoupon.data;
+      // console.log(newCoupon);
+      this.ok();
+      console.log("qweascxc");
+      setTimeout(() => {
+        wx.navigateBack({
+          data: 1
+        });
+      }, 200);
+    },
+    async ok() {
       var newCouponData = await this.$API.newCoupon({
         name: this.head_input,
         price: this.value_input,
         count: this.grant_input,
         startTime: this.date,
-        endTime: this.date1
-      });
-      this.newCoupon = newCoupon.data
-      console.log(newCoupon)
-
-      
-      wx.navigateBack({
-        data: 1
+        endTime: this.date1,
+        isLimitCount: this.isLimitCount,
+        limitCount: this.please_input,
+        originalGoodsIds: this.selIds,
+        isAll: this.isAll
       });
     },
     Use() {
-      this.$router.push("/pages/home/marketingMgt/Order/Order")
+      this.$router.push("/pages/home/marketingMgt/usageSettings/usageSettings");
+      // this.$router.push("/pages/home/marketingMgt/Order/Order")
     },
     Receive() {
-      this.$router.push("/pages/home/marketingMgt/settings/settings")
+      // this.$router.push("/pages/home/marketingMgt/Order/Order")
+      this.$router.push("/pages/home/marketingMgt/settings/settings");
     },
     couponsave() {
       // this.$router.push("/pages/home/marketingMgt/myCoupon")
+    },
+    huanc() {
+      this.isLimitCount = wx.getStorageSync("isLimitCount");
+      console.log(this.isLimitCount, "选择");
+      this.please_input = wx.getStorageSync("please_input");
+      console.log(this.please_input, "输入");
+      this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
+      console.log(this.isOriginalPrice, "原价");
+      this.selIds = wx.getStorageSync("selIds");
+      console.log(this.selIds, "商品");
+      this.isAll = wx.getStorageSync("isAll");
+      console.log(this.isAll, "全部");
+      // ----------------------------------------------
+      if (this.isLimitCount == "" && this.please_input == "") {
+        this.ling = "";
+        console.log(this.ling);
+      }
+      if (this.isLimitCount != "" || this.please_input != "") {
+        this.ling = 1;
+        console.log(this.ling);
+      }
     }
   },
-  mounted() {
-    // console.log(this);
-  }
+  onShow() {
+    console.log(this);
+    this.huanc();
+    wx.getStorageInfo({
+      success: function(res) {
+        console.log(res.keys);
+        console.log(res.currentSize);
+        console.log(res.limitSize);
+      }
+    });
+  },
+  mounted() {}
 };
 </script>
 <style lang="sass" scoped>

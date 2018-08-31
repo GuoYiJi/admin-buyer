@@ -70,7 +70,7 @@ export default {
 
     };
   },
- 
+
   methods: {
     async handleTag(tag) {
       this.tag = tag;
@@ -133,7 +133,7 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
-    this.orderList = this.orderList.concat(listData.data.list); 
+    this.orderList = this.orderList.concat(listData.data.list);
     for(var i=0;i<this.orderList.length;i++){
       if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
         this.sigleList.push(this.orderList[i])
@@ -172,7 +172,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -183,18 +183,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>
