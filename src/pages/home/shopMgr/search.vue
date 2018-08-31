@@ -7,6 +7,14 @@
         <p class="confirm" @click="keywordBut">确认</p>
       </div>
     </div>
+    <div class="scroll-box">
+        <div class="box">
+          <p >
+            <!-- 拼团组件 -->
+            <Collage :noSigleList="noSigleList"/>
+          </p>
+        </div>
+      </div>
   </div>
 </template>
 <script>
@@ -37,7 +45,8 @@ export default {
           keyword: this.keyword, 
           orderType: 1, 
         });
-        console.log(L_selectOrder)
+        this.noSigleList =  L_selectOrder.data.list
+        console.log(this.noSigleList)
 
       }
     }

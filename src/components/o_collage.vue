@@ -3,7 +3,7 @@
     <div v-for="(item,index) in noSigleList" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.id}}</p>
+          <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">
             {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}} 
             </p> 
@@ -29,7 +29,7 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close(item.id)">关闭订单</span>
+            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
@@ -46,44 +46,13 @@
         </div>
       </div>
     </div>
-    <!-- <div v-for="(item,index) in navData" :key="index">
-      <div class="kuang">
-        <div class="head">
-          <p class="order">订单编号：{{item.title}}</p>
-          <p class="state">拼团中，还差{{item.maShuo}}人</p>
-        </div>
-        <div class="middle">
-          <div class="picture">
-            <img class="imgOne" :src="item.picture">
-          </div>
-          <i class="sanJiao" @click="sanJiaoBut"></i>
-        </div>
-        <div class="jieShuan">
-          <div class="quantity">共{{item.kuan}}个款，合计{{item.jian}}件</div>
-          <div class="money">订单金额：
-            <p class="money1">{{item.money}}元</p>
-          </div>
-          <div class="phone">收货人:{{item.name}} {{item.phone}}</div>
-        </div>
-        <div class="foot">
-          <div class="picture_1">
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
-          </div>
-          <div class="btn">
-            <span v-if="(btn==0)" class="see" @click="seeBut">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
-            <span v-if="(btn==1)" class="collage">查看子拼团</span>
-          </div>
-        </div>
-      </div>
-    </div> -->
+ 
   </div>
 </template>
 <script>
 import wx from "wx";
-import config from "@/config";
+// import config from "@/config";
+
 export default {
     components: {
 
@@ -91,41 +60,7 @@ export default {
     data() {
         return {
             btn: 0,
-            navData: [
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                }
-            ],
+            navData: [],
             groupOrderzz: [],
             sessionIdzz: '',
             url: '',
@@ -154,8 +89,8 @@ export default {
           const L_shopCloseData = await this.$API.L_shopClose({
             orderId: this.orderID,
           });
-          console.log(L_dealWithOrderData)
-          if(L_dealWithOrderData.code == 1){
+          console.log(L_shopCloseData)
+          if(L_shopCloseData.code == 1){
             wx.showToast({               
               title: '成功',               
               icon: 'success',  
@@ -169,8 +104,8 @@ export default {
 
         },
         sanJiaoBut(item){
-          console.log(item)
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+          console.log(123)
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
@@ -182,8 +117,7 @@ export default {
     async mounted() {
       this.url = config.url+'/api/order/shopClose'
       console.log(this.url)
-      this.sessionIdzz = wx.getstoragesync('sessionId')
-      console.log(this.sessionIdzz)
+     
     }
 };
 </script>
@@ -306,7 +240,7 @@ page
   .closeTip
     opacity: 1 
     width: 550px
-    height: 350px
+    height: 260px
     margin: 0 auto
     background: #fff
     margin-top: 300rpx
@@ -320,10 +254,9 @@ page
       p
       .tipText
         margin: 40px
-
         // margin-top: 40px
     .confirm_but
-      margin-top: 80px
+      margin-top: 40px
       display: flex
       div
         width: 100%

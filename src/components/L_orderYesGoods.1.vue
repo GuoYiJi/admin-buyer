@@ -20,38 +20,52 @@
           </li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  >
+      <!-- <div v-for="item in shopList">
+        <div>{{item.deliverTime}}</div>
+      </div> -->
+      <!-- <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  > -->
         <div class="scroll-box">
           <div class="box">
             <p>
               <!-- 拆单组件 -->
-              <delivery :sigleList="sigleList"/>
+              <delivery />
             </p>
             <p >
               <!-- 拼团组件 -->
-              <Collage :noSigleList="noSigleList"/>
+              <CollageYesGoods :yesGoods="yesGoods"/>
+            </p>
+            
+            <p>
+              <!-- 交易成功 -->
+              <payment/>
+            </p>
+            <p>
+              <!-- 退款组件 -->
+              <!-- <afterSales /> -->
             </p>
           </div>
         </div>
-        <div class="loading" v-if="canLoad">
+        <!-- <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
-        </div>
-      </scroll-view>
+        </div> -->
+      <!-- </scroll-view> -->
     </div>
   </div>
 </template>
 <script>
 import wx from "wx";
 import payment from "@/components/o_payment";
-import Collage from "@/components/o_collage";
+import CollageYesGoods from "@/components/L_collageYesGoods";
 import delivery from "@/components/o_delivery";
-import loading from "@/commond/loading";
+// import afterSales from "@/components/o_afterSales";
+// import loading from "@/commond/loading";
 export default {
   components: {
     payment,
-    Collage,
+    CollageYesGoods,
     delivery,
-    loading,
+    // afterSales,
+    // loading
 
   },
   data() {
@@ -59,94 +73,84 @@ export default {
       searchIn: false,
       asceSale: true,
       ascePrice: true,
-      showLoad: false,
-      canLoad: true,
       tag: 1,
       shopNum: 0,
       items: this.default,
-      orderList: [],
-      sigleList: [],//可拆单的数组
-      noSigleList: [],//不可拆单的数组
+      showLoad: false,
+      canLoad: true,
+      shopList: [],
+      groupOrder: [],
+      // noGrounpOrder: [],
+      nameID: '2',
+      allID: '1',
+      sumID: '5',
 
     };
   },
-
+  props: {
+    yesGoods: {
+      type: Array,
+      default: []
+    },
+  },
   methods: {
-    async handleTag(tag) {
+    handleTag(tag) {
       this.tag = tag;
-      var type = 0 ;
+      var type;
       this.shopNum = 0;
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
-        type = this.asceSale ? 3 : 4;
+        type = this.asceSale ? 2 : 3;
       }
       if (tag === 5) {
         this.ascePrice = !this.ascePrice;
-        type = this.ascePrice ? 5 : 6;
+        type = this.ascePrice ? 4 : 5;
       }
-      console.log(type)
-      this.type = type
-      const listData = await this.getNextPage({
-        orderType: type,
-        // state: 1
-      })
-
-      this.orderList = listData.data.list
-      console.log(this.orderList)
-      if(listData.data.list.length < this.pageSize) {
-        this.canLoad = false
-      }
+      this.type = type;
     },
-    getNextPage() {
-      var obj = {
-        pageSize: 30,
-        orderType: 1,
-        // state: this.tag
-      };
-      this.shopNum++;
-      obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderPage(obj);
-    },
-    //滚动下拉事件
-    lowerlower(e) {
-      console.log(e);
-      console.log(111111);
-      if (!this.canLoad) return;
-      if (this.showLoad) return;
-      this.showLoad = true;
-      let listData = {}
-      this.getNextPage().then(response => {
-        listData = response;
-        console.log(listData)
-      });
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
-        }
-        this.orderList = this.orderList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+    // getNextPage() {
+    //   var obj = {
+    //     pageSize: 20,
+    //     orderType: this.tag,
+    //   };
+    //   this.shopNum++;
+    //   obj.pageNumber = this.shopNum;
+    //   return this.$API.L_selectOrderPage(obj);
+    // },
+    // async lower(e) {
+    //   // console.log(e);
+    //   if (!this.canLoad) return;
+    //   if (this.showLoad) return;
+    //   this.showLoad = true;
+    //   const listData = await this.getNextPage();
+    //   setTimeout(() => {
+    //     if (listData.data.list.length < 20) {
+    //       this.canLoad = false;
+    //     }
+    //     this.shopList = this.shopList.concat(listData.data.list);
+    //     this.showLoad = false;
+    //   }, 2000);
+    // }
 
   },
   async mounted() {
-    this.shopNum = 0;
-    const listData = await this.getNextPage();
-    // console.log(listData);
-    this.orderList = this.orderList.concat(listData.data.list);
-    for(var i=0;i<this.orderList.length;i++){
-      if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
-        this.sigleList.push(this.orderList[i])
-        console.log(this.sigleList)
-      } else{
-        this.noSigleList.push(this.orderList[i])
-      }
-    }
-    if (listData.data.list.length < 30) {
-      this.canLoad = false;
-    }
-    // console.log(this.noSigleList)
+    console.log(this.noGrounpOrder)
+    // this.shopNum = 0;
+    // const listData = await this.getNextPage();
+    // this.shopList = listData.data.list;
+    // for(var i=0,l;l=this.shopList[i++];){
+    //     // if(this.shopList[i].isPing == 0){
+    //     //   this.noGrounpOrder.push(l)
+    //     // }else if(this.shopList[i].isPing == 0){
+    //     //   this.groupOrder.push(l)
+    //     // }
+       
+     
+    // }
+    // if (listData.data.list.length < 20) {
+    //   this.canLoad = false;
+    // }
   }
 };
 </script>
@@ -174,7 +178,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul
+  ul 
     display: flex
     font-size: 26px
     height: 92px
@@ -185,18 +189,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom
+        .sort-bottom 
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top
+        .sort-top    
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999
+            border-color: #999   
 </style>

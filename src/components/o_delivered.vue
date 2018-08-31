@@ -18,13 +18,30 @@
           </li>
         </ul>
       </div>
-      <div class="scroll-box">
+      <!-- <div class="scroll-box">
         <div class="box">
           <p>
             <delivery ref="delivery" />
           </p>
         </div>
-      </div>
+      </div> -->
+      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
+        <div class="scroll-box">
+          <div class="box">
+            <p>
+              <!-- 拆单组件 -->
+              <delivery :sigleList="sigleList"/>
+            </p>
+            <p >
+              <!-- 拼团组件 -->
+              <CollageNoGoods :noGoodszz="noGoodszz"/>
+            </p>
+          </div>
+        </div>
+        <div class="loading" v-if="canLoad">
+          <div v-if="showLoad"><loading  /></div>
+        </div>
+      </scroll-view>
       <!-- 筛选弹窗 -->
       <div class="screen" v-show="isShows">
         <div class="title">筛选</div>
@@ -50,19 +67,25 @@
 <script>
 import wx from "wx";
 import delivery from "@/components/o_delivery";
+import CollageNoGoods from "@/components/L_collageNoGoods";
 export default {
     components: {
-      delivery
+      CollageNoGoods,
+      delivery,
     },
     data() {
-        return {
-            asceSale: true,
-            tag: 1,
-            btn: 1,
-            isShows: false,
-            shopNum: 0,
-            navList: ["收货人", "收货人", "收货人", "收货人", "收货人"]
-        };
+      return {
+        asceSale: true,
+        tag: 1,
+        btn: 1,
+        isShows: false,
+        shopNum: 0,
+        navList: [],
+        onPlayList: [],
+        noGoodszz: [],
+        sigleList: [],//可拆单的数组
+
+      };
     },
     methods: {
         handleTag(tag) {
@@ -96,18 +119,64 @@ export default {
         selectedNav(index) {
             this.btn = index;
         },
-        // async confirmBut(){
-        //   console.log(111)
-        //   const L_selectDeliver = await this.$API.L_selectDeliverName({
-        //     //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
-        //     // orderType: 1, 
-        //   });
-        //   console.log(L_selectDeliver)
-        //   this.isShows = false
-        // }
+        async confirmBut(){
+          console.log(111)
+          const L_selectDeliver = await this.$API.L_selectDeliverName({
+            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
+            // orderType: 1, 
+          });
+          console.log(L_selectDeliver)
+          this.isShows = false
+        },
+      getNextPage() {
+        var obj = {
+          pageSize: 30,
+          orderType: 1,
+          state: 5
+          // state: this.tag
+        };
+        this.shopNum++;
+        obj.pageNumber = this.shopNum;
+        return this.$API.L_selectOrderPage(obj);
+      },
+      async lower(e) {
+        console.log(e);
+        if (!this.canLoad) return;
+        if (this.showLoad) return;
+        this.showLoad = true;
+        const listData = await this.getNextPage();
+        setTimeout(() => {
+          if (listData.data.list.length < 30) {
+            this.canLoad = false;
+          }
+          this.noGoodszz = this.noGoodszz.concat(listData.data.list);
+          this.showLoad = false;
+        }, 2000);
+      }
+
     },
-    mounted() {
-    }
+    async mounted() {
+      console.log(11)
+      this.shopNum = 0;
+      const listData = await this.getNextPage();
+      console.log(listData);
+      this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
+      // console.log(this.orderList)
+      console.log(this.noGoodszz);
+      if (listData.data.list.length < 30) {
+        this.canLoad = false;
+      }
+      for(var i=0;i<this.noGoodszz.length;i++){
+        if(this.noGoodszz[i].layer == 1 || this.noGoodszz[i].layer == -1){
+          this.sigleList.push(this.noGoodszz[i])
+          console.log(this.sigleList)
+        }else{
+          // this.noSigleList.push(this.noGoodszz[i])
+          return null
+        }
+      }
+    
+  }
 };
 </script>
 <style lang="sass" scoped>

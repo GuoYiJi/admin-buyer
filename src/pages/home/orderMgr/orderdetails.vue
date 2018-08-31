@@ -1,6 +1,6 @@
 <template>
     <div class="nav" >
-        <div v-for="(item,idx) in navData" :key="idx"> 
+        <div v-for="(item,idx) in navData" :key="idx">
             <div class="list" >
                 <div class="kuang" v-for="(itemzz,idzz)  in item.orderGoods" :key="idzz">
                     <img class="sPimg" :src="itemzz.image" />
@@ -8,7 +8,7 @@
                         <div class="title">{{itemss.name}}</div>
                         <div class="huo">
                             <text class="name">{{itemss.stallInfo3}}</text>
-                            <div class="type">货期:{{itemss.state}}</div>
+                            <div class="type">货期:{{itemss.delivery}}</div>
                             <span class="number">X{{itemss.num}}</span>
                         </div>
                         <div class="maShuo">{{itemss.skuCode}}/{{itemss.num}}件</div>
@@ -31,6 +31,7 @@ export default {
         return {
             shuoo: 0,
             navData: []
+            // navData: ''
         };
     },
     methods: {
@@ -46,31 +47,10 @@ export default {
     },
     // 页面触底执行
     onReachBottom() {
-        // var navData = this.navData;
-        // var qwe = {
-        //     picture:
-        //         "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-        //     title: "商品2商品2商品2商品2商品2商品2商品2商品2商品2商品2",
-        //     name: "档口名称",
-        //     type: "现货",
-        //     number: 9,
-        //     maShuo: "均码",
-        //     jianShuo: 4,
-        //     jianShuo1: 10,
-        //     jiage: 40
-        // };
-        // navData.push(qwe);
-        // this.navData = navData;
-        // this.shuoLiang();
+
     },
     mounted() {
-        // var b = [];
-        // b = JSON.parse(this.$route.query.item)
         this.navData.push(JSON.parse(this.$route.query.item))
-        // b = JSON(this.$route.query.item)
-
-        // console.log(b)
-        console.log(this.navData)
     },
 
 };
@@ -85,16 +65,16 @@ page
     width: 702px
     height: 270px
     background-color: #fff
-    .kuang 
+    .kuang
         display: flex
         border-bottom: 1px solid #cccccc
-    .sPimg 
+    .sPimg
         width: 160px
         height: 160px
         display: inline-block
         position: relative
         margin: 21px 20px
-    .textThad 
+    .textThad
         display: inline-block
         width: 494px
         position: relative
@@ -103,35 +83,35 @@ page
         .title
             +moreLine(2)
         .huo
-            +singleFile 
-            .name 
+            +singleFile
+            .name
                 display: inline-block
                 background-color: #cccccc
                 color: #fff
                 padding: 4px 8px
-            .type 
+            .type
                 margin: 0 0 0 20px
                 display: inline-block
                 color: #999
-            .number 
+            .number
                 float: right
                 margin-right: 12rpx
                 color: #999
-    .maShuo 
+    .maShuo
         color: #999
-    .jiaGe 
+    .jiaGe
         float: right
         color: #f67c2f
         margin-right: 12rpx
         padding-top: 4rpx
 
-.foot 
+.foot
     width: 100%
     position: fixed
     bottom: 0px
     height: 98px
-    background-color: #fff  
-    .btn 
+    background-color: #fff
+    .btn
         width: 220px
         height: 98px
         float: right

@@ -42,6 +42,18 @@ export default {
         console.log(res.data);
       }
     });
+    wx.removeStorage({
+      key: "selIds",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
+    wx.removeStorage({
+      key: "isAll",
+      success: function(res) {
+        console.log(res.data);
+      }
+    });
   },
   mounted() {}
 };

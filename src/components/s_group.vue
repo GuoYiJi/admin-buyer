@@ -108,6 +108,8 @@ export default {
           title
         }
       });
+      this.$store.commit('ADDMATCH', matchGoodsList);
+      console.log(this.shopMatch);
     },
     searchShop(params) {
       params.pageSize = this.pageSize;
