@@ -48,21 +48,24 @@ export default {
       showLoad: false,
       canLoad: true,
       pageSize: 20,
-      type: 0,
-      state: 0
+      type: 0,//接口'ob'字段, 排序
+      state: 0,//接口'state'字段, 0未开始, 1进行中, 2已经过期
 
     };
   },
   methods: {
+    //搜索商品
     searchShop(params){
       params.pageSize = this.pageSize
       return this.$API.s_getShopGroup(params)
     },
+    //下拉加载
     getNextPage(params) {
       this.shopNum++;
       params.pageNumber = this.shopNum;
       return this.searchShop(params)
     },
+    //点击Tag请求
     async handleTag(tag) {
       this.tag = tag;
       this.state = tag
@@ -81,11 +84,10 @@ export default {
       if(listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
-      //切换拼团
     },
-    toRoute(path) {
-      this.$router.push("/pages/home/" + path);
-    },
+    // toRoute(path) {
+    //   this.$router.push("/pages/home/" + path);
+    // },
     async lower(e) {
       // console.log(e);
       if (!this.canLoad) return;

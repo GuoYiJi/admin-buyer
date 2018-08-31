@@ -3,7 +3,7 @@
   <!-- <scroll-view class="scroll-y" scroll-y="true" style="height: 920px" v-for="(item, index) in shopList" :key="index"> -->
   <div v-for="(item, index) in shopList" :key="index">
     <scroll-view scroll-x="true" style="width: 100%">
-      <div class="scroll-x" :style="{width: 445 + 290 * shopNum + 'rpx'}">
+      <div class="scroll-x" :style="{width: 445 + 290 * widthArr[index]+ 'rpx'}">
 
         <div class="left-box">
           <div class="title">
@@ -19,8 +19,8 @@
             <span class="price"><strong>售价:￥{{item.matchGoods[0].sellPrice}}</strong>利润:￥{{item.matchGoods[0].profit}}</span>
           </div>
         </div>
-        <div class="right-box" :style="{width: 290 * shopNum +50 +'rpx'}">
-          <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx >= 0">
+        <div class="right-box" :style="{width: 290 * widthArr[index] + 50 +'rpx'}">
+          <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx > 0">
             <div class="border">
               <i class="shop-img" :style="{background: 'url(' + ite.images + ')'}"></i>
             </div>
@@ -32,7 +32,7 @@
       </div>
     </scroll-view>
     <div class="footer">
-      <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title, item.shopId)">编辑</button>
+      <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
       <button class="down">下架</button>
     </div>
   </div>
@@ -41,6 +41,7 @@
   <div class="create">
     <!-- <btn :title="'创建搭配'" @click="pageTo('/pages/home/shopMgr/setNewMatch')" /> -->
     <button @click="pageTo('/pages/home/shopMgr/setNewMatch')">创建搭配</button>
+    <!-- <button @click="toRoute('home/shopMgr/setNewMatch')">创建搭配</button> -->
   </div>
 </div>
 </template>
@@ -48,7 +49,10 @@
 import wx from "wx";
 import scard from "@/components/group_card";
 import btn from "@/components/btn.vue";
+import mixin from "@/mixin";
+import { mapState } from "vuex"
 export default {
+  mixins: [mixin],
   components: {
     scard,
     btn
@@ -56,29 +60,52 @@ export default {
   data() {
     return {
       //loading
-      shopNum: 0,
+      // widthArr: [],
       shopList: [],
       showLoad: false,
       canLoad: true,
       pageSize: 6,
-      type: 0,
-      state: 1
+      // type: 0,
+      // state: 1,
+      shopNum: 0
     };
   },
+  computed: {
+    ...mapState(['shopMatch']),
+    widthArr() {
+      let arr = []
+      this.shopList.forEach((item, index) => {
+        arr[index] = Math.round((item.matchGoods.length - 1) / 2)
+      })
+      return arr
+    }
+  },
   methods: {
-    pageTo(url) {
-      // wx.removeStorageSync('selectShopArr');
-      this.$router.push(url);
-    },
-    toEdit(url, matchGoodsList, id, title, shopId) {
+    // pageTo(url) {
+    //   // wx.removeStorageSync('selectShopArr');
+    //   this.$store.commit('ADDMATCH', [])
+    //   this.$router.push(url);
+    // },
+    toEdit(url, matchGoodsList, id, title) {
+      this.$store.commit('ADDMATCH', [])
       console.log(matchGoodsList);
+      matchGoodsList.forEach(item => {
+        this.$store.commit('PUSHMATCH', {
+          delivery: item.delivery,//货期
+          goodsId: item.goodsId,//商品ID
+          images: item.images,
+          name: item.name,//名称
+          profit: item.profit,//利润
+          sellCount: item.sellCount,//销量
+          sellPrice: item.sellPrice,//售价
+        });
+      });
+      console.log(this.shopMatch);
       this.$router.push({
         path: url,
         query: {
-          matchGoodsList: JSON.stringify(matchGoodsList),
           id,
-          title,
-          shopId
+          title
         }
       });
     },
@@ -107,12 +134,13 @@ export default {
     }
   },
   async created() {
-    this.shopNum = 0;
     const listData = await this.getNextPage({});
-    this.shopList = listData.data.list;
-    console.log(this.shopList);
-    this.shopNum = Math.round(this.shopList[0].matchGoods.length / 2);
-    console.log(this.shopNum);
+    console.log(listData);
+    this.shopList = listData.data.list;//搭配列表->包含搭配图片
+    // this.shopList.forEach((item, index) => {
+    //   this.widthArr[index] = Math.round((item.matchGoods.length - 1) / 2)
+    // })
+    // console.log(this.widthArr);
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
@@ -123,10 +151,10 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 
-// .home
-//   width: 100%
-//   min-height: 100%
-//   background-color: #ffffff
+.home
+  // width: 100%
+  // min-height: 100%
+  background-color: #ffffff
 .scroll-x
   display: flex
   width: 100%
@@ -135,7 +163,7 @@ export default {
   // height: 1200px
   .left-box
     width: 395px
-    overflow: hidden
+    // overflow: hidden
     div.title
       width: 344px
       height: 165px
@@ -190,6 +218,7 @@ export default {
           color: #FF0000
   .right-box
     // float: left
+    background-color: #ffffff
     display: flex
     margin-left: 50px
     flex-wrap: wrap
@@ -227,7 +256,7 @@ export default {
           font-size: 24px
           color: #FF0000
 .footer
-  width: 100%
+  // width: 100%
   // height: 110px
   // line-height: 110px
   // bottom: -110px

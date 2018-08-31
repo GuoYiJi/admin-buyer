@@ -7,21 +7,21 @@
   </div>
   <!-- 添加大图 -->
   <div class="add_shops">
-    <div class="shop-card" v-if="matchGoodsList[0]">
+    <div class="shop-card" v-if="shopMatch && shopMatch[0]">
       <div class="img_box">
-        <i class="shopImg" :style="{background: 'url(' + matchGoodsList[0].images + ')'}">
+        <i class="shopImg" :style="{background: 'url(' + shopMatch[0].images + ')'}">
           <i class="cancel_shop" @click="toCancel(0)"></i>
         </i>
       </div>
-      <span class="name">{{matchGoodsList[0].name}}</span>
-      <span class="desc"> 货期:{{matchGoodsList[0].delivery}}丨销量:{{matchGoodsList[0].sellCount}}</span>
-      <span class="sell"><strong>售价:￥{{matchGoodsList[0].sellPrice}}</strong> 利润:￥{{matchGoodsList[0].profit}}</span>
+      <span class="name">{{shopMatch[0].name}}</span>
+      <span class="desc"> 货期:{{shopMatch[0].delivery}}丨销量:{{shopMatch[0].sellCount}}</span>
+      <span class="sell"><strong>售价:￥{{shopMatch[0].sellPrice}}</strong> 利润:￥{{shopMatch[0].profit}}</span>
     </div>
-    <div class="shop-card add_shop" @click="toRoute('shopMgr/matchList')" v-else>+添加商品</div>
+    <div class="shop-card add_shop" @click="toRoute('home/shopMgr/matchList')" v-else>+添加商品</div>
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
-    <div class="shop-cards" v-for="(item,idx) in matchGoodsList" :key="idx" v-if="idx > 0">
+    <div class="shop-cards" v-for="(item, idx) in shopMatch" :key="idx" v-if="idx > 0">
       <div class="img_box">
         <i class="shopImg" :style="{background: 'url(' + item.images + ')'}">
           <i class="cancel_shop" @click="toCancel(idx)"></i>
@@ -31,7 +31,7 @@
       <span class="desc">货期:{{item.delivery}}丨销量:{{item.sellCount}}</span>
       <span class="sell"><strong>售价:￥{{item.sellPrice}}</strong> 利润:￥{{item.profit}}</span>
     </div>
-    <div class="shop-cards add_shop" @click="toRoute('shopMgr/matchList')">+添加商品</div>
+    <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList')">+添加商品</div>
   </div>
   <p class="bottom"></p>
   <p class="save" @click="submit()">确定</p>
@@ -41,9 +41,7 @@
 import wx from "wx";
 // import scard from "@/components/group_card";
 import mixin from "@/mixin";
-import {
-  mapState
-} from "vuex";
+import { mapState } from "vuex";
 export default {
   mixins: [mixin],
   components: {
@@ -51,24 +49,36 @@ export default {
   },
   data() {
     return {
-      matchGoodsList: [],
+      // matchGoodsList: [],
       id: '',
       title: '',
       shopId: '',
-      goodsIds: []
+      // goodsIds: []
     };
   },
   computed: {
-    ...mapState(["shopMatch"])
+    ...mapState(['shopMatch']),
+    goodsIds() {
+      let arr = []
+      this.shopMatch.forEach((item, index) => {
+        arr[index] = item.goodsId
+      })
+      return arr
+    }
   },
   methods: {
-    pageTo(url) {
-      this.$router.push(url)
+    addShopMatch() {
+      this.$store.commit('ADDMATCH', []);
+      console.log(this.shopMatch);
+      this.$router.push('/matchList')
     },
     toCancel(index) {
       console.log(index);
-      this.matchGoodsList.splice(index, 1);
-      this.goodsIds.splice(index, 1);
+      // this.matchGoodsList.splice(index, 1);
+      this.$store.commit('SPLICEMATCH', index)
+      console.log(this.shopMatch);
+      // this.goodsIds.splice(index, 1);
+      // console.log(this.goodsIds);
       // this.matchGoodsList[index] = null;
       // this.$set(this.matchGoodsList, index, {images: null,name: null, delivery: null, sellCount: null, sellPrice: null, profit: null });
     },
@@ -81,6 +91,7 @@ export default {
           selector: '#toast'
         })
       }else {
+        console.log(this.goodsIds);
         this.$API.editMatchGoods({
           id: this.id,
           title: this.title,
@@ -94,18 +105,15 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query.shopNum) {
-      this.shopTop = this.$route.query.shopNum;
-      console.log(this.shopTop);
-    }
-    console.log(this.$route.query.matchGoodsList);
-    this.matchGoodsList = JSON.parse(this.$route.query.matchGoodsList);
-    this.matchGoodsList.forEach(item => {
-      this.goodsIds.push(item.goodsId);
-    })
+    console.log(this.shopMatch);
+    // if (this.$route.query.shopNum) {
+    //   this.shopTop = this.$route.query.shopNum;
+    //   console.log(this.shopTop);
+    // }
+    // this.shopMatch.forEach((item, index) => {
+    //   this.goodsIds[index] = item.goodsId
+    // })
     console.log(this.goodsIds);
-    // this.shopId = this.$route.query.shopId;
-    console.log(this.shopId);
     this.id = this.$route.query.id;
     this.title = this.$route.query.title;
   }
@@ -240,16 +248,18 @@ export default {
         font-size: 26px
         color: #000
         overflow: hidden
-        // +singleFile
+        +singleFile
       span.desc
         width: 100%
         text-align: left
         color: #999999
         font-size: 22px
+        +singleFile
       span.sell
         width: 100%
         color: #333333
         font-size: 23px
+        +singleFile
         strong
           display: inline-block
           color: #FF0000
@@ -262,6 +272,7 @@ export default {
     height: 98px
     line-height: 98px
     font-size: 32px
+    color: #ffffff
     background-color: #F67C2F
     text-align: center
 </style>

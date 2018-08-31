@@ -84,7 +84,10 @@ const route = [
   {
     path: '/pages/home/shopMgr/setNewMatch',
     config: {
-      navigationBarTitleText: '创建搭配'
+      navigationBarTitleText: '创建搭配',
+      'usingComponents': {
+        'i-toast': '/iview/toast/index'
+      }
     }
   },
 ]

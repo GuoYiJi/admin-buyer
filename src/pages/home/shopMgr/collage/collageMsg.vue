@@ -61,6 +61,7 @@
 <script>
 import wx from "wx";
 import config from "@/config"
+import { mapState } from "vuex"
 export default {
   components: {},
   data() {
@@ -80,11 +81,12 @@ export default {
   },
   computed: {
     showShop() {
-      if (this.addShop) {
-        return this.addShop + '件'
+      if (this.shopSelectList) {
+        return this.shopSelectList.length + '件'
       }
       return '去添加商品'
-    }
+    },
+    ...mapState(["shopSelectList"])
   },
   methods: {
     //创建拼团
@@ -163,14 +165,13 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query.groupPriceData, this.$route.query.selIds)
-    if (this.$route.query.groupPriceData) {
-      this.groupPriceData = JSON.parse(this.$route.query.groupPriceData)
-      this.selIds = JSON.parse(this.$route.query.selIds);
-      this.addShop = this.selIds.length;
-    }
+    // console.log(this.$route.query.groupPriceData, this.$route.query.selIds)
+    // if (this.$route.query.groupPriceData) {
+    //   this.groupPriceData = JSON.parse(this.$route.query.groupPriceData)
+    //   this.selIds = JSON.parse(this.$route.query.selIds);
+    //   this.addShop = this.selIds.length;
+    // }
     this.url = config.url + '/api/shop/ping/addPing';
-    console.log(this.url)
   }
 };
 </script>

@@ -38,6 +38,7 @@ import scard from '@/components/s_listCard'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import { mapState } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
@@ -48,7 +49,8 @@ export default {
   computed: {
     groupNum(){
       return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
-    }
+    },
+    ...mapState(["shopSelectList"])
   },
   data() {
     return {
@@ -73,7 +75,7 @@ export default {
   },
   methods: {
     confirm(){
-      this.$router.push({path: '/pages/home/shopMgr/collage/collageMsg', query: {groupPriceData: JSON.stringify(this.groupPriceData), selIds: JSON.stringify(this.selIds)}})
+      this.$router.back(-1);
     },
     async handleTag(tag){
       this.tag = tag

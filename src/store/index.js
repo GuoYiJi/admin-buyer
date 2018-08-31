@@ -14,7 +14,8 @@ const store = new Vuex.Store({
     editAdr: '',
     shopGroup: {},
     shopExplan: {},
-    shopMatch: []
+    shopMatch: [],//商品搭配页面的集中状态管理
+    shopSelectList: [],//添加商品页面的集中状态管理
   },
   getters,
   actions,
