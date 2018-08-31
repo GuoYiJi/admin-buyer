@@ -3,64 +3,64 @@
     <div class="search-box" >
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
-        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索订单号、收货人姓名、手机号</p>
+        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索订单号、收货人姓名、手机号</p>  
       </div>
     </div>
     <div class="nav">
       <div class="list">
-        <span
-          v-for="(item,idx) in navData"
-          :key="idx"
-          class="item"
-          :class="[tag === item.id && 'active']"
+        <span 
+          v-for="(item,idx) in navData" 
+          :key="idx" 
+          class="item" 
+          :class="[tag === item.id && 'active']"  
           @click="handleNav(item.id)"
         >{{item.text}}</span>
         <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
-      </div>
+      </div>  
     </div>
-    <!-- <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  > -->
+
+    <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
     <div class="content">
       <div v-if="tag == 1">
         <orderMgr />
       </div>
       <!-- 代付款 -->
       <div v-else-if="tag == 2">
-        <orderOnPaly />
+        <orderOnPaly :noPlay="noPlay"/>
       </div>
       <!-- 拼单 -->
       <div v-else-if="tag == 3">
-        <orderIsPin />
+        <orderIsPin :isPin="isPin"/>
       </div>
-      <!-- 待发货  维修改  -->
+      <!-- 待发货 -->
       <div v-else-if="tag == 4">
-        <!-- <orderNoGoods :noGoods='noGoods'/> -->
-        <delivered />
+        <orderNoGoods :noGoods="noGoods"/>
       </div>
       <!-- 已发货 -->
       <div v-else-if="tag == 5">
-        <orderYesGoods />
+        <orderYesGoods :yesGoods="yesGoods"/>
       </div>
       <div v-else-if="tag == 6">
-        <orderYesGod />
+        <orderYesGod :yesGod="yesGod"/>
       </div>
       <div v-else-if="tag == 7">
-        <closeOrder />
+        <closeOrder :closeOrder="closeOrder"/>
       </div>
       <div v-else-if="tag == 8">
-        <orderRefund />
+        <orderRefund :shopListRefund="shopListRefund"/>
       </div>
     </div>
-    <!-- <div class="loading" v-if="canLoad">
+    <div class="loading" v-if="canLoad">
       <div v-if="showLoad"><loading  /></div>
-    </div> -->
-    <!-- </scroll-view> -->
+    </div>
+    </scroll-view>
   </div>
 </template>
 <script>
 import wx from "wx";
 import orderMgr from "@/components/o_orderMgr";
 import delivered from "@/components/o_delivered";
-// import loading from "@/commond/loading";
+import loading from "@/commond/loading";
 import orderOnPaly from "@/components/L_orderOnPaly";
 import orderIsPin from "@/components/L_orderIsPin";
 import orderNoGoods from "@/components/L_orderNoGoods";
@@ -73,7 +73,7 @@ export default {
   components: {
     orderMgr,
     delivered,
-    // loading,
+    loading,
     orderOnPaly,
     orderIsPin,
     orderNoGoods,
@@ -153,74 +153,74 @@ export default {
     toRoute(path) {
       this.$router.push("/pages/home/" + path);
      },
-    // getNextPage() {
-    //   var obj = {
-    //     pageSize: 30,
-    //     orderType: 1,
-    //     // state: this.tag
-    //   };
-    //   this.shopNum++;
-    //   obj.pageNumber = this.shopNum;
-    //   return this.$API.L_selectOrderPage(obj);
-    // },
-    // async lower(e) {
-    //   console.log(e);
-    //   if (!this.canLoad) return;
-    //   if (this.showLoad) return;
-    //   console.log(this.showLoad)
-    //   this.showLoad = true;
-    //   const listData = await this.getNextPage();
-    //   setTimeout(() => {
-    //     if (listData.data.list.length < 30) {
-    //       this.canLoad = false;
-    //     }
-    //     this.shopList = this.shopList.concat(listData.data.list);
-    //     this.showLoad = false;
-    //   }, 2000);
-    // }
+    getNextPage() {
+      var obj = {
+        pageSize: 30,
+        orderType: 1,
+        // state: this.tag
+      };
+      this.shopNum++;
+      obj.pageNumber = this.shopNum;
+      return this.$API.L_selectOrderPage(obj);
+    },
+    async lower(e) {
+      console.log(e);
+      if (!this.canLoad) return;
+      if (this.showLoad) return;
+      console.log(this.showLoad)
+      this.showLoad = true;
+      const listData = await this.getNextPage();
+      setTimeout(() => {
+        if (listData.data.list.length < 30) {
+          this.canLoad = false;
+        }
+        this.shopList = this.shopList.concat(listData.data.list);
+        this.showLoad = false;
+      }, 2000);
+    }
 
   },
   async mounted() {
-    // this.shopNum = 0;
-    // const listData = await this.getNextPage();
-    // this.shopList = this.shopList.concat(listData.data.list);
-    // if (listData.data.list.length < 30) {
-    //   this.canLoad = false;
-    // }
-    // // console.log(this.shopList)
-    // for(var i=0;i<this.shopList.length;i++){
-    //   //未付款
-    //   if(this.shopList[i].state == 1){
-    //     // console.log(11111)
-    //     this.noPlay.push(this.shopList[i])
-    //     // console.log(this.noPlay)
-    //   }else if(this.shopList[i].state == 2){//取消
-    //     this.noOrder.push(this.shopList[i])
-    //     // console.log(this.noOrder)
-    //   }else if(this.shopList[i].state == 3){//已支付
-    //     this.yesPlay.push(this.shopList[i])
-    //     // console.log(this.yesPlay)
-    //   }else if(this.shopList[i].state == 4){//支付失败
-    //     this.noPlays.push(this.shopList[i])
-    //   }else if(this.shopList[i].state == 5){//未发货
-    //     this.noGoods.push(this.shopList[i])
-    //     // console.log(this.noGoods)
-    //   }else if(this.shopList[i].state == 6){//已发货
-    //     this.yesGoods.push(this.shopList[i])
-    //     // console.log(this.yesGoods)
-    //   }else if(this.shopList[i].state == 7){//交易成功
-    //     this.yesGod.push(this.shopList[i])
-    //   }else if(this.shopList[i].state == 8){//交易关闭
-    //     this.closeOrder.push(this.shopList[i])
-    //     // console.log(this.closeOrder)
-    //   }else if(this.shopList[i].state == 9){//拼单
-    //     this.isPin.push(this.shopList[i])
-    //   }else{
+    this.shopNum = 0;
+    const listData = await this.getNextPage();
+    this.shopList = this.shopList.concat(listData.data.list); 
+    if (listData.data.list.length < 30) {
+      this.canLoad = false;
+    }
+    // console.log(this.shopList)
+    for(var i=0;i<this.shopList.length;i++){
+      //未付款
+      if(this.shopList[i].state == 1){
+        // console.log(11111)
+        this.noPlay.push(this.shopList[i])
+        // console.log(this.noPlay)
+      }else if(this.shopList[i].state == 2){//取消
+        this.noOrder.push(this.shopList[i])
+        // console.log(this.noOrder)
+      }else if(this.shopList[i].state == 3){//已支付
+        this.yesPlay.push(this.shopList[i])
+        // console.log(this.yesPlay)
+      }else if(this.shopList[i].state == 4){//支付失败
+        this.noPlays.push(this.shopList[i])
+      }else if(this.shopList[i].state == 5){//未发货
+        this.noGoods.push(this.shopList[i])
+        // console.log(this.noGoods)
+      }else if(this.shopList[i].state == 6){//已发货
+        this.yesGoods.push(this.shopList[i])
+        // console.log(this.yesGoods)
+      }else if(this.shopList[i].state == 7){//交易成功
+        this.yesGod.push(this.shopList[i])
+      }else if(this.shopList[i].state == 8){//交易关闭
+        this.closeOrder.push(this.shopList[i])
+        // console.log(this.closeOrder)
+      }else if(this.shopList[i].state == 9){//拼单
+        this.isPin.push(this.shopList[i])
+      }else{
 
-    //   }
+      }
 
-    // }
-
+    }
+    
   }
 };
 </script>
@@ -241,10 +241,10 @@ export default {
       .search
         +bg-img('home/search.png')
         +icon(38px)
-        margin-top: 7px
+        margin-top: 7px  
     .search-icon
       position: absolute
-      left: 60px
+      left: 60px 
     .input-box
       background-color: #f5f5f5
       border-radius: 4px
@@ -257,7 +257,7 @@ export default {
 .active
   color: #F67C2F
   // font-weight: 600
-.nav
+.nav 
   overflow: hidden
   text-align: center
   background: #f5f5f5
@@ -265,10 +265,10 @@ export default {
   width: 100%
   padding-top: 1px;/*no*/
   box-shadow: 0px 4px 6px 0px rgba(0, 69, 162, 0.06);/*no*/
-  .list
+  .list  
     font-size: 26px
     color: #000
-    background: #f5f5f5
+    background: #f5f5f5    
     overflow-y: hidden
     overflow-x: auto
     height: 90px
@@ -276,10 +276,10 @@ export default {
     display: flex
     width: 100%
     .item
-      flex: 0 0 20%
+      flex: 0 0 20%    
       line-height: 70px
       box-sizing: border-box
-.line
+.line 
   display: block
   height: 1px;/*no*/
   width: 8%
@@ -289,5 +289,5 @@ export default {
   bottom: 23px
   margin: 0 6%
   transition: left .3s ease-in
-
+    
 </style>

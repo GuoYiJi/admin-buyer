@@ -43,7 +43,7 @@
         <p class="Invalid_text">已失效</p>
       </div>
     </div> -->
-    <div class="text_1">已领取:112 未使用:12</div>
+    <!-- <div class="text_1">已领取:112 未使用:12</div> -->
     <!-- 撑开下方创建按钮 -->
     <div style="height: 60px"></div>
   </div>

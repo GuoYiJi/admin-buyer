@@ -1,10 +1,10 @@
 <template>
   <div class="nav">
-    <div v-for="(item,index) in noPlay" :key="index">
+    <div v-for="(item,index) in onPlayList" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.pid}}</p>
-          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
+          <p class="order">订单编号：{{item.orderNo}}</p>
+          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p>
         </div>
         <div class="middle">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
@@ -21,52 +21,40 @@
         </div>
         <div class="foot">
           <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
+            <!-- <img class="imgTwo" :src="item.picture"> -->
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(btn==0)" class="see" @click="seePlay(item.id)">确认已支付</span>
-            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
-            <!-- <span v-if="(btn==1)" class="collage">查看子拼团</span> -->
+            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
           </div>
         </div>
       </div>
     </div>
-    <!-- <div v-for="(item,index) in navData" :key="index">
-      <div class="kuang">
-        <div class="head">
-          <p class="order">订单编号：{{item.title}}</p>
-          <p class="state">拼团中，还差{{item.maShuo}}人</p>
+    <!-- 关闭订单 -->
+    <div class="closeTipAll" v-show="passhowYes">
+      <div class="closeTip">
+        <div class="closeTip_text">
+          <p class="tipText">是否确认关闭订单!</p>
         </div>
-        <div class="middle">
-          <div class="picture">
-            <img class="imgOne" :src="item.picture">
-          </div>
-          <i class="sanJiao" @click="sanJiaoBut"></i>
-        </div>
-        <div class="jieShuan">
-          <div class="quantity">共{{item.kuan}}个款，合计{{item.jian}}件</div>
-          <div class="money">订单金额：
-            <p class="money1">{{item.money}}元</p>
-          </div>
-          <div class="phone">收货人:{{item.name}} {{item.phone}}</div>
-        </div>
-        <div class="foot">
-          <div class="picture_1">
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
-          </div>
-          <div class="btn">
-            <span v-if="(btn==0)" class="see" @click="seeBut">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
-            <span v-if="(btn==1)" class="collage">查看子拼团</span>
-          </div>
+        <div class="confirm_but">
+          <div><button @click="passYesClose">取消</button></div>
+          <div><button @click="passYesBut">确定</button></div>
         </div>
       </div>
-    </div> -->
+    </div>
+    <!-- 确认已支付 -->
+    <div class="closeTipAll" v-show="pasSeePlay">
+      <div class="closeTip">
+        <div class="closeTip_text">
+          <p class="tipText">是否确认关闭订单!</p>
+        </div>
+        <div class="confirm_but">
+          <div><button @click="pasSeeClose">取消</button></div>
+          <div><button @click="pasSeeBut">确定</button></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -77,83 +65,66 @@ export default {
     data() {
         return {
             btn: 0,
-            navData: [
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                }
-            ],
+            navData: [],
             groupOrderzz: [],
             url: '',
+            passhowYes: false,
+            pasSeePlay: false,
+            orderID: '',
         };
     },
     props: {
-      noPlay: {
+      onPlayList: {
         type: Array,
         default: []
       }
     },
     methods: {
-       close() {
-            wx.showModal({
-                // title: "提示",
-                content: "确定关闭订单！",
-                success: function(res) {
-                    console.log(res);
-                    if (res.confirm) {
-                      console.log("用户点击确定");
-                      console.log(config.url)
-                      // wx.request({  
-                      //   url:  config.url+"/api/order/selectOrderPage",  
-                      //   data:{
-                      //     sessionId: wx.getStorageSync('sessionId'),
-                      //     shopId: config.appId,
-                      //     state: 8,
-                      //   },  
-                      //   method:'POST',  
-                      //   header: {  
-                      //     'content-type': 'application/x-www-form-urlencoded'  
-                      //   },  
-                      //   success: function (res) {  
-                      //     console.log(res.data)  
-                      //     // this.onLoad();
-                      //   }  
-                      // })
-                    } else if (res.cancel) {
-                      console.log("用户点击取消");
-                    }
-                }
-            });
-
+        seePlay(id){
+          this.pasSeePlay = true
+          this.orderID = id
+        },
+        close(id) {
+          this.passhowYes = true
+          this.orderID = id
+        },
+        passYesClose(){
+          this.passhowYes = false
+        },
+        async passYesBut(){
+          const L_shopCloseData = await this.$API.L_shopClose({
+            orderId: this.orderID,
+          });
+          console.log(L_shopCloseData)
+          if(L_shopCloseData.code == 1){
+            wx.showToast({
+              title: '成功',
+              icon: 'success',
+              duration: 2000
+            })
+            this.passhowYes = false
+          }else{
+            this.passhowYes = false
+          }
+        },
+        pasSeeClose(){
+          this.passhowYes = false
+        },
+        async pasSeeBut(){
+          const L_surePayData = await this.$API.L_surePay({
+            orderId: this.orderID,
+          });
+          console.log(L_surePayData)
+          if(L_surePayData.code == 1){
+            wx.showToast({
+              title: '成功',
+              icon: 'success',
+              duration: 2000
+            })
+            this.pasSeePlay = false
+          }else{
+            this.pasSeePlay = false
+          }
         },
         sanJiaoBut(item){
           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
@@ -170,7 +141,7 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
 .kuang
   width: 702px
@@ -189,13 +160,15 @@ page
       margin-left: 20px
     .state
       display: inline-block
-      flex: 1
+      // flex: 1
+      margin-right: 20px
+
   .middle
     height: 200px
     border-bottom: 1px solid #f5f5f5
     line-height: 200px
     .picture
-      margin: 20px 0 0 20px 
+      margin: 20px 0 0 20px
       display: inline-block
       .imgOne
         width: 160px
@@ -262,7 +235,7 @@ page
         width: 130px
         height: 60px
         background: #fff
-        border-radius: 8px 
+        border-radius: 8px
         border: 1px solid #999999
         color: #999
         line-height: 60px
@@ -276,5 +249,70 @@ page
         color: #fff
         margin: 20px 20px 0 0
         line-height: 60px
+.closeTipAll
+  background: rgba(0,0,0,0.4)
+  // background-color: #000
+  width: 100%
+  height: 100%
+  position: fixed
+  top: 0
+  z-index: 9999
+  .closeTip
+    opacity: 1
+    width: 550px
+    height: 260px
+    margin: 0 auto
+    background: #fff
+    margin-top: 300rpx
+    .closeTip_text
+      padding: 10px
+      text-align: center
+      textarea
+        text-align: left
+        width: 530px
+        height: 200px
+      p
+      .tipText
+        margin: 40px
+        // margin-top: 40px
+    .confirm_but
+      margin-top: 40px
+      display: flex
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+
+    .closeTip_but
+      display: flex
+      margin-top: 20px
+      div
+        width: 100%
+      div:nth-child(1) button
+        background: #CCCCCC
+        color: #000000
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
+      div:nth-child(2) button
+        background: #F67C2F
+        color: #ffffff
+        width: 100%
+        // height: 70px
+        border-radius: 0px
+        padding: 20px 0 20px 0
 
 </style>
