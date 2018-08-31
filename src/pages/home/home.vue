@@ -2,19 +2,19 @@
   <div class="home">
     <div class="top">
       <p>今日收款金额（元）</p>
-      <p class="t_money">12.00</p>
+      <p class="t_money">{{statistics.todayIncome}}</p>
       <div class="sale-box">
         <div class="s_item p-left">
           <p>今日销售件数</p>
-          <p class="num">12</p>
+          <p class="num">{{statistics.todaySales}}</p>
         </div>
         <div class="s_item p-left">
           <p>今日上新件数</p>
-          <p class="num">12</p>
+          <p class="num">{{statistics.todayNews}}</p>
         </div>
         <div class="s_item">
           <p>待发货件数</p>
-          <p class="num">12</p>
+          <p class="num">{{statistics.todayToSend}}</p>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
         <i class="n_icon n_h4"></i>
         <p>营销管理</p>
       </div>
-      <div class="n_item" @click="toRoute('home/addShop/addShop')" >
+      <div class="n_item" @click="toRoute('home/addShop/addShop')">
         <i class="n_icon n_h5"></i>
         <p>添加商品</p>
       </div>
@@ -61,27 +61,28 @@
   </div>
 </template>
 <script>
-import wx from 'wx'
-import mixin from '@/mixin'
+import wx from "wx";
+import mixin from "@/mixin";
 export default {
   mixins: [mixin],
-  components: {
-  },
-  data(){
+  components: {},
+  data() {
     return {
       nav: 1,
-    }
+      statistics: ""
+    };
   },
   methods: {
     // selectNav(num){
     //   this.nav = num
     // }
   },
-  mounted(){
-
-  },
- 
-}
+  async mounted() {
+    const statistics = await this.$API.statistics({});
+    console.log(statistics);
+    this.statistics = statistics.data;
+  }
+};
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
@@ -117,7 +118,7 @@ export default {
   display: flex
   flex-wrap: wrap
   text-align: center
-  padding-top: 60px 
+  padding-top: 60px
   .n_item
     width: 33.3%
     font-size: 28px
@@ -164,6 +165,6 @@ export default {
   .t_money
     font-size: 60px
     padding-bottom: 50px
-    
+
 </style>
 

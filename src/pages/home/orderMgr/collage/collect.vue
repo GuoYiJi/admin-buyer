@@ -21,8 +21,8 @@
       <text class="name">耕山小寨</text>
       <text class="fuKuan">拼单中，还差一人</text>
     </div>
-    <div class="list" v-for="(item,idx) in orderGoodsList" :key="idx">
-      <div class="kuang">
+    <div class="list" v-for="(item,idx) in orderGoodsList" :key="idx" >
+      <div class="kuang" @click="orderListArr(item.goodsId)">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -31,7 +31,7 @@
             <!-- <div class="type">货期:{{item.type}}</div> -->
             <!-- <span class="number">X{{item.pingOrderId}}</span> -->
           </div>
-          <div class="maShuo">{{item.num}}/{{item.price}}件</div>
+          <div class="maShuo">{{item.price}}/{{item.num}}件</div>
           <!-- <div class="maShuo">黑色:{{item.maShuo}}/{{item.pingId}}件</div> -->
         </div>
       </div>
@@ -62,77 +62,12 @@
       </div> -->
       <i class="xuXian"></i>
       <div class="orderNumber">订单编号：{{L_selectDetail.accountId}}</div>
-      <div class="orderTime">下单时间：{{L_selectDetail.receiptTime}}</div>
+      <div class="orderTime">下单时间：{{L_selectDetail.createTime}}</div>
     </div>
     <div class="foot">
       <span class="btn" @click="btn()">关闭订单</span>
     </div>
   </div>
-  <!-- <div class="nav">
-    <div class="head">
-      <i class="dingwei"></i>
-      <div class="right">
-        <div class="consignee">
-          <text>收货人:</text>
-          <text>陈小姐</text>
-          <text class="phone">13416098113</text>
-        </div>
-        <div class="address">
-          收货地址:广东省广州市海珠区保利世贸大厦c 塔2205
-        </div>
-        <div class="remark">
-          备注:包装好点
-        </div>
-      </div>
-    </div>
-    <div class="maiJia">
-      <i class="maiJiaico"></i>
-      <text class="name">耕山小寨</text>
-      <text class="fuKuan">拼单中，还差一人</text>
-    </div>
-    <div class="list" v-for="(item,idx) in navData" :key="idx">
-      <div class="kuang">
-        <img class="sPimg" :src="item.picture" />
-        <div class="textThad">
-          <div class="title">{{item.title}}</div>
-          <div class="huo">
-            <text class="name">{{item.name}}</text>
-            <div class="type">货期:{{item.type}}</div>
-            <span class="number">X{{item.number}}</span>
-          </div>
-          <div class="maShuo">白色:{{item.maShuo}}/{{item.jianShuo}}件</div>
-          <div class="maShuo">黑色:{{item.maShuo}}/{{item.jianShuo1}}件</div>
-        </div>
-      </div>
-      <div class="collage">
-        <div class="picture">
-          <img class="imgOne" :src="item.picture">
-          <img class="imgTwo" :src="item.picture">
-          <img class="imgThree" :src="item.picture">
-        </div>
-        <div class="jiaGe">
-          <text class="text">共{{item.number}}件商品,合计: </text>
-          <text class="jiaGet">{{item.jiage}}元</text>
-        </div>
-      </div>
-    </div>
-    <div class="jieShuan">
-      <div class="price">
-        <text>商品总价</text>
-        <text class="price1">￥299.00</text>
-      </div>
-      <div class="coupon">
-        <text>优惠券抵扣</text>
-        <text class="coupon1">-￥6.99</text>
-      </div>
-      <i class="xuXian"></i>
-      <div class="orderNumber">订单编号：2018062712345678904</div>
-      <div class="orderTime">下单时间：2018-06-16 12:27:12</div>
-    </div>
-    <div class="foot">
-      <span class="btn" @click="btn()">关闭订单</span>
-    </div>
-  </div> -->
 </template>
 <script>
 import wx from "wx";
@@ -141,36 +76,15 @@ export default {
     data() {
       return {
           shuoo: 0,
-          navData: [
-              {
-                  picture:
-                      "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                  title: "商品1商品1商品1商品1商品1商品1商品1商品1商品1商品1",
-                  name: "档口名称",
-                  type: "现货",
-                  number: 5,
-                  maShuo: "均码",
-                  jianShuo: 1,
-                  jianShuo1: 4,
-                  jiage: 154
-              }
-          ],
+          navData: [],
           L_selectDetail: [],
           warehouseData: [],
           pingUserData: [],
           orderGoodsList: [],
+          goodsDetailData: []
       };
     },
     methods: {
-        // shuoLiang() {
-        //     var that = this;
-        //     var navData = this.navData;
-        //     var shuo = 0;
-        //     for (var i = 0; i < navData.length; i++) {
-        //         shuo += navData[i].number;
-        //     }
-        //     that.shuoo = shuo;
-        // },
         btn() {
             wx.showModal({
                 // title: "提示",
@@ -184,6 +98,10 @@ export default {
                     }
                 }
             });
+        },
+        orderListArr(goodsId){
+          console.log(goodsId)
+          this.$router.push( {path:'/pages/home/orderMgr/orderList', query:{goodsId: goodsId}})
         }
     },
     async mounted() {

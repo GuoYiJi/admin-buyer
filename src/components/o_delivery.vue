@@ -21,13 +21,14 @@
                 <span class="number">X{{itemzz.countNum}}</span>
                 <div >
                   <div class="maShuo">
-                    <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    <scroll-view scroll-x="true" style=" width:180px " >
+                      <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    </scroll-view>
                     <span class="edit" @click="edit(itemzz,item.id)">编辑</span>
                   </div>
                 </div> 
             </div>
-          </div>
-         
+          </div>      
         </div>
       </div>
       <div class="jiaGe">
@@ -39,7 +40,7 @@
         <span class="text">共{{item.num}}件商品,合计: </span>
         <span class="jiaGet">{{item.count}}元</span>
       </div>
-      <div class="type_1">
+      <div class="type_1" v-show="colorSex">
         <div class="title">
           <span class="colour">颜色</span>
           <span class="colour">码数</span>
@@ -48,11 +49,11 @@
           <span class="remaining">剩余件数</span>
         </div>
         <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
-          <div class="title_2" v-for="(itemss,idss) in orderDeliver" :key="idss">
-            <span class="colour">{{itemss.color}}</span>
-            <span class="standby">{{itemss.size}}</span>
-            <span class="shipments">{{itemss.canNumer}}</span>
-            <span class="remaining">{{itemss.waitNum}}</span>
+          <div class="title_2" v-for="(itemxx,idxx) in colorSexArr" :key="idxx" v-if="itemxx.orderIds == item.id">
+            <span class="colour">{{itemxx.color}}</span>
+            <span class="standby">{{itemxx.size}}</span>
+            <span class="shipments">{{itemxx.canNumer}}</span>
+            <span class="remaining">{{itemxx.waitNum}}</span>
           </div>
         <!-- </div> -->
       </div>
@@ -70,7 +71,7 @@
           <img class="collage_img" :src="item.picture">
           <img class="collage_img" :src="item.picture">
         </div>
-        <span class="details" @click="details()">查看详情</span>
+        <span class="details" @click="details(item.id)">查看详情</span>
         <span class="Deliver" @click="Deliver()">发货</span>
         <span v-if="(btn==1)" class="collage">查看子拼团</span>
       </div>
@@ -88,7 +89,6 @@
           </ul>
         </div>
         <div class="title_t" >
-              
           <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
@@ -192,6 +192,8 @@ export default {
             orderIds: '',
             skuId: '',
             orderGoodsId: '',
+            colorSex: false,
+            colorSexArr: []
             // count: 0,
             // items: []
         };
@@ -225,10 +227,10 @@ export default {
             }
         }, 
         add(index,itemss){
-          console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
           this.value1 = this.inputValueArr[index]
           console.log(this.value1)
+          this.colorSexArr.push(itemss)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
             console.log(111111111111111111111111111)
@@ -251,7 +253,8 @@ export default {
         },
         // 编辑弹窗保存
         save() {
-          console.log(this.idzz)
+          // console.log(this.idzz)
+          this.colorSex = true
           let object = {
             sessionId: this.azzSessionId,
             shopId: this.appId,
@@ -315,11 +318,6 @@ export default {
           let orderLisetArr = itemss.skuList
           let deliverList = itemss.deliverList
           let array = [];
-
-          // this.idzz = orderLisetArr.id
-          // console.log(idzz)
-          // this.orderIdzz = orderLisetArr.skuId
-          // console.log(orderIdzz)
           for(var i=0; i<orderLisetArr.length;i++){
             let obj = {};
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
@@ -339,6 +337,7 @@ export default {
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
             obj.orderGoodsId = deliverList[i].orderGoodsId
+            obj.orderIds = idNum
             // console.log(obj)
             array.push(obj)
           }
@@ -347,7 +346,6 @@ export default {
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
-          // console.log(this.idzz)
 
         },
         // 发布
@@ -355,8 +353,8 @@ export default {
             console.log(123123);
             this.isShows = !this.isShows;
         },
-        details(){
-          this.$router.push('mail/delivery')
+        details(id){
+          this.$router.push( {path:'/pages/home/orderMgr/mail/delivery', query:{orderId: id}})
           console.log(111)
         },
         btn() {
@@ -492,6 +490,8 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
+        margin-left: 10px
+
   .jiaGe 
     // height: 70px
     width: 100%
@@ -742,11 +742,6 @@ page
             button
               width: 80px
               height: 40px
-
-
-
-          
-
   .foot 
     width: 100%
     position: fixed

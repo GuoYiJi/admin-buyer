@@ -1,34 +1,48 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="user_head"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"/></p>
-      <p class="t_name">发生交电话费</p>
+      <p class="user_head"><img :src="this.headimg"/></p>
+      <!-- <p class="t_name">发生交电话费</p> -->
+      <open-data class="t_name" type="userNickName"></open-data>
     </div>
     <div class="center">
       <div class="line" @click="toRoute('my/newPoint/newPoint')">
         <div class="content">
-          <p class="title"><i class="icon my1"></i>新手指南</p>
-          <p class="toin"><i class="goin"></i></p>
+          <p class="title">
+            <i class="icon my1"></i>新手指南</p>
+          <p class="toin">
+            <i class="goin"></i>
+          </p>
         </div>
       </div>
+      <!-- <div class="line" @click="toRoute('my/invate/invateDetail')"> -->
       <div class="line" @click="toRoute('my/invate/invate')">
         <div class="content">
-          <p class="title"><i class="icon my2"></i>邀约有奖</p>
-          <p class="toin"><i class="goin"></i></p>
+          <p class="title">
+            <i class="icon my2"></i>邀约有奖</p>
+          <p class="toin">
+            <i class="goin"></i>
+          </p>
         </div>
       </div>
-      <div class="line" @click="toRoute('my/connect')">
+      <!-- <div class="line" @click="toRoute('my/connect')">
         <div class="content">
-          <p class="title"><i class="icon my3"></i>汇提客服</p>
-          <p class="toin"><i class="goin"></i></p>
+          <p class="title">
+            <i class="icon my3"></i>汇提客服</p>
+          <p class="toin">
+            <i class="goin"></i>
+          </p>
         </div>
-      </div>
-      <div class="line" @click="toRoute('my/setting/setting')">
+      </div> -->
+      <!-- <div class="line" @click="toRoute('my/setting/setting')">
         <div class="content">
-          <p class="title"><i class="icon my4"></i>设置</p>
-          <p class="toin"><i class="goin"></i></p>
+          <p class="title">
+            <i class="icon my4"></i>设置</p>
+          <p class="toin">
+            <i class="goin"></i>
+          </p>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="footer">
       <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">
@@ -50,13 +64,16 @@ export default {
   components: {},
   data() {
     return {
-      nav: 2
+      nav: 2,
+      headimg: ''
     };
   },
   methods: {},
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
+    this.headimg = wx.getStorage('avatar')
+    console.log(this.headimg)
   }
 };
 </script>
@@ -128,7 +145,7 @@ export default {
     .my3
       +bg-img('my/my3.png')
     .my4
-      +bg-img('my/my4.png') 
+      +bg-img('my/my4.png')
   .toin
     color: #666
     font-size: .38rem
@@ -138,5 +155,5 @@ export default {
     vertical-align: baseline
     &:after
       transform: rotate(225deg)
-      border-color: #666 
+      border-color: #666
 </style>

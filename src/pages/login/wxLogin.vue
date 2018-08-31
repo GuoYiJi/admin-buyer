@@ -68,6 +68,7 @@ export default {
       });
       console.log(data.data);
       await wx.setStorageSync("sessionId", data.data.sessionId);
+      await wx.setStorageSync("avatar", data.data.avatar);
       this.toRoute("home/home");
     }
   },

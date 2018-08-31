@@ -19,6 +19,7 @@
 <script>
 import wx from "wx";
 import mixin from "@/mixin";
+import uploadImg from "@/plugins/uploadImg";
 export default {
   mixins: [mixin],
   components: {},
@@ -37,11 +38,47 @@ export default {
         count: 1,
         success: function(file) {
           console.log(file);
-          self.img = file.tempFilePaths[0];
+          // self.img = file.tempFilePaths[0];
+          uploadImg(file.tempFilePaths[0], function(url) {
+            self.img = url;
+          });
           wx.setStorage({
             key: "FMimg",
             data: file.tempFilePaths[0]
           });
+        }
+      });
+    },
+    uploadImg(tempFilePath, callback) {
+      var that = this;
+      wx.uploadFile({
+        url: config.uploadImageUrl,
+        filePath: tempFilePath,
+        name: "file",
+        formData: {
+          name: tempFilePath.substring(10),
+          key: "img/${filename}",
+          policy: config.imgPolicy,
+          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+          success_action_status: "200",
+          signature: config.imgSignature
+        },
+        success: function(res) {
+          console.log(res);
+          if (res.statusCode == 400) {
+            that.handleError("上传的图片大小不能超过2m!");
+          } else if (res.statusCode == 200) {
+            if (that.maxNum && that.imgList.length >= that.maxNum) {
+              that.handleError("不能超过15张图片噢！");
+              return;
+            }
+            callback(
+              config.uploadImageUrl + "/img" + tempFilePath.substring(10)
+            );
+          }
+        },
+        fail: function(err) {
+          console.log(err);
         }
       });
     }

@@ -1,103 +1,77 @@
 <template>
-  <div class="home">
-    <scroll-view scroll-y style="height: 480px;" >
+<div class="home">
+  <scroll-view scroll-y style="height: 480px;">
     <div class="item_b">
       <!-- <div class="sb_box"> -->
       <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
-        <div class="g_box clearfix" :style="{width: 242*4 + 384 + 'rpx'}">
+        <div class="g_box clearfix" :style="{width: 242 * shopNum / 2 + 384 + 'rpx'}">
           <div class="g_left">
-            <div class="left_box">
+            <div class="left_box" v-for="(item, index) in shopList" :key="index">
+              <!-- 系列标题 -->
               <div class="title">
-                <p><i class="i_new"></i>清新系列</p>
+                <p>
+                  <i class="i_new"></i>{{item.title}}系列</p>
               </div>
+              <!-- 大图 -->
               <div class="card_box shop-card">
-                <div class="img_box"><p class="img_1"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"></p></div>
+                <div class="img_box">
+                  <p class="img_1"><img :src="item.matchGoods[0].images"></p>
+                </div>
                 <div class="desc">
-                  <p class="d_text">就爱上的回访记录卡山东客服了解奥斯卡代理费圣诞快乐房间卡萨老地方拉水电费可垃圾上单士大夫看见爱上的看法</p>
-                  <p class="d_time"> 货期:现货丨销量:123</p>
+                  <p class="d_text">{{item.matchGoods[0].name}}</p>
+                  <p class="d_time">货期:{{item.matchGoods[0].delivery}}丨销量:{{item.matchGoods[0].sellCount}}</p>
                 </div>
                 <p class="price">
-                  <span>售价:￥23</span>
-                  <span class="sell">&nbsp;&nbsp;&nbsp;售价:￥23</span>         
+                  <span>售价:￥{{item.matchGoods[0].sellPrice}}</span>
+                  <span class="sell">利润:￥{{item.matchGoods[0].profit}}</span>
                 </p>
               </div>
             </div>
           </div>
           <div class="g_right">
-            <!-- <div class="scroll_box"> -->
-              <div class="scard_box" :style="{width: 242*4 + 'rpx'}" >
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-              </div>
-            <!-- </div> -->
-          </div>
-        </div>
-      </scroll-view>
-      <!-- </div> -->
-      <div class="footer">
-        <p class="edit">编辑</p>
-        <p class="close">下架</p>
-      </div>
-    </div>
-    <div class="item_b">
-      <!-- <div class="sb_box"> -->
-      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
-        <div class="g_box clearfix" :style="{width: 242*4 + 384 + 'rpx'}">
-          <div class="g_left">
-            <div class="left_box">
-              <div class="title">
-                <p><i class="i_new"></i>清新系列</p>
-              </div>
-              <div class="card_box shop-card">
-                <div class="img_box"><p class="img_1"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"></p></div>
-                <div class="desc">
-                  <p class="d_text">就爱上的回访记录卡山东客服了解奥斯卡代理费圣诞快乐房间卡萨老地方拉水电费可垃圾上单士大夫看见爱上的看法</p>
-                  <p class="d_time"> 货期:现货丨销量:123</p>
+            <!-- 小图 -->
+            <div class="scard_box" :style="{width: 242*1 + 'rpx'}" v-for="(item, i) in shopList" :key="i">
+              <div class="p_card" v-for="(ite, j) in item.matchGoods" :key="j" v-if="j > 0">
+                <div class="g_boxs">
+                  <div class="card_boxs shop-cards">
+                    <div class="img_box">
+                      <p class="img_1"><img :src="ite.images"></p>
+                    </div>
+                    <div class="descs">
+                      <p class="d_texts">{{ite.name}}</p>
+                      <p class="d_times">货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</p>
+                    </div>
+                    <p class="price">
+                      <span>售价:￥{{ite.sellPrice}}</span>
+                      <span class="sell">利润:￥{{ite.profit}}</span>
+                    </p>
+                    <i class="cancel_shop" v-if="cancel"></i>
+                  </div>
                 </div>
-                <p class="price">
-                  <span>售价:￥23</span>
-                  <span class="sell">&nbsp;&nbsp;&nbsp;售价:￥23</span>         
-                </p>
               </div>
             </div>
           </div>
-          <div class="g_right">
-            <!-- <div class="scroll_box"> -->
-              <div class="scard_box" :style="{width: 242*4 + 'rpx'}" >
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-                <p class="p_card"><scard /></p>
-              </div>
-            <!-- </div> -->
-          </div>
         </div>
       </scroll-view>
       <!-- </div> -->
       <div class="footer">
-        <p class="edit">编辑</p>
+        <p class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', shopList, shopList[0].id, shopList[0].title, shopList[0].shopId)">编辑</p>
         <p class="close">下架</p>
       </div>
     </div>
     <div class="bottom"></div>
-    </scroll-view> 
-    <div class="create">
-      <p @click="toRoute('groupSetting')"><btn :title="'创建搭配'" /></p>
-    </div>
+  </scroll-view>
+  <div class="create">
+    <p @click="pageTo('/pages/home/shopMgr/setNewMatch')">
+      <btn :title="'创建搭配'"/>
+    </p>
   </div>
+</div>
 </template>
 <script>
-import wx from "wx"
-import scard from '@/components/group_card'
-import btn from '@/components/btn.vue'
+import wx from "wx";
+import scard from "@/components/group_card";
+import btn from "@/components/btn.vue";
 export default {
   components: {
     scard,
@@ -116,17 +90,29 @@ export default {
     };
   },
   methods: {
-    toRoute(path) {
-      this.$router.push('/pages/home/shopMgr/'+ path)
+    pageTo(url) {
+      // wx.removeStorageSync('selectShopArr');
+      this.$router.push(url);
     },
-    searchShop(params){
-      params.pageSize = this.pageSize
-      return this.$API.s_getshopMatch(params)
+    toEdit(url, shopList, id, title, shopId) {
+      this.$router.push({
+        path: url,
+        query: {
+          matchGoodsList: JSON.stringify(shopList[0].matchGoods),
+          id,
+          title,
+          shopId
+        }
+      });
+    },
+    searchShop(params) {
+      params.pageSize = this.pageSize;
+      return this.$API.s_getshopMatch(params);
     },
     getNextPage(params) {
       this.shopNum++;
       params.pageNumber = this.shopNum;
-      return this.searchShop(params)
+      return this.searchShop(params);
     },
     async lower(e) {
       // console.log(e);
@@ -141,34 +127,34 @@ export default {
         this.shopList = this.shopList.concat(listData.data.list);
         this.showLoad = false;
       }, 2000);
-    },
+    }
   },
-  async mounted() {
+  async created() {
     this.shopNum = 0;
     const listData = await this.getNextPage({});
     this.shopList = listData.data.list;
+    this.shopNum = this.shopList[0].matchGoods.length;
+    console.log(this.shopNum);
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
+    console.log(this.shopList, 123);
   }
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .sb_box
-  // overflow-x: auto
 .create
   position: fixed
   bottom: 0
-  left: 0 
+  left: 0
   right: 0
   padding: 20px 74px
   background: #fff
 .scroll_box_content
   height: 1000px
   overflow: auto
-  // overflow-x: hidden
 .home
   background: #fff
 .footer
@@ -194,29 +180,72 @@ export default {
   top: 0
   left: 20px
   width: 344px
-// .scroll_box
-//   overflow-y: hidden
-//   overflow-x: auto
-//   height: 950px
 .scard_box
   display: flex
   flex-wrap: wrap
-  // width: 600px
   .p_card
     height: 444px
     padding-right: 26px
     padding-bottom: 20px
     width: 216px
+    .cancel_shop
+      position: absolute
+      +bg-img('shopMgr/cancel.png')
+      right: 12px
+      top: 12px
+      +icon(50px)
+      border-radius: 50px
+    .g_boxs
+      display: inline-block
+      height: 422px
+      width: 216px
+    .card_boxs
+      padding-bottom: 4px
+      .img_box
+        +border(2px,all, #ccc)
+        padding: 16px 0px
+        .img_1
+          height: 300px
+          width: 212px
+    .d_name
+      color: #e3e3e3
+      font-size: 14px
+    .shop-cards
+      position: relative
+      img
+        width: 100%
+        border-radius: 4px
+    .descs
+      margin: 5px 0
+      font-size: 20px
+    .d_texts
+      color: #000
+      font-size: 24px
+      +singleFile
+    .price
+      color: #FF0000
+      font-size: 22px
+      padding-top: 10px
+      height: 24px
+      line-height: 24px
+      +singleFile
+      text-align: left
+      .sell
+        margin-left: 5px
+        color: #333
+        font-size: 20px
+        font-weight: 500
+    .d_times
+      font-size: 20px
+      color: #999
+      +singleFile
+      text-align: left
 .g_box
-  // height: 400px
-  padding-top: 20px 
+  padding-top: 20px
   +border(10px,bottom,#F5F5F5)
-  // overflow-y: hidden
-  // overflow-x: auto
   .g_left
     float: left
     width: 384px
-    // padding: 0 20px
     height: 900px
     position: relative
     .title
@@ -238,16 +267,12 @@ export default {
 
   .g_right
     float: left
-    // width: 356px
-    // height: 917px
-    // overflow: hidden
 .d_name
 	color: #e3e3e3
 	font-size: 14px
 .shop-card
-	// width: 320px
 	position: relative
-	img 
+	img
 		width: 100%
 		border-radius: 4px
 	.desc
@@ -259,7 +284,6 @@ export default {
       +singleFile()
       color: #000
       font-size: 28px
-
 .price
   color: #FF0000
   font-weight: bold

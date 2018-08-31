@@ -25,8 +25,8 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="see" @click="seePlay(item.id)">确认已支付</span>
-            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
+            <span v-if="(btn==0)" class="see" @click="seePlay(item.id,index)">确认已支付</span>
+            <span v-if="item.state == 1" class="close" @click="close(item.id, index)">关闭订单</span>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
         </div>
         <div class="confirm_but">
           <div><button @click="passYesClose">取消</button></div>
-          <div><button @click="passYesBut">确定</button></div>
+          <div><button @click="passYesBut()">确定</button></div>
         </div>
       </div>
     </div>
@@ -47,7 +47,7 @@
     <div class="closeTipAll" v-show="pasSeePlay">
       <div class="closeTip">
         <div class="closeTip_text">
-          <p class="tipText">是否确认关闭订单!</p>
+          <p class="tipText">确认付款!</p>
         </div>
         <div class="confirm_but">
           <div><button @click="pasSeeClose">取消</button></div>
@@ -71,6 +71,7 @@ export default {
             passhowYes: false,
             pasSeePlay: false,
             orderID: '',
+            currentSelectedIndex: 0
         };
     },
     props: {
@@ -80,13 +81,17 @@ export default {
       }
     },
     methods: {
-        seePlay(id){
+      //支付
+        seePlay(id,index){
           this.pasSeePlay = true
           this.orderID = id
+          this.currentSelectedIndex = index
         },
-        close(id) {
+        //关闭订单
+        close(id, index) {
           this.passhowYes = true
           this.orderID = id
+          this.currentSelectedIndex = index
         },
         passYesClose(){
           this.passhowYes = false
@@ -100,15 +105,18 @@ export default {
             wx.showToast({               
               title: '成功',               
               icon: 'success',  
-              duration: 2000  
+              duration: 2000
             }) 
             this.passhowYes = false
+            this.onPlayList.splice(this.currentSelectedIndex, 1)
           }else{
             this.passhowYes = false
           }
         },
         pasSeeClose(){
-          this.passhowYes = false
+          this.pasSeePlay = false
+            // pasSeePlay: false,
+
         },
         async pasSeeBut(){
           const L_surePayData = await this.$API.L_surePay({
@@ -117,14 +125,16 @@ export default {
           console.log(L_surePayData)
           if(L_surePayData.code == 1){
             wx.showToast({               
-              title: '成功',               
+              title: '成功',    
               icon: 'success',  
               duration: 2000  
             }) 
             this.pasSeePlay = false
+            this.onPlayList.splice(this.currentSelectedIndex, 1)
           }else{
             this.pasSeePlay = false
           }
+          
         },
         sanJiaoBut(item){
           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})

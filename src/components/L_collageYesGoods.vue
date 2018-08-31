@@ -27,7 +27,7 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="seeLogistics()">查看物流</span>
+            <span v-if="(btn==0)" class="close" @click="seeLogistics(item.id)">查看物流</span>
           </div>
         </div>
       </div>
@@ -73,8 +73,8 @@ export default {
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
         },
-        seeLogistics(){
-          this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: 2}})
+        seeLogistics(id){
+          this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: id}})
         }
     },
     mounted() {

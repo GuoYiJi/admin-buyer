@@ -100,7 +100,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 5,
+        pageSize: 30,
         orderType: 1,
         // state: this.tag
       };
@@ -121,7 +121,7 @@ export default {
         console.log(listData)
       });
       setTimeout(() => {
-        if (listData.data.list.length < 5) {
+        if (listData.data.list.length < 30) {
           this.canLoad = false;
         }
         this.orderList = this.orderList.concat(listData.data.list);
@@ -142,7 +142,7 @@ export default {
         this.noSigleList.push(this.orderList[i])
       }
     }
-    if (listData.data.list.length < 5) {
+    if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
   }

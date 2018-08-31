@@ -57,18 +57,25 @@ const orderMgr = [{
             navigationBarTitleText: '订单详情'
         }
     },
+    // 物流详情
+    {
+        path: '/pages/home/orderMgr/mail/logistics',
+        config: {
+            navigationBarTitleText: '物流详情'
+        }
+    },
+    // 商品详情
+    {
+        path: '/pages/home/orderMgr/orderList',
+        config: {
+            navigationBarTitleText: '商品详情'
+        }
+    },
     // 子订单
     {
         path: '/pages/home/orderMgr/suborders/suborders',
         config: {
             navigationBarTitleText: '订单详情'
-        }
-    },
-    // 子订单
-    {
-        path: '/pages/home/orderMgr/mail/logistics',
-        config: {
-            navigationBarTitleText: '物流详情'
         }
     },
     // 邮寄待发货--主订单
@@ -86,3 +93,5 @@ const orderMgr = [{
         },
     },
 ]
+
+module.exports = orderMgr

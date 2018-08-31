@@ -29,7 +29,7 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="item.state == 1" class="close" @click="close(item.id)">关闭订单</span>
+            <span v-if="item.state == 1" class="close" @click="close(item.id,index)">关闭订单</span>
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
@@ -51,7 +51,7 @@
 </template>
 <script>
 import wx from "wx";
-import config from "@/config";
+// import config from "@/config";
 
 export default {
     components: {
@@ -66,6 +66,7 @@ export default {
             url: '',
             passhowYes: false,
             orderID: '',
+            currentSelectedIndex: 0
             // arr: []
         };
     },
@@ -78,9 +79,11 @@ export default {
       }
     },
     methods: {
-        close(id) {
+        close(id,index) {
           this.passhowYes = true
           this.orderID = id
+          this.currentSelectedIndex = index
+
         },
         passYesClose(){
           this.passhowYes = false
@@ -97,6 +100,7 @@ export default {
               duration: 2000  
             }) 
             this.passhowYes = false
+            this.onPlayList.splice(this.currentSelectedIndex, 1)
           }else{
             this.passhowYes = false
 

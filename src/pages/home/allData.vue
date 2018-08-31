@@ -23,11 +23,11 @@
       <div class="content">
         <div class="box">
           <p class="name">用户总数</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.accountSum}}</p>
         </div>
         <div class="box">
           <p class="name">昨日新增用户</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.newAccount}}</p>
         </div>
         <div class="box">
           <p class="name"></p>
@@ -44,19 +44,19 @@
       <div class="content">
         <div class="box">
           <p class="name">已付款订单数</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.payOrder}}</p>
         </div>
         <div class="box">
           <p class="name">待发货件数</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.waitDeliver}}</p>
         </div>
         <div class="box">
           <p class="name">已发货件数</p>
-          <p class="number"></p>
+          <p class="number">{{statistics.isDeliver}}</p>
         </div>
         <div class="box">
           <p class="name">昨日新增件数</p>
-          <p class="number"></p>
+          <p class="number">{{statistics.yesterdayNew}}</p>
         </div>
       </div>
     </div>
@@ -65,19 +65,19 @@
       <div class="content">
         <div class="box">
           <p class="name">交易总额</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.countPay}}</p>
         </div>
         <div class="box">
           <p class="name">昨日收款</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.yestodayIncome}}</p>
         </div>
         <div class="box">
           <p class="name">总退款</p>
-          <p class="number"></p>
+          <p class="number">{{statistics.countRefundPrice}}</p>
         </div>
         <div class="box">
           <p class="name">昨日退款</p>
-          <p class="number"></p>
+          <p class="number">{{statistics.refundPrice}}</p>
         </div>
       </div>
     </div>
@@ -86,15 +86,15 @@
       <div class="content">
         <div class="box">
           <p class="name">商品总数</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.skuStock}}</p>
         </div>
         <div class="box">
           <p class="name">在线商品数</p>
-          <p class="number">1234</p>
+          <p class="number">{{statistics.onLineStock}}</p>
         </div>
         <div class="box">
           <p class="name">昨日新增商品</p>
-          <p class="number"></p>
+          <p class="number">{{statistics.yestodayNewStock}}</p>
         </div>
         <div class="box">
           <p class="name"></p>
@@ -106,18 +106,19 @@
 </template>
 <script>
 import wx from "wx";
-
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      statistics: []
+    };
   },
-  methods: {
- 
-  },
-   async mounted() {
-
-   }
+  methods: {},
+  async mounted() {
+    const statistics = await this.$API.statistics({});
+    this.statistics = statistics.data;
+    console.log(statistics);
+  }
 };
 </script>
 <style lang="sass" scoped>
@@ -136,7 +137,7 @@ export default {
   font-size: 28px
   line-height: 80px
   .title
-    height: 80px 
+    height: 80px
     color: #fff
   .content
     display: flex
@@ -165,5 +166,5 @@ export default {
   padding-bottom: 20px
   .t_money
     font-size: 60px
-    padding-bottom: 50px 
+    padding-bottom: 50px
 </style>

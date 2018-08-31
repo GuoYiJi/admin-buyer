@@ -21,7 +21,10 @@
                 <span class="number">X{{item.countNum}}</span>
                 <div >
                   <div class="maShuo">
-                    <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    
+                    <scroll-view scroll-x="true" style=" width:180px  " >
+                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    </scroll-view>
                     <span class="edit" @click="edit(item,item.orderId)">编辑</span>
                   </div>
                 </div> 
@@ -32,7 +35,7 @@
       </div>
       <div class="jiaGe">
         <div class="jiaGe_1" >
-          <span>共1个款，合计3件</span>
+          <span>共{{item.skuListSize}}个款，合计{{item.countNum}}件</span>
           <br/>
           <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
         </div>
@@ -89,7 +92,6 @@
         </div>
         <div class="title_t" >
               
-          <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
@@ -106,7 +108,6 @@
               </li>
               <li class="s_item">{{itemss.waitNum}}</li>
             </ul>
-          </scroll-view>
           <!-- </div>-->
         </div> 
         <div class="foot">
@@ -191,6 +192,7 @@ export default {
             valueArr: [],
             orderIds: '',
             skuId: '',
+            orderGoodsId: '',
             // count: 0,
             // items: []
         };
@@ -230,9 +232,9 @@ export default {
           console.log(this.value1)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
+            this.orderGoodsId= itemss.orderGoodsId
             
             console.log(this.idzz)
           }
@@ -336,6 +338,7 @@ export default {
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
+            obj.orderGoodsId = deliverList[i].orderGoodsId
             // console.log(obj)
             array.push(obj)
           }
@@ -362,7 +365,7 @@ export default {
               shopId: this.appId,
               orderDeliver:  
               [{
-                orderGoodsId: this.orderIdzz,
+                orderGoodsId: this.orderGoodsId,
                 canDeliverNumber: this.value1,
                 id: this.idzz
               }],
@@ -489,6 +492,7 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
+        margin-left: 10px
   .jiaGe 
     // height: 70px
     width: 100%
@@ -501,11 +505,11 @@ page
       margin: 20px
     .text
       display: inline-block
-      right: 100px;
+      right: 100px
       top: 20px
       position: absolute
     .jiaGet
-      right: 30px;
+      right: 30px
       top: 20px
       position: absolute
       display: inline-block
@@ -739,10 +743,6 @@ page
             button
               width: 80px
               height: 40px
-
-
-
-          
 
   .foot 
     width: 100%

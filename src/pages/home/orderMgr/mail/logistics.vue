@@ -1,19 +1,22 @@
 <template>
   <!-- 查看物流 -->
   <div class="home">
-    <div class="kuang" v-show="kuang">
+    <div class="kuang" v-show="kuang" v-if="L_sLogistics">
       <div class="head">
         <i class="h-img"></i>
-        <span class="h-text">物流公司：中通快递</span>
+        <span class="h-text">物流公司：{{L_sLogistics.type==0?'顺丰':'申通'}}</span>
       </div>
       <div class="head">
-        <span class="ht-text">快递单号：123456</span>
+        <span class="ht-text">快递单号：{{L_sLogistics.logisticsNo}}</span>
       </div>
       <div class="img-box">
-        <img class="img" :src="img">
+        <img class="img" :src="L_sLogistics.image">
       </div>
     </div>
-    <div class="kuang">
+    <div class="img-box" v-show="showImg" v-if="L_sLogistics">
+      <img class="img" :src="L_sLogistics.image">
+    </div>
+    <div class="kuang" v-show="wuKuang">
       <div class="kong">
         <p class="k-text">无物流状态</p>
       </div>
@@ -27,11 +30,37 @@ export default {
   data() {
     return {
       kuang: false,
-      img: "http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"
+      wuKuang: true,
+      showImg: false,
+      L_sLogistics: []
     };
   },
-  methods: {},
-  mounted() {}
+  methods: {
+    
+  },
+  async mounted() {
+    const L_selectLogisticsData = await this.$API.L_selectLogistics({
+      orderId: this.$route.query.orderId
+    });
+    console.log(L_selectLogisticsData)
+    if(L_selectLogisticsData.code == 1 ){
+      this.L_sLogistics = L_selectLogisticsData.data
+      this.kuang = true
+      this.wuKuang = false
+    }else if(L_selectLogisticsData.data.logisticsNo == '' || L_selectLogisticsData.data.logisticsNo == null ){
+      
+      this.L_sLogistics = L_selectLogisticsData.data
+      this.showImg = true
+      this.wuKuang = false
+      this.kuang = false
+    }
+    else{
+      this.wuKuang = true
+      this.kuang = false
+      this.showImg = false
+    }
+
+  }
 };
 </script>
 <style lang="sass" scoped>
