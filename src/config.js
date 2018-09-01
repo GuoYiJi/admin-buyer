@@ -11,6 +11,5 @@ export default {
     videoSignature: 'qEHyM+78CoR758nHxlVr2VwV2PQ=',
     //wx config
     appId: 'wx3a5f4001c0e1d32f',
-    test: 'asd'
 
 }
