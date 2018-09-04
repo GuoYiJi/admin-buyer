@@ -1,41 +1,44 @@
 <template>
-  <div class="nav">
-    <div class="head">
+  <div class="nav" >
+    <div class="head" v-if="warehouseData">
       <i class="dingwei"></i>
       <div class="right">
         <div class="consignee">
           <text>收货人:</text>
-          <text>陈小姐</text>
-          <text class="phone">13416098113</text>
+          <text>{{warehouseData.name}}</text>
+          <text class="phone">{{warehouseData.mobile}}</text>
         </div>
         <div class="address">
-          收货地址:广东省广州市海珠区保利世贸大厦c 塔2205
+          收货地址:{{warehouseData.value}}{{warehouseData.address}}
         </div>
-        <div class="remark">
-          备注:包装好点
+        <div class="remark" v-if="L_selectDetail">
+          备注:{{L_selectDetail.remark}}
         </div>
       </div>
     </div>
     <div class="maiJia">
       <i class="maiJiaico"></i>
       <text class="name">耕山小寨</text>
-      <text class="fuKuan" v-if="(select == 2)">待发货</text>
+      <!-- <text class="fuKuan" v-if="(select == 2)">待发货</text> -->
       <text class="fuKuan" v-if="(select == 0)">拼团成功，待发货</text>
     </div>
-    <div class="list" v-for="(item,idx) in navData" :key="idx">
-      <div class="kuang">
-        <img class="sPimg" :src="item.picture" />
+    <div class="list" v-for="(item,idx) in orderGoodsSku" :key="idx">
+      
+      <div class="kuang"  @click="orderListArr(item.goodsId)">
+        <img class="sPimg" :src="item.image" />
         <div class="textThad">
-          <div class="title">{{item.title}}</div>
+          <div class="title">{{item.name}}</div>
           <div class="huo">
-            <text class="name">{{item.name}}</text>
-            <div class="type">货期:{{item.type}}</div>
-            <span class="number">X{{item.number}}</span>
+            <text class="name">{{item.stallInfo3}}</text>
+            <div class="type">货期:{{item.delivery}}</div>
+            <!-- <text class="name">{{item.stallInfo3}}</text> -->
+            <span class="number">X{{item.remainNum}}</span>
           </div>
-          <div class="maShuo">白色:{{item.maShuo}}/{{item.jianShuo}}件</div>
           <div class="maShuo">
-            <span class="text">黑色:{{item.maShuo}}/{{item.jianShuo1}}件</span>
-            <span class="edit" @click="edit()">编辑</span>
+            <scroll-view scroll-x="true" style=" width:180px  " >
+              <span class="text">{{item.skuCode}}/{{item.num}}件</span>  
+            </scroll-view>
+            <span class="edit" @click="edit(item,item.id)">编辑</span>
           </div>
         </div>
       </div>
@@ -46,107 +49,63 @@
           <span class="standby">待发数</span>
           <span class="shipments">发货件数</span>
           <span class="remaining">剩余件数</span>
-        </div>
-        <div class="title_2">
-          <span class="colour_1">红</span>
-          <span class="size_1">S</span>
-          <span class="standby_1">12</span>
-          <span class="shipments_1">5</span>
-          <span class="remaining_1">5</span>
-        </div>
-        <div class="title_3">
-          <span class="colour_2">黄</span>
-          <span class="size_2">M</span>
-          <span class="standby_2">12</span>
-          <span class="shipments_2">1</span>
-          <span class="remaining_2">1</span>
+        </div> 
+        <div class="title_2" v-for="(itemss,idss) in orderDeliver" :key="idss">
+          <span class="colour">{{itemss.color}}</span>
+          <span class="standby">{{itemss.size}}</span>
+          <span class="shipments">{{itemss.canNumer}}</span>
+          <span class="remaining">{{itemss.waitNum}}</span>
         </div>
       </div>
       <div class="jiaGe">
-        <div class="collage" v-if="(select == 2)">
+        <!-- <div class="collage" v-if="(select == 2)">
           <img class="collage_img" :src="item.picture">
           <img class="collage_img" :src="item.picture">
           <img class="collage_img" :src="item.picture">
-        </div>
-        <text class="text">共{{item.number}}件商品,合计: </text>
-        <text class="jiaGet">{{item.jiage}}元</text>
+        </div> -->
+        <text class="text">共{{item.num}}件商品,合计: </text>
+        <text class="jiaGet">{{item.price}}元</text>
       </div>
-    </div>
-    <div class="number_1" v-if="(select == 2)">
-      <div class="completed">
-        <div class="completed_1">子订单编号（已完成）：12345678</div>
-        <i class="sanjiao"></i>
-      </div>
-      <div class="incomplete">
-        <div class="incomplete_1">子订单编号（待收货）：12345678</div>
-        <i class="sanjiao"></i>
-      </div>
-    </div>
-    <div class="jieShuan">
-      <div class="price">
-        <span class="price_1">商品总价</span>
-        <span class="price_2">￥299.00</span>
-      </div>
-      <div class="coupon">
-        <span class="coupon_1">优惠券抵扣</span>
-        <span class="coupon_2">-￥6.99</span>
-      </div>
-      <div class="freight">
-        <span class="freight_1">运费</span>
-        <span class="freight_2">+￥6.00</span>
-      </div>
-      <i class="xuXian"></i>
-      <div class="orderNumber">订单编号：2018062712345678904</div>
-      <div class="orderTime">下单时间：2018-06-16 12:27:12</div>
-      <div class="Payment">支付时间：2018-06-16 12:27:12</div>
-      <div class="collage">拼团时间：2018-06-16 12:27:12</div>
     </div>
     <!-- 撑开下面按钮 -->
     <div style="height: 50px; width: 100%;"></div>
     <div class="foot">
-      <span class="btn" @click="btn()">发货</span>
+      <span class="btn" @click="Deliver()">发货</span>
     </div>
     <!-- 编辑弹窗 -->
     <div v-show="isShow">
       <div class="demo-container">
         <div class="title_s">
           <ul class="s_item_box">
-            <li class="s_item">颜色</li>
+            <li class="s_item">码数</li>
             <li class="s_item">码数</li>
             <li class="s_item">待发数</li>
             <li class="s_item i-input">发货件数</li>
             <li class="s_item">剩余件数</li>
           </ul>
         </div>
-        <div class="title_t">
-          <ul class="s_item_box">
-            <li class="s_item">红</li>
-            <li class="s_item">S</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value1" min="0" max="100" @change="handleChange1" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-          <ul class="s_item_box">
-            <li class="s_item">黄</li>
-            <li class="s_item">M</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value2" min="0" max="100" @change="handleChange2" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-          <ul class="s_item_box">
-            <li class="s_item">红</li>
-            <li class="s_item">M</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value3" min="0" max="100" @change="handleChange3" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-        </div>
+        <div class="title_t" >
+              
+          <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
+            <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
+              <li class="s_item">{{itemss.color}}</li>
+              <li class="s_item">{{itemss.size}}</li>
+              <li class="s_item">{{itemss.num}}</li>
+              <li class="s_item i-input">
+                <div class="numAll">
+                  <div class="numCut"> <button @click="subtract(idss)">-</button></div>
+                  <div class="numInput"> 
+                    <!-- {{inputValueArr[idss]}} -->
+                    <input type="text" value="0"  v-model="inputValueArr[idss]">
+                    </div>
+                  <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
+                </div>
+              </li>
+              <li class="s_item">{{itemss.waitNum}}</li>
+            </ul>
+          </scroll-view>
+          <!-- </div>-->
+        </div> 
         <div class="foot">
           <span class="save" @click="save()">保存</span>
           <span class="cancel" @click="cancel()">取消</span>
@@ -156,7 +115,7 @@
     <!-- 发布弹窗 -->
     <div v-show="isShows">
       <div class="box">
-        <div class="kuang">
+        <div class="kuang_1">
           <div class="title">请填写物流信息</div>
           <div class="logistics">
             <picker @change="bindPickerChange" :value="index" :range="array">
@@ -170,7 +129,7 @@
           </div>
           <div class="courier">
             <span class="span">快递单号:</span>
-            <input class="input" type="text" placeholder="请填写快递单号">
+            <input class="input" type="text" v-model="logisticsNo" placeholder="请填写快递单号">
           </div>
           <div class="title_s">上传快递信息凭证：(仅一张)</div>
           <div class="upload" @click="upload()">
@@ -178,12 +137,12 @@
             <img v-if="(tempFilePaths != '')" :src="tempFilePaths">
           </div>
           <div class="message" @click="message()">
-            <i class="message_img" v-if="(select == 0)"></i>
+            <i class="message_img" :v-model="select" v-if="(select == 0)"></i>
             <i class="message_img img" v-if="(select == 1)"></i>
             <span>无快递信息</span>
           </div>
           <div class="btn">
-            <span class="btn_1" @click="btn()">取消</span>
+            <span class="btn_1" @click="btnzz()">取消</span>
             <span class="btn_2" @click="btn()">确认发货</span>
           </div>
         </div>
@@ -193,6 +152,7 @@
 </template>
 <script>
 import wx from "wx";
+import config from "@/config";
 export default {
     components: {},
     data() {
@@ -232,7 +192,33 @@ export default {
                     jianShuo1: 4,
                     jiage: 154
                 }
-            ]
+            ],
+            L_selectDetail: [],
+            warehouseData: [],
+            pingUserData: [],
+            orderGoodsList: [],
+            goodsDetailData: [],
+            L_selectOrderzz: [],
+            // number: '',
+            skuCode: [],
+            goodsOrder: [],
+            skuCodeAllList: [],
+            numAllList: [],
+            idzz: [],
+            orderIdzz: [],
+            orderDeliver: [],
+            url: '',
+            appId: '',
+            sexList: [],
+            addurl: '',
+            inputValueArr: [],
+            valueArr: [],
+            orderIds: '',
+            skuId: '',
+            orderGoodsId: '',
+            orderGoodsSku: [],
+            deliverListSku: []
+
         };
     },
     methods: {
@@ -263,28 +249,84 @@ export default {
                 this.select = 0;
             }
         },
+        orderListArr(id){
+          console.log(id)
+          this.$router.push({path:'/pages/home/orderMgr/orderList',query:{goodsId: id}})
+        },
         // 发货组件
         handleChange1({ mp: { detail } }) {
             this.value1 = detail.value;
         },
-        handleChange2({ mp: { detail } }) {
-            this.value2 = detail.value;
+        add(index,itemss){
+          console.log(itemss)
+          this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
+          this.value1 = this.inputValueArr[index]
+          console.log(this.value1)
+          // console.log(this.inputValueArr)
+          if( this.inputValueArr[index] > 0 ){
+            console.log(111111111111111111111111111)
+            this.orderIdzz= itemss.skuId
+            // this.idzz= itemss.id
+            this.orderGoodsId= itemss.orderGoodsId
+            
+            console.log(this.idzz)
+          }
         },
-        handleChange3({ mp: { detail } }) {
-            this.value3 = detail.value;
+        subtract(index){
+          if(this.inputValueArr[index]  == 0){
+            this.idzz[index] = null
+            this.orderIdzz[index] = null
+            return;
+          }
+
+          this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
+          console.log(this.inputValueArr)
         },
         // 编辑弹窗保存
         save() {
+          console.log(this.idzz)
+          let object = {
+            sessionId: this.azzSessionId,
+            shopId: this.appId,
+            orderIds: this.orderIds,
+            orderDeliver:  
+            [{
+              num: this.value1,
+              // canDeliverNumber: ,
+              skuId: this.orderIdzz
+            }],
+          }
             var that = this;
             wx.showModal({
                 // title: "提示",
                 content: "是否确认保存！",
                 success: function(res) {
+                    that.isShow = false 
                     console.log(res);
                     if (res.confirm) {
-                        console.log("用户点击确定");
+                          console.log("用户点击确定");
+                        wx.request({
+                          url: that.addurl, //仅为示例，并非真实的接口地址
+                          data: JSON.stringify(object),
+                          header: {
+                            'content-type': 'application/json'
+                          },
+                          method: 'post',
+                          success: function(res) {
+                            console.log(res.data)
+                            if(res.data.code == 1){
+                              wx.showToast({
+                                title: '保存成功',
+                                icon: 'success',
+                                duration: 2000
+                              })
+                            }else{
+                            }
+                            
+                            // this.isShows = false
+                          }
+                        })
                         setTimeout(function() {
-                            that.edit();
                         }, 500);
                     } else if (res.cancel) {
                         console.log("用户点击取消");
@@ -292,25 +334,131 @@ export default {
                 }
             });
         },
+        
+        Deliver() {
+            console.log(123123);
+            this.isShows = !this.isShows;
+        },
         // 编辑弹窗取消
         cancel() {
             this.edit();
         },
         // 显示隐藏编辑弹窗
-        edit() {
-            this.isShow = !this.isShow;
+        async edit(itemss,idNum) {
+          this.orderIds = idNum
+          console.log(itemss)
+          this.isShow = !this.isShow;
+          // this.skuCode = []
+          // let vueNum =  this.value1
+          let orderLisetArr = this.orderGoodsSku
+          let deliverList = this.deliverListSku
+          console.log(deliverList)
+          let array = [];
+          for(var i=0; i<orderLisetArr.length;i++){
+            console.log(orderLisetArr)
+            let obj = {};
+            let skuCodeList  = orderLisetArr[i].skuCode.split(',')
+            console.log(skuCodeList)
+            obj.color = skuCodeList[0];
+            obj.size = skuCodeList[1];
+            var canNumer = 0;
+            for(var j=0;j<deliverList.length;j++){
+              if(orderLisetArr[i].skuId == deliverList[j].skuId ){
+                  canNumer = deliverList[j].canDeliverNumber
+              }
+              
+            console.log(orderLisetArr)
+            }
+            obj.canNumer = canNumer
+            obj.num = orderLisetArr[i].num
+            obj.id = orderLisetArr[i].id
+            obj.skuId = orderLisetArr[i].skuId
+            obj.waitNum = orderLisetArr[i].remainNum
+            obj.orderGoodsId = deliverList[i].orderGoodsId
+            // console.log(obj)
+            array.push(obj)
+          }
+          this.orderDeliver = array
+          console.log( this.orderDeliver)
+          this.orderDeliver.forEach((item, index) => {
+            this.inputValueArr[index] = 0;
+          })
+
         },
-        // 发布
         btn() {
-            console.log(123123);
-            this.isShows = !this.isShows;
+          let object = {
+              sessionId: this.azzSessionId,
+              shopId: this.appId,
+              orderDeliver:  
+              [{
+                orderGoodsId: this.orderGoodsId,
+                canDeliverNumber: this.value1,
+                id: this.idzz
+              }],
+              logistics: 
+              {
+                image: this.tempFilePaths,
+                logisticsNo: this.logisticsNo,
+                type: this.select
+              }
+            }
+            console.log(JSON.stringify(object))
+          wx.request({
+            url: this.url, //仅为示例，并非真实的接口地址
+            data: JSON.stringify(object),
+            header: {
+              'content-type': 'application/json'
+            },
+            method: 'post',
+            success: function(res) {
+              console.log(res.data)
+              if(res.data.code == 1){
+                wx.showToast({
+                  title: '发货成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                // this.isShows = false
+              }else{
+                // this.isShows = false
+              }
+            }
+          })
+        },
+        details(id){
+          this.$router.push( {path:'/pages/home/orderMgr/mail/delivery', query:{orderId: id}})
+          console.log(111)
+        },
+        btnzz(){
+          this.isShows = !this.isShows;
+
         }
     },
     async mounted() {
-      const L_OrderDetail = await this.$API.L_selectOrderDetail({
-        // orderId: '',
+      const L_selectOrderData = await this.$API.L_selectOrderDetail({
+        orderId: this.$route.query.orderId
       });
-      console.log(L_OrderDetail)
+      // console.log(L_selectOrderData)
+      this.L_selectDetail = L_selectOrderData.data
+      this.idzz = this.L_selectDetail.id
+      console.log(this.idzz)
+      // console.log(this.L_selectDetail.warehouse)
+      this.warehouseData =this. L_selectDetail.orderAddress
+      console.log( this.warehouseData)
+      // this.pingUserData = this.L_selectDetail.pingUser
+      this.orderGoodsList =  this.L_selectDetail.orderGoods
+      // console.log(this.orderGoodsList.orderGoods)
+      for(var i = 0; i<this.orderGoodsList.length; i++){
+        this.orderGoodsSku = this.orderGoodsList[i].orderGoods
+        this.deliverListSku = this.orderGoodsList[i].deliverList
+        console.log(this.orderGoodsSku)
+      }
+      
+      this.azzSessionId =  wx.getStorageSync('sessionId')
+      this.url = config.url+'/api/order/addChildren'
+      this.addurl = config.url+'/api/order/goods/addChildren'
+      console.log(this.addurl)
+      this.appId = config.appId
     }
 };
 </script>
@@ -622,6 +770,12 @@ page
         margin: 0 -15px
       .i-input
         flex: 2
+        .numAll
+          display: flex
+          div
+            button
+              width: 80px
+              height: 40px
   .foot 
     width: 100%
     position: fixed
@@ -656,6 +810,7 @@ page
       border-radius: 4px  
 
 
+
 // 发布弹窗
 .box
   width: 100%
@@ -664,7 +819,7 @@ page
   position: fixed
   top: 0px
   left: 0px
-  .kuang
+  .kuang_1
     +center
     width: 600px
     height: 737px

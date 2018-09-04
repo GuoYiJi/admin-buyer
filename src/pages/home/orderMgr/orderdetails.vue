@@ -51,6 +51,10 @@ export default {
     },
     mounted() {
         this.navData.push(JSON.parse(this.$route.query.item))
+<<<<<<< HEAD
+=======
+        console.log(this.navData)
+>>>>>>> remotes/origin/Lqi
     },
 
 };

@@ -27,7 +27,6 @@
         <div class="scroll-box">
           <div class="box">
             <p >
-              <!-- 拼团组件 -->
               <CollageYesGoods :yesGoods="yesGoods"/>
             </p>
           </div>
@@ -42,14 +41,14 @@
 <script>
 import wx from "wx";
 import payment from "@/components/o_payment";
-import delivery from "@/components/o_delivery";
+import Ldelivery from "@/components/L_delivery";
 import CollageYesGoods from "@/components/L_collageYesGoods";
 import loading from "@/commond/loading";
 export default {
   components: {
     payment,
     CollageYesGoods,
-    delivery,
+    Ldelivery,
     loading,
 
   },
@@ -64,6 +63,7 @@ export default {
       shopNum: 0,
       items: this.default,
       yesGoods: [],
+      yesGoodsAll: [],
 
     };
   },
@@ -87,7 +87,7 @@ export default {
       console.log(type)
       this.type = type
       const listData = await this.getNextPage({
-        ob: type,
+        orderType: type,
         // state: 1
       })
 
@@ -100,7 +100,7 @@ export default {
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: 1,
+        orderType: 6,
         state: 6
         // state: this.tag
       };
@@ -129,7 +129,7 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.yesGoods = this.yesGoods.concat(listData.data.list); 
+    this.yesGoods = this.yesGoods.concat(listData.data.list);
     // console.log(this.orderList)
     console.log(this.yesGoods);
     if (listData.data.list.length < 30) {

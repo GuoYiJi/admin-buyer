@@ -20,10 +20,8 @@
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
+          <div class="picture_1" v-for="(pin,idPin) in isPin.pingUser" :key="idPin" v-if="pin.head.length < 4">
+            <img class="imgTwo" :src="pin.head">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>

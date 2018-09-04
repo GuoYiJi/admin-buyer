@@ -21,12 +21,20 @@
                 <span class="number">X{{item.countNum}}</span>
                 <div >
                   <div class="maShuo">
+<<<<<<< HEAD
                     <scroll-view scroll-x="true" style=" width:80%  display: flex" >
                       <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
                     </scroll-view>
                     <span class="edit" @click="edit(item,item.orderId)">编辑</span>
                     <!-- <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
                     <span class="edit" @click="edit(item)">编辑</span> -->
+=======
+                    
+                    <scroll-view scroll-x="true" style=" width:180px  " >
+                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                    </scroll-view>
+                    <span class="edit" @click="edit(item,item.orderId)">编辑</span>
+>>>>>>> remotes/origin/Lqi
                   </div>
                 </div>
             <!-- </div> -->
@@ -92,8 +100,12 @@
           </ul>
         </div>
         <div class="title_t" >
+<<<<<<< HEAD
 
           <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
+=======
+              
+>>>>>>> remotes/origin/Lqi
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
@@ -110,7 +122,6 @@
               </li>
               <li class="s_item">{{itemss.waitNum}}</li>
             </ul>
-          </scroll-view>
           <!-- </div>-->
         </div>
         <div class="foot">
@@ -227,7 +238,11 @@ export default {
             } else if (this.select == 1) {
                 this.select = 0;
             }
+<<<<<<< HEAD
         },
+=======
+        }, 
+>>>>>>> remotes/origin/Lqi
         add(index,itemss){
           console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
@@ -235,7 +250,6 @@ export default {
           console.log(this.value1)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
@@ -260,7 +274,11 @@ export default {
             sessionId: this.azzSessionId,
             shopId: this.appId,
             orderIds: this.orderIds,
+<<<<<<< HEAD
             orderDeliver:
+=======
+            orderDeliver:  
+>>>>>>> remotes/origin/Lqi
             [{
               num: this.value1,
               // canDeliverNumber: ,
@@ -293,7 +311,11 @@ export default {
                               })
                             }else{
                             }
+<<<<<<< HEAD
 
+=======
+                            
+>>>>>>> remotes/origin/Lqi
                             // this.isShows = false
                           }
                         })
@@ -423,6 +445,10 @@ export default {
 
     },
     async mounted() {
+<<<<<<< HEAD
+=======
+      
+>>>>>>> remotes/origin/Lqi
     },
 };
 </script>
@@ -495,7 +521,12 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
+<<<<<<< HEAD
   .jiaGe
+=======
+        margin-left: 10px
+  .jiaGe 
+>>>>>>> remotes/origin/Lqi
     // height: 70px
     width: 100%
     background: #fff
@@ -507,11 +538,11 @@ page
       margin: 20px
     .text
       display: inline-block
-      right: 100px;
+      right: 100px
       top: 20px
       position: absolute
     .jiaGet
-      right: 30px;
+      right: 30px
       top: 20px
       position: absolute
       display: inline-block
@@ -746,11 +777,15 @@ page
               width: 80px
               height: 40px
 
+<<<<<<< HEAD
 
 
 
 
   .foot
+=======
+  .foot 
+>>>>>>> remotes/origin/Lqi
     width: 100%
     position: fixed
     bottom: 0px

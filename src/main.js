@@ -21,7 +21,13 @@ Vue.prototype.$Toast = $Toast
 Vue.prototype.$success = $success
 Vue.config.productionTip = false
 
-
+// const routes = [{
+//         path: "/pages/home/orderMgr/orderdetails",
+//         name: 'orderdetails',
+//         component: Orderdetails,
+//     }]
+//     //创建路由实例
+// const router = new VueRouter({ routes })
 const app = new Vue({
     // el: '#app',
     store,
@@ -30,6 +36,7 @@ const app = new Vue({
 app.$mount()
 
 export default {
+
     // 这个字段走 app.json
     config: {
         // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去

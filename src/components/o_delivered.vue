@@ -29,13 +29,12 @@
         <div class="scroll-box">
           <div class="box">
             <p>
-              <!-- 拆单组件 -->
+              <!-- 发货组件 -->
               <delivery :sigleList="sigleList"/>
             </p>
-            <p >
-              <!-- 拼团组件 -->
+            <!-- <p >
               <CollageNoGoods :noGoodszz="noGoodszz"/>
-            </p>
+            </p> -->
           </div>
         </div>
         <div class="loading" v-if="canLoad">
@@ -48,9 +47,11 @@
         <div class="nav">
           <p class="title_1">收货人</p>
           <div class="btn">
-            <span v-for="(item, index) in navList" :key="index">
-              <span class="brn_1" :class="[btn == index && 'btn-active']" @click="selectedNav(index)">{{item}}</span>
-            </span>
+            <scroll-view scroll-y="true" style="height:80%" >
+              <span v-for="(item, index) in selectReceiptName" :key="index">
+                <span class="brn_1" :class="[btn == index && 'btn-active']" @click="selectedNav(item.receiptName)">{{item.receiptName}}</span>
+              </span> 
+            </scroll-view>
           </div>
           <p class="more">查看更多
             <i class="goback"></i>
@@ -84,6 +85,7 @@ export default {
         onPlayList: [],
         noGoodszz: [],
         sigleList: [],//可拆单的数组
+        selectReceiptName: [],
 
       };
     },
@@ -105,9 +107,17 @@ export default {
                 this.toggleRight1();
             }
             this.type = type;
+            
         },
-        toggleRight1() {
-            this.isShows = !this.isShows;
+        async toggleRight1() {
+            
+          const L_selectDeliver = await this.$API.L_selectDeliverName({
+            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
+            // orderType: 1, 
+          });
+          this.selectReceiptName = L_selectDeliver.data.list
+
+          this.isShows = !this.isShows;
         },
         toEdit() {
             this.edit = true;
@@ -120,13 +130,13 @@ export default {
             this.btn = index;
         },
         async confirmBut(){
-          console.log(111)
-          const L_selectDeliver = await this.$API.L_selectDeliverName({
-            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
-            // orderType: 1, 
+          const listData = await this.getNextPage({
+            receiptName: this.btn
           });
-          console.log(L_selectDeliver)
-          this.isShows = false
+          this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
+          this.sigleList = this.noGoodszz 
+          console.log(this.sigleList)
+           this.isShows = !this.isShows;
         },
       getNextPage() {
         var obj = {
@@ -161,19 +171,11 @@ export default {
       const listData = await this.getNextPage();
       console.log(listData);
       this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
+      this.sigleList = this.noGoodszz 
       // console.log(this.orderList)
       console.log(this.noGoodszz);
       if (listData.data.list.length < 30) {
         this.canLoad = false;
-      }
-      for(var i=0;i<this.noGoodszz.length;i++){
-        if(this.noGoodszz[i].layer == 1 || this.noGoodszz[i].layer == -1){
-          this.sigleList.push(this.noGoodszz[i])
-          console.log(this.sigleList)
-        }else{
-          // this.noSigleList.push(this.noGoodszz[i])
-          return null
-        }
       }
     
   }

@@ -147,6 +147,7 @@ export default {
     this.shopNum = 0;
     const listDatazz = await this.getNextPageRefund();
     this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
+    console.log(this.shopListRefund)
     // this.groupOrder = this.shopListRefund
     for(var i=0;i<this.shopListRefund.length;i++){//申请中
       if(this.shopListRefund[i].state == 0){//

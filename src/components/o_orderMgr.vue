@@ -24,7 +24,7 @@
         <div class="scroll-box">
           <div class="box">
             <p>
-              <!-- 拆单组件 -->
+              <!-- 发货组件 -->
               <delivery :sigleList="sigleList"/>
             </p>
             <p >
@@ -133,8 +133,12 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
+<<<<<<< HEAD
     // console.log(listData);
     this.orderList = this.orderList.concat(listData.data.list);
+=======
+    this.orderList = this.orderList.concat(listData.data.list); 
+>>>>>>> remotes/origin/Lqi
     for(var i=0;i<this.orderList.length;i++){
       if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
         this.sigleList.push(this.orderList[i])
@@ -146,7 +150,10 @@ export default {
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
+<<<<<<< HEAD
     // console.log(this.noSigleList)
+=======
+>>>>>>> remotes/origin/Lqi
   }
 };
 </script>

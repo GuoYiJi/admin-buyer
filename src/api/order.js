@@ -7,8 +7,8 @@ export default class order {
     L_selectOrderDetail = params => http.post('api/order/selectOrderDetail', params)
         //售后列表
     L_selectOrderRefund = params => http.post('api/order/refund/selectOrderRefund', params)
-        //筛选
-    L_selectDeliverName = params => http.post('api/order/selectDeliverName', params)
+        //筛选发货人
+    L_selectDeliverName = params => http.post('api/order/selectReceiptName', params)
         // 拆单
     L_addChildren = params => http.post('api/order/addChildren', params)
         //发货
@@ -28,6 +28,7 @@ export default class order {
     L_selectLogistics = params => http.post('api/order/selectLogistics', params)
         //api/goods/selectGoodsDetail 商品详情
     L_selectGoodsDetail = params => http.post('api/goods/selectGoodsDetail', params)
+<<<<<<< HEAD
         //api/goods/add
     L_addOrder = params => http.post('api/goods/add', params)
 
@@ -36,3 +37,12 @@ export default class order {
 
 
 }
+=======
+        ///api/freight/findFreight
+    L_findFreight = params => http.post('api/freight/findFreight', params)
+        //api/warehouse/changeExpress
+    L_changeExpress = params => http.post('api/warehouse/changeExpress', params)
+        //api/goods/add
+    L_addOrder = params => http.post('api/goods/add', params)
+}
+>>>>>>> remotes/origin/Lqi

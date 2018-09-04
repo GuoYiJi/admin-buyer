@@ -8,19 +8,10 @@
           <text class="name">订单编号：123456</text>
           <text class="fuKuan">待付款</text>
         </div>
-        <img class="sPimg" :src="item.picture" />
         <div class="textThad">
-          <div class="title">{{item.title}}</div>
-          <div class="huo">
-            <text class="name">{{item.name}}</text>
-            <div class="type">货期:{{item.type}}</div>
-            <span class="number">X{{item.number}}</span>
-          </div>
-          <div class="maShuo">白色:{{item.maShuo}}/{{item.jianShuo}}件</div>
-          <div class="maShuo">
-            <span class="text">黑色:{{item.maShuo}}/{{item.jianShuo1}}件</span>
-            <span class="edit" @click="edit()">编辑</span>
-          </div>
+          <img class="sPimg" :src="item.picture" />
+          <img class="sPimg" :src="item.picture" />
+          <img class="sPimg" :src="item.picture" />
         </div>
       </div>
       <div class="jiaGe">
@@ -83,89 +74,6 @@
         <span v-if="(btn==1)" class="collage">查看子拼团</span>
       </div>
     </div>
-    <!-- 编辑弹窗 -->
-    <div v-show="isShow">
-      <div class="demo-container">
-        <div class="title_s">
-          <ul class="s_item_box">
-            <li class="s_item">颜色</li>
-            <li class="s_item">码数</li>
-            <li class="s_item">待发数</li>
-            <li class="s_item i-input">发货件数</li>
-            <li class="s_item">剩余件数</li>
-          </ul>
-        </div>
-        <div class="title_t">
-          <ul class="s_item_box">
-            <li class="s_item">红</li>
-            <li class="s_item">S</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value1" min="0" max="100" @change="handleChange1" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-          <ul class="s_item_box">
-            <li class="s_item">黄</li>
-            <li class="s_item">M</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value2" min="0" max="100" @change="handleChange2" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-          <ul class="s_item_box">
-            <li class="s_item">红</li>
-            <li class="s_item">M</li>
-            <li class="s_item">12</li>
-            <li class="s_item i-input">
-              <i-input-number :value="value3" min="0" max="100" @change="handleChange3" />
-            </li>
-            <li class="s_item">6</li>
-          </ul>
-        </div>
-        <div class="foot">
-          <span class="save" @click="save()">保存</span>
-          <span class="cancel" @click="cancel()">取消</span>
-        </div>
-      </div>
-    </div>
-    <!-- 发布弹窗 -->
-    <div v-show="isShows">
-      <div class="box">
-        <div class="kuang_1">
-          <div class="title">请填写物流信息</div>
-          <div class="logistics">
-            <picker @change="bindPickerChange" :value="index" :range="array">
-              <view class="picker">
-                物流公司:
-                <span class="picker_o">{{array[index]}}
-                  <i class="drop"></i>
-                </span>
-              </view>
-            </picker>
-          </div>
-          <div class="courier">
-            <span class="span">快递单号:</span>
-            <input class="input" type="text" placeholder="请填写快递单号">
-          </div>
-          <div class="title_s">上传快递信息凭证：(仅一张)</div>
-          <div class="upload" @click="upload()">
-            <span class="text" v-if="(tempFilePaths == '')">+可上传图片</span>
-            <img v-if="(tempFilePaths != '')" :src="tempFilePaths">
-          </div>
-          <div class="message" @click="message()">
-            <i class="message_img" v-if="(select == 0)"></i>
-            <i class="message_img img" v-if="(select == 1)"></i>
-            <span>无快递信息</span>
-          </div>
-          <div class="btn">
-            <span class="btn_1" @click="btn()">取消</span>
-            <span class="btn_2" @click="btn()">确认发货</span>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 <script>
@@ -184,7 +92,6 @@ export default {
             index: 0,
             select: 0,
             tempFilePaths: "",
-            array: ["-请选择物流公司-", "顺丰", "申通"],
             navData: [
                 {
                     picture:
@@ -198,38 +105,11 @@ export default {
                     jianShuo1: 4,
                     jiage: 154
                 },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: "商品1商品1商品1商品1商品1商品1商品1商品1商品1商品1",
-                    name: "档口名称",
-                    type: "现货",
-                    number: 5,
-                    maShuo: "均码",
-                    jianShuo: 1,
-                    jianShuo1: 4,
-                    jiage: 154
-                }
             ],
             L_selectOrderzz: []
         };
     },
     methods: {
-        // 上传图片
-        upload() {
-            var that = this;
-            wx.chooseImage({
-                count: 1, // 默认9
-                sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
-                sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
-                success: function(res) {
-                    // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                    var tempFilePaths = res.tempFilePaths;
-                    console.log(tempFilePaths, 123123);
-                    that.tempFilePaths = tempFilePaths[0];
-                }
-            });
-        },
         bindPickerChange(e) {
             console.log(e.mp.detail.value);
             this.index = e.mp.detail.value;
@@ -241,48 +121,6 @@ export default {
             } else if (this.select == 1) {
                 this.select = 0;
             }
-        },
-        // 发货组件
-        handleChange1({ mp: { detail } }) {
-            this.value1 = detail.value;
-        },
-        handleChange2({ mp: { detail } }) {
-            this.value2 = detail.value;
-        },
-        handleChange3({ mp: { detail } }) {
-            this.value3 = detail.value;
-        },
-        // 编辑弹窗保存
-        save() {
-            var that = this;
-            wx.showModal({
-                // title: "提示",
-                content: "是否确认保存！",
-                success: function(res) {
-                    console.log(res);
-                    if (res.confirm) {
-                        console.log("用户点击确定");
-                        setTimeout(function() {
-                            that.edit();
-                        }, 500);
-                    } else if (res.cancel) {
-                        console.log("用户点击取消");
-                    }
-                }
-            });
-        },
-        // 编辑弹窗取消
-        cancel() {
-            this.edit();
-        },
-        // 显示隐藏编辑弹窗
-        edit() {
-            this.isShow = !this.isShow;
-        },
-        // 发布
-        Deliver() {
-            console.log(123123);
-            this.isShows = !this.isShows;
         },
         details(){
           this.$router.push('mail/delivery')
@@ -331,7 +169,7 @@ page
       margin: 21px 20px 0
     .textThad
       display: inline-block
-      width: 494px
+      // width: 494px
       position: relative
       margin: 10px 0
       font-size: 24px

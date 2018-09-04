@@ -1,27 +1,20 @@
 <template>
   <div class="home">
-    <div class="content" >
-      <div class="adr-card" @click="selectAct(1)">
-        <div class="user">
-          <p class="name">浙江沪包邮</p>
-        </div>
-        <div class="adr">
-          <i class="select" :class="[select == 1 && 'active'] " ></i>
-          <p class="adr-text">运送到上海、江苏、浙江山歌、安徽省和江西省；售件1kg，运费10.00元；续重1件，运费5.00元</p>
-        </div>
-      </div>
-      <div class="adr-card" @click="selectAct(2)">
-        <div class="user">
-          <p class="name">浙江沪包邮</p>
-        </div>
-        <div class="adr">
-          <i class="select" :class="[select == 2 && 'active'] " ></i>
-          <p class="adr-text">运送到上海、江苏、浙江山歌、安徽省和江西省；售件1kg，运费10.00元；续重1件，运费5.00元</p>
+    <scroll-view scroll-y="true" style="height: 80% " >
+      <div class="content">
+        <div class="adr-card" @click="selectAct(item.id,item)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
+            <div class="user">
+              <p class="name">{{item.name}}</p>
+            </div>
+            <div class="adr">
+              <i class="select" :class="[select == item.id && 'active'] " ></i>
+              <p class="adr-text" v-for="(itemzz,indexzz) in item.area" :key="indexzz">运送到{{itemzz.areaName}}；售件{{itemzz.firstPirce}}kg，运费{{itemzz.secondPrice}}元</p>
+            </div>
         </div>
       </div>
-    </div>
+    </scroll-view>
     <p class="bottom"></p>
-    <p class="save">保存</p>
+    <p class="save" @click="saveBut">保存</p>
   </div>
 </template>
 <script>
@@ -30,15 +23,38 @@ export default {
   components: {},
   data() {
     return {
-      select: ''
+      select: '',
+      areaIdAll: [],
+      templateId: '',
+      areazz: [],
+      value1: 1,
+
+
     };
   },
   methods: {
-    selectAct(id){
+    selectAct(id,item){
       this.select = id
+      console.log(item.area)
+      console.log(id)
+      for(var i=0;i<item.area.length;i++){
+        console.log(item.area[i].templateId)
+        this.templateId = item.area[i].templateId
+        wx.setStorageSync('templateId',this.templateId)
+      }
+    },
+    saveBut(){
+      this.$router.push( {path:'/pages/home/storeMgr/sendWay/sendWay', query:{templateId: this.templateId}})
     }
   },
-  mounted() {
+  async mounted() {
+    //L_findFreight
+      const L_findFreightData = await this.$API.L_findFreight({
+
+      });
+      console.log(L_findFreightData)
+      this.areaIdAll = L_findFreightData.data
+
 
   }
 };
@@ -48,7 +64,7 @@ export default {
 .content
   padding-bottom: 100px
 .save
-  position: absolute
+  // position: absolute
   bottom: 0
   left: 0
   right: 0

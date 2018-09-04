@@ -19,11 +19,19 @@
           </div>
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
+        <div class="number_1">
+          <scroll-view scroll-y lower-threshold='80' style="height: 80%;  overflow-y: hidden;">
+            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+              <div class="completed_1">子订单编号
+                {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
+              ：{{childrenzz.orderNo}}</div>
+              <i class="sanjiao"></i>
+            </div>
+          </scroll-view>
+        </div>
         <div class="foot">
-          <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
+          <div class="picture_1" v-for="(pingUser,idPin) in item.pingUser" :key="idPin" v-if="pingUser.head == 3">
+            <img class="imgTwo" :src="pingUser.head">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
@@ -253,6 +261,33 @@ page
         width: 100%
         // height: 70px
         border-radius: 0px
-        padding: 20px 0 20px 0
+        padding: 20px 0 20px 0  
+.number_1
+  margin-top: 10px
+  // height: 184px
+  background: #fff
+  line-height: 90px
+  font-size: 26px
+  .completed
+    border-bottom: 1px solid #f4f4f4
+    display: flex
+    padding-left: 25px
+    .completed_1
+      flex: 10
+    .sanjiao
+      +bg-img('home/shanJiao.png')
+      margin: 30px
+      width: 16px
+      height: 29px
+  .incomplete
+    display: flex
+    padding-left: 25px
+    .incomplete_1
+      flex: 10
+    .sanjiao
+      +bg-img('home/shanJiao.png')
+      margin: 30px
+      width: 16px
+      height: 29px
 
 </style>

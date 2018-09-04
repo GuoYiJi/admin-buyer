@@ -19,6 +19,7 @@
 <script>
 import wx from "wx";
 import mixin from "@/mixin";
+import uploadImg from "@/plugins/uploadImg";
 export default {
   mixins: [mixin],
   components: {},

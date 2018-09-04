@@ -3,27 +3,25 @@
     <div class="list" v-for="(item,idx) in applyFor" :key="idx">
       <div class="kuang clearfix">
         <div class="title">
-          <text class="name">订单编号：{{item.orderNo}}</text>
+          <text class="name">订单编号：{{item.orderId}}</text>
           <text class="fuKuan">买家发起，仅退款</text>
         </div>
         <div class="img">
-          <img class="sPimg" :src="item.picture" />
-          <img class="sPimg" :src="item.picture" />
-          <img class="sPimg" :src="item.picture" />
+          <img class="sPimg" :src="item.image" />
           <i class="icon"></i>
         </div>
         <div class="message">
           <div class="message_1">
-            <p class="text_1">共3个款，合计54件</p>
+            <p class="text_1">共{{item.skuSize}}个款，合计{{item.countGoodsNum}}件</p>
             <p class="text_2">订单金额：</p>
-            <p class="text_3">154元</p>
+            <p class="text_3">{{}}元</p>
           </div>
-          <p class="name">收货人:张三 13560234567</p>
+          <p class="name" v-for="(itemxx,idxx) in item.accountAddress" :key="idxx">收货人:{{itemxx.name}} {{itemxx.mobile}}</p>
         </div>
         <div class="btn">
           <span class="details" @click="details">查看详情</span>
-          <span class="confirm"  @click="confirm(item)">同意</span>
-          <span class="close"    @click="passBut(item)">拒绝</span>
+          <span class="confirm"  @click="confirm(item,index)">同意</span>
+          <span class="close"    @click="passBut(item,idnex)">拒绝</span>
         </div>
       </div>
     </div>
@@ -51,33 +49,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <div class="closeTip">
-      <div></div>
-      <div>
-        <div><button>取消</button></div>
-        <div><button>确定</button></div>
-      </div>
-    </div>
-
-    <div class="closeTip">
-      <div>
-        <p>填写拒绝理由</p>
-        <textarea></textarea>
-      </div>
-      <div>
-        <div><button>取消</button></div>
-        <div><button>确定</button></div>
-      </div>
-    </div>
-
-    <div class="closeTip">
-      <div></div>
-      <div>
-        <div><button>取消</button></div>
-        <div><button>确定</button></div>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -87,20 +58,7 @@ export default {
     data() {
         return {
             shuoo: 0,
-            navData: [
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: "商品1商品1商品1商品1商品1商品1商品1商品1商品1商品1",
-                    name: "档口名称",
-                    type: "现货",
-                    number: 5,
-                    maShuo: "均码",
-                    jianShuo: 1,
-                    jianShuo1: 4,
-                    jiage: 154
-                }
-            ],
+            navData: [],
             passhow: false,
             passTipSHow: false,
             tag: '',
@@ -108,6 +66,7 @@ export default {
             idzz: '',
             passhowYes: false,
             moneyzz: '',
+            currentSelectedIndex: 0
 
         };
     },
@@ -118,10 +77,11 @@ export default {
       }
     },
     methods: {
-        confirm(item) {
+        confirm(item,index) {
           console.log(item)
           this.idzz = item.id
           this.passhowYes = true
+          this.currentSelectedIndex = index
         },
         passYesClose(){
           this.passhowYes = false
@@ -148,11 +108,12 @@ export default {
         details(){
           this.$router.push('obligations/collectPerson')
         },
-        passBut(item){
+        passBut(item ,index){
           console.log(item)
           this.idzz = item.id
           // this.tag = item.
           this.passhow = true
+          this.currentSelectedIndex = index
         },
         async passYes(){
           const L_dealWithOrderData = await this.$API.L_dealWithOrder({
@@ -168,6 +129,7 @@ export default {
               duration: 2000  
             }) 
             this.passhow = false
+            this.onPlayList.splice(this.currentSelectedIndex, 1)
 
           }else{
             this.passhow = false

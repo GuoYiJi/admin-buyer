@@ -29,7 +29,7 @@
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
+            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
