@@ -1,15 +1,15 @@
 <template>
   <div class="home">
     <div class="add_video">
-      <p class="a_title">请添加视频: </p>
+      <p class="a_title">请添加视频: (最多可添加1个)</p>
       <div class="v_box">
         <vbox @getVideo="getVideo" :videoStr="$route.query.video" />
       </div>
     </div>
     <div class="add_video">
-      <p class="a_title">请添加图片: （最多添加15张） </p>
+      <p class="a_title">请添加图片:(最多可添加15张)</p>
       <div class="v_box">
-        <ibox @getImg="getImg" @changeImg="changeImg" :imgStr="$route.query.images" maxNum='16' uploadNum="5"/>
+        <ibox @getImg="getImg" @changeImg="changeImg" :imgStr="$route.query.images" maxNum='15' uploadNum="5"/>
       </div>
     </div>
     <div class="line-box">
@@ -46,7 +46,7 @@
       </div>
       <div class="line b_line" @click="toOpen('showType1')" >
         <p class="input">品类：</p>
-        <p class="blur">{{ goods.labelInfo ? goods.labelInfo : '点击选择品类'}} </p>
+        <p class="blur">{{ goods.labelInfo2 ? goods.labelInfo + '-' + goods.labelInfo2: '点击选择品类'}} </p>
       </div>
       <div class="line b_line shopType" @click="toRoute('home/addShop/addType')">
         <p class="input">规格与库存：</p>
@@ -61,14 +61,18 @@
           </div>
         </div>
       </div>
-      <div class="line b_line" @click="toOpen('showType2')" v-if="type2Data.length > 0">
+      <div class="line b_line" v-for="(code, codeIndex) in type3Data" :key="codeIndex" @click="getNextLevlList(code.id, code.name, codeIndex)">
+        <p class="input">{{code.name}}</p>
+        <p class="blur">{{versionName[codeIndex] ? versionName[codeIndex] : '点击选择' + code.name}}</p>
+      </div>
+      <!-- <div class="line b_line" @click="toOpen('showType2')" v-if="type2Data.length > 0">
         <p class="input">版型：</p>
         <p class="blur">{{goods.labelInfo2 ? goods.labelInfo2 : '点击选择版型'}}</p>
       </div>
       <div class="line b_line" @click="toOpen('showType3')" v-if="type3Data.length > 0">
         <p class="input">面料类型：</p>
-        <p class="blur">{{goods.labelInfo3 ? goods.labelInfo3 : '点击选择面料'}}</p> 
-      </div>
+        <p class="blur">{{goods.labelInfo3 ? goods.labelInfo3 : '点击选择面料'}}</p>
+      </div> -->
       <div class="line b_line" @click="toRoute('home/shopMgr/classify')" >
         <!-- <i class="i_s3 i-icon"></i> -->
         <p class="input">商品分组</p>
@@ -92,11 +96,11 @@
               <p>不支持</p>
             </div>
           </div>
-        </div> 
+        </div>
       </div>
       <!-- <div class="line b_line" >
         <p class="input">商品ID：</p>
-        <p class="blur">123764B402</p> 
+        <p class="blur">123764B402</p>
       </div> -->
     </div>
     <div class="footer" v-if="!editType">
@@ -105,6 +109,40 @@
     </div>
     <div class="edit_footer" v-if="editType">
       <p class="getUp" @click="save(2)">确认修改</p>
+    </div>
+    <!-- 弹出层 品类 -->
+    <div class="modal_box" v-if="showType1">
+      <div class="modal_time" >
+        <div class="top">
+          <p class="cancel" @click="toClose('showType1')">取消</p>
+          <p class="title">{{clickNum === 0 ? '选择一级分类' : '选择二级分类'}}</p>
+          <!-- 点击请求 关闭弹窗 -->
+          <!-- <p class="confirm" @click="confirmType('showType1')">确定</p> -->
+          <!-- @click="select('type1Text', item)" -->
+          <p class="confirm" v-if="clickNum === 0"></p>
+          <p class="confirm" v-else @click="reSelect()">重选</p>
+        </div>
+        <!-- 一级分类 -->
+        <ul class="content" v-if="clickNum == 0">
+          <li class="item"
+            v-for="(item,idx) in otherData"
+            @click="confirmType('showType1', item)"
+            :class="[type1Text.id == item.id && 'active']"
+            :key="idx">{{item.name}}
+          </li>
+        </ul>
+        <!-- 二级分类 -->
+        <ul class="content" v-else>
+          <li class="item"
+            v-for="(item,idx) in type2Data"
+            v-if="clickNum == 1"
+            @click="select('type2Text',item)"
+            :class="[type2Text.id == item.id && 'active']"
+            :key="idx">{{item.name}}
+          </li>
+        </ul>
+        <button class="ok" v-show="clickNum == 1" @click="confirmType('showType2')">确定</button>
+      </div>
     </div>
     <!-- 弹出层 modal_time -->
     <div class="modal_box" v-if="showTime">
@@ -116,8 +154,8 @@
         </div>
         <div class="content">
           <!-- <li class="item" @click="select('timeText','现货')" :class="[timeText == '现货' && 'active']" >现货</li> -->
-          <li class="item" 
-          v-for="(item,idx) in otherData" 
+          <li class="item"
+          v-for="(item,idx) in otherData"
           v-if="item.typeId == 4"
           @click="select('timeText', item)"
           :class="[timeText.id == item.id && 'active']"
@@ -125,65 +163,47 @@
         </div>
       </div>
     </div>
-    <!-- 弹出层 品类 -->
-    <div class="modal_box" v-if="showType1">
-      <div class="modal_time" >
+    <!-- 弹出层 版型 或 面料类型 -->
+    <div class="modal_box" v-for="(item,idx) in type3Data" :key="idx" v-if="versionId === item.id">
+      <div class="modal_time">
         <div class="top">
-          <p class="cancel" @click="toClose('showType1')">取消</p>
-          <p class="title">选择品类</p>
-          <p class="confirm" @click="confirmType('showType1')">确定</p>
+          <p class="cancel" @click="closeVersion(item.id)">取消</p>
+          <p class="title">选择{{item.name}}</p>
+          <p class="confirm" @click="selectName(type3Text, idx)">确定</p>
         </div>
         <div class="content">
-          <li class="item" 
-          v-for="(item,idx) in otherData" 
-          v-if="item.typeId == 2"
-          @click="select('type1Text', item)"
-          :class="[type1Text.id == item.id && 'active']"
-          :key="idx">{{item.name}}</li>
-        </div>
-      </div>
-    </div>
-    <!-- 弹出层 版型 -->
-    <div class="modal_box" v-if="showType2">
-      <div class="modal_time" >
-        <div class="top">
-          <p class="cancel" @click="toClose('showType2')">取消</p>
-          <p class="title">选择版型</p>
-          <p class="confirm" @click="confirmType('showType2')">确定</p>
-        </div>
-        <div class="content">
-          <!-- <li class="item" @click="select('type2Text','现货')" :class="[type2Text == '现货' && 'active']" >现货</li> -->
-          <li class="item" 
-          v-for="(item,idx) in type2Data" 
+          <!-- <li class="item" @click="select('type3Text','现货')" :class="[type3Text == '现货' && 'active']" >现货</li> -->
+          <li class="item"
+          v-for="(type,typeIndex) in type4Data"
           :key="idx"
-          @click="select('type2Text',item)" 
-          :class="[type2Text.id == item.id && 'active']"
-          >{{item.name}}</li>
- 
+          @click="selectItem(type, idx)"
+          :class="[type3Text.id == type.id && 'active']"
+          >{{type.name}}</li>
+
         </div>
       </div>
     </div>
-    
+
     <!-- 弹出层 面料类型 -->
-    <div class="modal_box" v-if="showType3">
+    <!-- <div class="modal_box" v-if="showType3">
       <div class="modal_time" >
         <div class="top">
           <p class="cancel" @click="toClose('showType3')">取消</p>
           <p class="title">选择面料类型</p>
           <p class="confirm" @click="confirmType('showType3')">确定</p>
         </div>
-        <div class="content">
+        <div class="content"> -->
           <!-- <li class="item" @click="select('materialText','现货')" :class="[materialText == '现货' && 'active']" >现货</li> -->
-          <li class="item" 
-          v-for="(item,idx) in type3Data" 
+          <!-- <li class="item"
+          v-for="(item,idx) in type3Data"
           :key="idx"
-          @click="select('type3Text',item)" 
+          @click="select('type3Text',item)"
           :class="[type3Text.id == item.id && 'active']"
           >{{item.name}}</li>
         </div>
       </div>
-    </div>
-    
+    </div> -->
+
     <!-- 弹出层  商品标签-->
     <div class="modal_box" v-if="showTag">
       <div class="modal_time" >
@@ -198,7 +218,7 @@
             <p>标签1标签2</p>
           </div> -->
           <div class="tag_item"
-          v-for="(item,idx) in tagData" 
+          v-for="(item,idx) in tagData"
           @click="selectTagIds('tagIds',item)"
           :key="idx">
             <i class="select" :class="item.select && 'select-active'"></i>
@@ -210,7 +230,7 @@
           <p class="add_btn" @click="addTag">添加</p>
         </div>
       </div>
-    </div>    
+    </div>
 
     <!-- 弹出层 市场档口-->
     <div class="modal_box" v-if="showMarket">
@@ -258,26 +278,32 @@ export default {
   },
   data() {
     return {
+      versionId: '',//弹窗标题
+      versionName: [],
+      clickNum: 0, //品类选择点击次数记录
       editType: false,
       // backTips: false,
       showTime: false,
       showType: false,
       // showMaterial: false,
       showTag: false,
-      sellType: false,
+      sellType: true,
       showMarket: false,
+      showType0: false,
       showType1: false,
       showType2: false,
       showType3: false,
       type2Data: [],
       type3Data: [],
+      type4Data: [],
       tagIds: '',
       tagText: '',
       // materialText: '',
-      // typeText: '',
+      type0Text: '',
       type1Text: '',
       type2Text: '',
       type3Text: '',
+      type4Text: '',
       timeText: '',
       imageList: [],
       //market adr
@@ -291,6 +317,7 @@ export default {
 
       //otherData
       otherData: {},
+      otherData2: {},//品类二级专用数据
       groupData: [],
       groupVal: '',
 
@@ -327,7 +354,10 @@ export default {
       //   stock: '',//库存
       //   image: '',//图片
       // }
-      ]
+    ],
+    goodsLabelValueIds: [],//面料，版型等值的ID拼接  格式:绵Id,紧身Id
+    postLabelInfo: [], //商品分类 一级品类 上衣
+    postLabelInfo2: [], //商品二级以下分类  女装,面料,棉,版型,紧身
     };
   },
   computed: {
@@ -353,12 +383,12 @@ export default {
     //init
     //get searchMarket
     this.getMarketData(0)
-    //get 排期 品类 版型 面料 分组 标签 
+    //get 排期 品类 版型 面料 分组 标签
     const {data} = await this.$API.searchType({
       types: '2,3,4'
     })
     this.otherData = data
-    //过滤tagData 
+    //过滤tagData
     let tagArr  = []
     this.tagText = ''
     this.tagIds = ''
@@ -366,18 +396,57 @@ export default {
       if(l.typeId == 3) {
         if(this.goods.tag && this.goods.tag.split(',').indexOf(l.id) >=0 ){
           l.select = true
-          this.tagText += l.name +',' 
+          this.tagText += l.name +','
           this.tagIds += l.id + ','
         } else {
           l.select = false
         }
-        
+
         tagArr.push(l)
-      } 
+      }
     }
     this.tagData = tagArr
   },
   methods: {
+    // 关闭弹窗
+    closeVersion(id) {
+      this.versionId = 0
+    },
+    //获取版型或面料等内部选项
+    async getNextLevlList(id, name, index) {
+      console.log(id);
+      // this.toOpen('showType3')
+      // this.versionTitle = title
+      this.versionId = id
+      //get 4级分类
+      const {data} = await this.getShopClass(2, id)
+      this.type4Data = data
+      this.postLabelInfo2[index] = name
+      console.log(this.postLabelInfo2);
+    },
+    //选择的值
+    selectItem(item, index) {
+      console.log(item);
+      this.select('type3Text', item)
+      // this.versionName[index] = item
+    },
+    selectName(item, index) {
+      console.log('name' + item.name);
+      this.versionName[index] = item.name
+      // this.goodsLabelValueIds[index] = item.id
+      // this.labelInfo2[index] = item.name
+      console.log(this.versionName);
+      this.closeVersion(item.id)
+
+      // console.log(this.goodsLabelValueIds);
+      // console.log(this.labelInfo2);
+    },
+    //重选
+    reSelect() {
+      this.clickNum = 0
+    },
+
+    // 请求
     async save(state){
       var value = await wx.getStorageSync('sessionId')
       if( this.imageList.length > 0){
@@ -388,26 +457,52 @@ export default {
       }
       if(this.type1Text.id){
         this.goods.labelIds = this.type1Text.id + ','
+        console.log('this.goods.labelIds=>'+ this.goods.labelIds);
       }
       if(this.type2Text.id){
         this.goods.labelIds += this.type2Text.id + ','
+        console.log('this.goods.labelIds=>'+ this.goods.labelIds);
       }
       if(this.type3Text.id){
         this.goods.labelIds += this.type3Text.id + ','
       }
-      
+
       this.goods.state = state
       //add buyExplan
       this.goods.buyExplan = this.shopExplan.value
       //
-      
+
+      // const labelInfoCC = []
+      // this.postLabelInfo2.forEach(item => {
+      //   labelInfoCC.push(item)
+      //   this.versionName.forEach(ite => {
+      //     labelInfoCC.push()
+      //   })
+      // })
+
+      // const obj = {
+      //   goods: this.goods,
+      //   skuList: this.addShopType,
+      //   shopId: config.appId,
+      //   sessionId: value
+      // }
+
+      console.log('goodsLabelValueIds =>' + this.goodsLabelValueIds);
+      console.log(this.versionName.concat(this.postLabelInfo2).toString());
+
+
       const obj = {
+        goodsLabelValueIds: this.goodsLabelValueIds.toString(),
         goods: this.goods,
         skuList: this.addShopType,
+        sessionId: value,
         shopId: config.appId,
-        sessionId: value
-      } 
-      console.log('111')
+      }
+
+      obj.name = this.name
+      obj.labelInfo = this.goods.labelInfo,
+      obj.labelInfo2 = this.goods.labelInfo2 + ',' + this.versionName.concat(this.postLabelInfo2).toString(),
+      console.log('obj=>' + obj)
       if(obj.skuList.length > 0){
         let str = ''
         for(var i=0,l;l=obj.skuList[i++];){
@@ -462,20 +557,20 @@ export default {
 
       }
       console.log(obj)
-      //数据合并 
-      // var mktArr = this.marketText.split('-') 
+      //数据合并
+      // var mktArr = this.marketText.split('-')
       // this.goods.stallInfo1 = mktArr[0]
       // this.goods.stallInfo2 = mktArr[1]
       // this.goods.stallInfo3 = mktArr[2]
       if(state == 2){
-        //edit 
+        //edit
         await this.$API.editShop(obj)
         this.$success('修改成功！')
       } else {
         await this.$API.addShop(obj)
         this.$success('添加成功！')
       }
-      
+
       setTimeout(()=>{
         //跳转到商品列表
         this.toRoute('home/shopMgr/shopMgr')
@@ -492,11 +587,11 @@ export default {
         this[name] = this[name].replace(val+',','')
         this.tagText = this.tagText.replace(item.name+',', '')
       } else {
-        this[name] += val + ',' 
+        this[name] += val + ','
         this.tagText += item.name+','
       }
       console.log(this[name])
-      
+
     },
     async addTag(){
       if(!this.addTagText) return this.handleError('请输入标签！')
@@ -508,35 +603,55 @@ export default {
       this.tagData.push(data)
 
     },
-    async confirmType(type){
-      this.toClose(type)
+    // 点击确定请求
+    async confirmType(type, item){
+      // 请求一级品类, 获取二级品类
       if(type == 'showType1') {
+        //恢复默认
+        this.postLabelInfo2 = []
+        this.versionName = []
+        // this.toClose(type)
+        this.select('type1Text', item)
+        this.clickNum = 1;
         if(!this.type1Text.id) return
         this.goods.labelInfo = this.type1Text.name
+        console.log('this.goods.labelInfo' + this.goods.labelInfo);
         // 获取2级分类
         const {data} = await this.getShopClass(2, this.type1Text.id)
         this.type2Data = data
         this.type3Data = []
         console.log(this.type2Data)
       }
+      // 请求一级品类, 获取三级品类, 判断是否有"版型"和"面料"
       if(type == 'showType2') {
+        //恢复默认
+        this.postLabelInfo2 = []
+        this.versionName = []
+
+        this.toClose('showType1')
         if(!this.type2Text.id) return
         this.goods.labelInfo2 = this.type2Text.name
+        console.log('this.goods.labelInfo2' + this.goods.labelInfo2);
         //get 3级分类
         const {data} = await this.getShopClass(2, this.type2Text.id)
         this.type3Data = data
         console.log(this.type3Data)
       }
-      if(type == 'showType3') {
-        if(!this.type3Text.id) return
-        this.goods.labelInfo3 = this.type3Text.name
-      }
+      // if(type == 'showType3') {
+      //   this.toClose(type)
+      //   if(!this.type3Text.id) return
+      //   this.goods.labelInfo3 = this.type3Text.name
+      // //   //get 4级分类
+      // //   const {data} = await this.getShopClass(2, this.type3Text.id)
+      // //   this.type4Data = data
+      // //   console.log(this.type4Data)
+      // }
     },
     confirmOther(type){
       this.toClose(type)
       if(type == 'showTime') {
         //货期
-        if(!this.timeText.id) return 
+        if(!this.timeText.id) return
         this.goods.deliveryId = this.timeText.id
         this.goods.delivery = this.timeText.name
       }
@@ -574,7 +689,7 @@ export default {
       if(pid) {
         if(series == 1) this.selectFMarket = item
         if(series == 2) this.selectSMarket = item
-      } 
+      }
       if(series == 0){
         this.mktSecondData = {}
         this.mktThirdData = {}
@@ -591,7 +706,7 @@ export default {
       if(series == 0) this.mktFirstData = data
       if(series == 1) this.mktSecondData = data
       if(series == 2) this.mktThirdData = data
-      
+
     },
     getShopClass(types, pId=""){
       return this.$API.searchType({
@@ -600,7 +715,7 @@ export default {
       })
     }
   }
-  
+
 };
 </script>
 <style lang="sass" scoped>
@@ -626,7 +741,7 @@ export default {
 
 .shopType
   height: 150px!important
-  
+
 
 .hasType
   display: flex
@@ -649,7 +764,7 @@ export default {
       text-align: center
     .select
       +select(30px)
-      
+
     .active
       +select-active
 // .model
@@ -722,8 +837,13 @@ export default {
       color: #F67C2F
     .title
       font-size: 32px
-
-
+  button.ok
+    width: 400px
+    padding: 20px 0
+    margin: 30px auto 42px
+    border-radius: 35px
+    color: #ffffff
+    background-color: #F67C2F
 
 
 .l_desc
@@ -772,7 +892,7 @@ export default {
   +border(1px,all)
   +center
   left: 180px
-  padding: 4px 8px 
+  padding: 4px 8px
 .small
   width: 200px
 .add_video
@@ -781,12 +901,12 @@ export default {
   margin-bottom: 20px
   .a_title
     color: #666
-    padding-bottom: 20px 
+    padding-bottom: 20px
 
 .b_line
   +border(1px,bottom,#f5f5f5)
 .line-box
-  padding: 0 24px 
+  padding: 0 24px
   background: #fff
   margin-bottom: 20px
 .line
@@ -795,7 +915,7 @@ export default {
   line-height: 89px
   position: relative
   .input
-    height: 100% 
+    height: 100%
     padding-right: 8px
     color: #999
     .red
@@ -813,5 +933,5 @@ export default {
   .input_text
     height: 68px
     line-height: 108px
-    padding: 20px  
+    padding: 20px
 </style>

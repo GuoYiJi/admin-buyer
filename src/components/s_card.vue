@@ -1,5 +1,5 @@
 <template>
-  <div class="order-shop-card" v-if="show">
+  <div class="order-shop-card">
     <div class="item-card" >
       <!-- :class="check && 'active'" -->
       <div v-if="edit" class="select-box" @click="select"><i class="select" :class="{'active': check}"></i></div>
@@ -58,12 +58,12 @@ export default {
       // check: false,
       visible4: false,
       visible2: false,
-      show: true,
       // vertical: '',
       actions4: [
         { name: "编辑" },
         { name: "下架" },
-        { name: "分组" }
+        { name: "分组" },
+        { name: "取消" }
       ],
     }
   },
@@ -108,6 +108,8 @@ export default {
       } else if (index === 2) {
         //group
         this.toRoute('home/shopMgr/classify',{groupIds: this.shop.groupIds,goodsIds: this.shop.id })
+      } else if (index === 3) {
+        this.toClose('visible4')
       }
     },
 

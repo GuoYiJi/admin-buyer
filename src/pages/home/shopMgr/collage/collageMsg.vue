@@ -1,12 +1,13 @@
 <template>
+  <!-- 创建拼团 | 编辑拼团 -->
 <div class="home">
-  <div class="line-box">
-    <div class="line b_line">
-      <p class="input">成团数量：</p>
-      <input class="input_text" placeholder="请输入成团数量" v-model="personNum">
-    </div>
-    <div class="line b_line">
-      <p class="input">生效时间：</p>
+  <ul class="line-box">
+    <li>
+      <span class="title">成团数量: </span>
+      <input type="number" class="input_text" placeholder="请输入成团数量" v-model="personNum">
+    </li>
+    <li class="more">
+      <span class="title">生效时间: </span>
       <p class="blur">
         <picker mode="date" :value="setDate" :start="startDate" @change="bindDateChange">
           <view class="picker">
@@ -14,10 +15,9 @@
           </view>
         </picker>
       </p>
-
-    </div>
-    <div class="line">
-      <p class="input">过期时间：</p>
+    </li>
+    <li class="more">
+      <span class="title">过期时间: </span>
       <p class="blur">
         <picker mode="date" :value="setEndDate" :start="startEndDate" @change="bindEndDateChange">
           <view class="picker">
@@ -25,36 +25,33 @@
           </view>
         </picker>
       </p>
-    </div>
-    <div class="line b_line">
-      <p class="input">限购次数：</p>
-      <input class="input_text" placeholder="请输入限购次数" v-model="limitTimes">
-    </div>
-    <!-- <div class="line b_line">
-        <p class="input">所在地区</p>
-        <p class="blur">
-          <picker mode="region" @change="bindRegionChange" :value="region" :custom-item="customItem">
-            <view class="picker">
-              {{region.length > 0 ? region[0] + '-' + region[1] + '-' + region[2] : '未设置' }}
-            </view>
-          </picker>
-        </p>
-
-      </div> -->
-    <div class="line">
-      <p class="input">限购件数：</p>
-      <input class="input_text" placeholder="请输入限购件数" v-model="limitNum">
-    </div>
-    <div class="line p_top">
-      <p class="input">可使用的商品：</p>
-      <p class="blur" @click="toRoute('shopList')">
-        {{ showShop }}
-      </p>
-    </div>
-  </div>
+    </li>
+    <li>
+      <span class="title">限购次数: </span>
+      <input type="number" class="input_text" placeholder="请输入限购次数" v-model="limitTimes">
+    </li>
+    <li>
+      <span class="title">限购次数: </span>
+      <input type="number" class="input_text" placeholder="请输入限购件数" v-model="limitNum">
+    </li>
+    <li v-if="isEdit">
+      <span class="title">拼团价: </span>
+      <span class="inputPrice">
+        <input type="number" class="input_text" v-model="price">
+        <p>元</p>
+      </span>
+    </li>
+    <li v-else @click="toRoute('shopList')">
+    <span class="title">可使用的商品: </span>
+    <p class="blur">
+      {{ showShop }}
+    </p>
+    </li>
+  </ul>
   <i-message id="message" />
   <div class="footer">
-    <p class="save" @click="createGroup()">保存</p>
+    <p class="save" v-if="isEdit" @click="editGroup()">保存编辑</p>
+    <p class="save" v-else @click="createGroup()">保存创建</p>
   </div>
 </div>
 </template>
@@ -73,48 +70,59 @@ export default {
       addShop: '', //添加了多少件
       limitNum: 0,
       limitTimes: 0,
-      groupPriceData: [],
+      personNum: 0,
+      price: 0,
+      // groupPriceData: [],
       selIds: [],
       requestData: [],
-      url: ''
+      url: '',
+      isEdit: false,
+      goodsId: ''
     };
   },
   computed: {
+    ...mapState(["shopSelectList"]),
     showShop() {
       if (this.shopSelectList) {
-        return this.shopSelectList.length + '件'
+        console.log(this.shopSelectList);
+        return '已选择' + this.shopSelectList.length + '件'
+        // return `已选择${this.shopSelectList.length}件`
       }
       return '去添加商品'
     },
-    ...mapState(["shopSelectList"])
+  },
+  watch: {
+    // isEdit(currentValue, oldValue) {
+    //   this.isEdit = !this.isEdit
+    // },
+    // setDate(currentValue, oldValue) {
+    //   console.log(currentValue);
+    //   this.setDate = currentValue
+    // },
+    // setEndDate(currentValue, oldValue) {
+    //   console.log(currentValue);
+    //   this.setEndDate = currentValue
+    // }
   },
   methods: {
     //创建拼团
     createGroup() {
-      // this.$API.s_createGroup({
-      //   num: this.personNum,
-      //   startTime: this.setDate,
-      //   endTime: this.setEndDate,
-      //   limitNum: this.limitNum,
-      //   limitTimes: this.limitTimes,
-      //   price: '',
-      //   goodsId: '',
-      // })
-      this.groupPriceData.forEach((item, index) => {
+      console.log(this.shopSelectList);
+      this.shopSelectList.forEach((item, index) => {
         this.requestData[index] = {
           num: this.personNum,
           startTime: this.setDate,
           endTime: this.setEndDate,
           limitNum: this.limitNum,
           limitTimes: this.limitTimes,
-          price: this.groupPriceData[index],
-          goodsId: this.selIds[index]
+          price: item.groupPrice,
+          goodsId: item.id
         };
       });
-
       console.log(this.requestData);
+      const vm = this
       wx.request({
-        url: this.url,
+        url: this.url + '/api/shop/ping/addPing',
         data: { pingList: this.requestData, sessionId: wx.getStorageSync('sessionId'), shopId: config.appId },
         method: 'POST',
         header: {
@@ -122,8 +130,38 @@ export default {
         },
         success(res) {
           console.log(res.data);
+          if(res.data.code == 1) {
+            vm.$router.back(-1);
+          }
+        }
+      })
+    },
+    //编辑拼团
+    editGroup() {
+      const vm = this
+      wx.request({
+        url: this.url + '/api/shop/ping/editPing',
+        data: {
+          pingList: {
+            num: this.personNum,
+            startTime: this.setDate,
+            endTime: this.setEndDate,
+            limitNum: this.limitNum,
+            limitTimes: this.limitTimes,
+            price: this.price,
+            goodsId: this.goodsId
+          },
+          sessionId: wx.getStorageSync('sessionId'),
+          shopId: config.appId
+        },
+        method: 'POST',
+        header: {
+          'content-type': 'application/json' // 默认值
+        },
+        success(res) {
+          console.log(res.data);
           if(res.code === 1) {
-            this.$route.back(-3);
+            vm.$router.back(-1);
           }
         }
       })
@@ -139,6 +177,8 @@ export default {
       this.setDate = e.mp.detail.value
     },
     bindEndDateChange(e) {
+      console.log(e);
+      console.log('picker发送选择改变，携带值为', e.mp.detail.value)
       if (!this.setDate) {
         this.handleError('请先设置生效时间！')
         return
@@ -166,19 +206,81 @@ export default {
   },
   mounted() {
     // console.log(this.$route.query.groupPriceData, this.$route.query.selIds)
-    // if (this.$route.query.groupPriceData) {
-    //   this.groupPriceData = JSON.parse(this.$route.query.groupPriceData)
-    //   this.selIds = JSON.parse(this.$route.query.selIds);
-    //   this.addShop = this.selIds.length;
-    // }
-    this.url = config.url + '/api/shop/ping/addPing';
+    console.log(this.$route.query);
+    if(this.$route.query.isEdit === "true") {
+      this.isEdit = true;
+    }else {
+      this.isEdit = false;
+      this.setDate = '',
+      this.setEndDate = '',
+      this.limitNum = 0,
+      this.limitTimes = 0,
+      this.personNum = 0,
+      this.price = 0,
+      this.goodsId = ''
+    }
+    if (this.$route.query.pingInfo) {
+      const pingInfo = JSON.parse(this.$route.query.pingInfo);
+      console.log(pingInfo);
+      this.personNum = pingInfo.num
+      this.limitNum = pingInfo.limitNum
+      this.limitTimes = pingInfo.limitTimes
+      this.setDate = pingInfo.startTime
+      this.setEndDate = pingInfo.endTime
+      this.goodsId = pingInfo.id
+      this.price = pingInfo.price
+    }
+    this.url = config.url;
   }
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.p_top
-  padding-top: 20px
+ul.line-box
+  padding: 0 25px
+  background-color: #ffffff
+  li
+    padding: 40px 0
+    font-size: 32px
+    display: flex
+    align-items: center
+    justify-content: space-between
+    padding-right: 30px
+    border-bottom: 1px solid #CCCCCC
+    &:last-of-type
+      border: none
+    &.more
+      background: url("~@/assets/img/home/shanJiao.png") no-repeat right
+      background-size: 16px 30px
+    span.title
+      width: 200px
+      +singleFile
+    input.input_text
+      flex: 1
+      text-align: right
+      overflow: hidden
+      border: none
+      &::-webkit-input-placeholde
+        color: #999999
+    p.blur
+      flex: 1
+      text-align: right
+      color: #999999
+    span.inputPrice
+      flex: 1
+      overflow: hidden
+      display: flex
+      align-items: center
+      justify-content: flex-end
+      input.input_text
+        flex: 1
+        text-align: right
+        overflow: hidden
+        border: none
+        &::-webkit-input-placeholde
+          color: #999999
+      p
+        width: 40px
 .footer
   position: absolute
   bottom: 0
@@ -189,30 +291,5 @@ export default {
   color: #fff
   text-align: center
   background: #F67C2F
-.b_line
-  +border(1px,bottom,#f5f5f5)
-.line-box
-  padding: 0 24px
-  background: #fff
-  margin-bottom: 20px
-.line
-  display: flex
-  height: 108px
-  line-height: 108px
-  position: relative
-  .input
-    height: 100%
-    padding-right: 8px
-  .blur
-    color: #999
-    font-size: 28px
-    +center
-    right: 0
-    width: 100%
-    text-align: right
-  .input_text
-    height: 68px
-    line-height: 108px
-    padding: 20px
 
 </style>

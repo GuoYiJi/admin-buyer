@@ -43,4 +43,10 @@ export default class shopMgr {
 
   // 更新搭配
   editMatchGoods = params => http.post('api/goods/editMatchGoods', params)
+
+  // 编辑拼团
+  editGroup = params => http.post('api/shop/ping/editPing', params)
+
+  //创建折扣商品
+  addDisGoods = params => http.post('api/goods/addDisGoods', params)
 }

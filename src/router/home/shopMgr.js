@@ -56,6 +56,17 @@ const route = [{
         'i-modal': '/iview/modal/index',
       }
     }
+  },
+  {
+    path: '/pages/home/shopMgr/shopListDiscount',
+    config: {
+      navigationBarTitleText: '商品列表',
+      'usingComponents': {
+        'i-drawer': '/iview/drawer/index',
+        'i-message': '/iview/message/index',
+        'i-modal': '/iview/modal/index',
+      }
+    }
   }
   //collage
   , {

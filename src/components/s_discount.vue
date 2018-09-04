@@ -23,7 +23,7 @@
       <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
         <selsearch @comSearch="comSearch" />
       </i-drawer>
-      
+
       </scroll-view>
     </div>
     <!-- <div class="footer" v-if="!edit">
@@ -33,16 +33,18 @@
       <div class="m_tips">确定要批量下架？</div>
     </i-modal>
     <div class="footer" v-if="!edit">
-      <p class="style1" @click="toOpen('edit')">批量处理</p>
-      <p class="style2" @click="toRoute('home/addShop/addShop')">添加商品</p>
+      <!-- <p class="style1" @click="toOpen('edit')">批量处理</p> -->
+      <p class="style2" @click="toRoute('home/shopMgr/shopListDiscount')">创建折扣</p>
     </div>
-    <div class="footer" v-else>
+    <!-- <div class="footer" v-else> -->
       <!-- <p class="all-btn"><i class="select" @click="selectAll" :class="allCheck && 'active'"></i>全部</p> -->
+      <!-- <p class="style2" @click="toGroup">编辑</p>
       <p class="style1" @click="toOpen('showUp')">下架</p>
       <p class="style2" @click="toGroup">分组</p>
-    </div>
+      <p class="style2" @click="toGroup">取消</p>
+    </div> -->
     <i-message id="message" />
-    
+
   </div>
 </template>
 <script>
@@ -102,7 +104,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -122,8 +124,10 @@ export default {
     //   this.allCheck = !this.allCheck
     //   this.$refs.scard.selectAll(this.allCheck)
     // },
+    //获取折扣商品列表
     searchShop(params){
       params.pageSize = this.pageSize
+      params.isDis = 1
       return this.$API.searchShopGroup(params)
     },
     getNextPage(params) {
@@ -181,16 +185,16 @@ export default {
     },
     async selUp(name){
       this[name] = !this[name]
-      
+
       if(this.selIds.length == 0) return this.handleError('请至少选择一件商品！')
-      
+
       await this.$API.switchShop({
         goodsIds: this.selIds.join(','),
         state: this.state == 0 ? 1 : 0
       })
       this.edit = false
       let newArr = this.shopList
-      
+
       for(var i=0,l; l=this.selIds[i++];){
         for(var j=0,k; k = newArr[j++];){
           if(k.id == l) k.del = true
@@ -208,10 +212,10 @@ export default {
       this.edit = false
       this.toRoute('home/shopMgr/classifyAll',{
         type: 0,
-        ids: this.selIds.join(',') 
+        ids: this.selIds.join(',')
       })
     }
-    
+
   },
   async mounted() {
     console.log(this.shopList)
@@ -219,7 +223,8 @@ export default {
     const listData = await this.getNextPage({
       ob: 0,
       state: this.state,
-      labelId: this.groupTag
+      // labelId: this.groupTag,
+      isDis: 1
     });
     console.log(listData)
     this.shopList = listData.data.list;
@@ -227,7 +232,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 
 
@@ -239,9 +244,6 @@ export default {
 .loading
   height: 70px
 
-
-
- 
 .box
   padding: 2% 0 50px 0%
 .home
@@ -299,7 +301,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -310,18 +312,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

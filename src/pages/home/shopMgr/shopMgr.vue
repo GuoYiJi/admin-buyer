@@ -45,7 +45,7 @@
       </div>
       <div v-else-if="tag == 7">
         <!-- 拼团 -->
-        <collage />
+        <collage @toRoute="toRoute" />
       </div>
       <div v-else-if="tag == 8">
         <!-- 搭配 -->
@@ -111,8 +111,9 @@ export default {
     handleNav(tag) {
       this.tag = tag
     },
-    toRoute(path) {
-      this.$router.push('/pages/home/' + path)
+    toRoute(url, params) {
+      console.log(222222222222);
+      this.$router.push({path: '/pages/home/' + url, query: params})
     }
   },
   mounted() {}

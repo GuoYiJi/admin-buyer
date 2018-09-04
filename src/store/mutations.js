@@ -24,8 +24,25 @@ export default {
     state.shopMatch.push(item)
   },
 
-  // 搭配页面
-  SETSHOPLIST: (state, value) => {
-    state.shopSelectList = value
+  // 拼团
+  PUSTROUNPPRICE: (state, value) => {
+    state.shopSelectList.push(value)
+  },
+  SPLICEROUNPPRICE: (state, index) => {
+    state.shopSelectList.splice(index, 1)
+  },
+  SETROUNPPRICE: (state, index, value) => {
+    state.shopSelectList[index] = value
+  },
+
+  // 折扣
+  PUSTDISOUNTPRICE: (state, value) => {
+    state.discountSelectList.push(value)
+  },
+  SPLICEDISOUNTPRICE: (state, index) => {
+    state.discountSelectList.splice(index, 1)
+  },
+  SETDISOUNTPRICE: (state, index, value) => {
+    state.discountSelectList[index] = value
   }
 }

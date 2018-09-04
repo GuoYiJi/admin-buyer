@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <!-- 商品选择列表 -->
     <div class="sort-select">
       <div class="top-nav">
         <ul>
@@ -13,7 +14,7 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -27,6 +28,7 @@
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
+      <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
     <i-message id="message" />
 
@@ -49,8 +51,14 @@ export default {
   computed: {
     groupNum(){
       return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+      // return this.$SETGROUNPPRICE.length > 0 ? ``
     },
     ...mapState(["shopSelectList"])
+  },
+  watch: {
+    edit(currentValue, oldValue) {
+      this.edit = !this.edit
+    }
   },
   data() {
     return {
@@ -59,7 +67,7 @@ export default {
       ascePrice: true,
       tag: 1,
       showRight1: false,
-      edit: false,
+      edit: true,
       allCheck: false,
       //loading
       shopNum: 0,
@@ -151,28 +159,38 @@ export default {
       }
 
     },
-    // 根据选中状态处理ids
+    // 根据选中状态处理ids: GoodsId, 拼团价, 是否已勾选
     switchSel(id, groupPrice, bool){
-      console.log(groupPrice);
       if(bool){
-        this.selIds.push(id);
-        this.groupPriceData.push(groupPrice)
-        console.log(this.groupPriceData);
+        if(this.selIds && this.selIds.some(item => item == id)) {
+          const start = this.selIds.indexOf(id)
+          this.selIds[start] = id;
+          this.groupPriceData[start] = groupPrice;
+          this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
+        }else {
+          this.selIds.push(id);
+          this.groupPriceData.push(groupPrice)
+          this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
+        }
+        // console.log(this.groupPriceData);
       }else {
         const start = this.selIds.indexOf(id)
-        this.selIds.splice(start,1)
+        this.selIds.splice(start, 1)
         this.groupPriceData.splice(start, 1)
-        console.log(this.groupPriceData);
+        // console.log(this.groupPriceData);
+        this.$store.commit('SPLICEROUNPPRICE', start);
       }
+      // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
+      console.log(this.shopSelectList);
     },
     // 设置拼团id和价格数组
     // obj: {id: this.shop.id, price: this.groupPrice}
     setGroupPrice(obj){
-      // for(var i=0,l; l=this.groupPriceData[i++];){
-      //   if(l.id == obj.id) return l.price = obj.price
-      // }
-      // this.groupPriceData.push(obj)
-      // console.log(this.groupPriceData);
+      for(var i=0,l; l=this.groupPriceData[i++];){
+        if(l.id == obj.id) return l.price = obj.price
+      }
+      this.groupPriceData.push(obj)
+      console.log(this.groupPriceData);
     }
 
 

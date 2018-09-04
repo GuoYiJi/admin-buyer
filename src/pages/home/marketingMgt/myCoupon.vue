@@ -14,12 +14,12 @@
       </div>
       <div v-else-if="tag == 2">
         <p>
-          <myCouponT @click="toMyCoupon" />
+          <myCoupon @click="toMyCoupon" />
         </p>
       </div>
       <div v-else-if="tag == 3">
         <p>
-          <myCouponTT @click="toMyCoupon" />
+          <myCoupon @click="toMyCoupon" />
         </p>
       </div>
     </div>
@@ -31,13 +31,13 @@
 <script>
 import wx from "wx";
 import myCoupon from "@/components/m_myCoupon";
-import myCouponT from "@/components/m_myCouponT";
-import myCouponTT from "@/components/m_myCouponTT";
+// import myCouponT from "@/components/m_myCouponT";
+// import myCouponTT from "@/components/m_myCouponTT";
 export default {
   components: {
     myCoupon,
-    myCouponT,
-    myCouponTT
+    // myCouponT,
+    // myCouponTT
   },
   data() {
     return {

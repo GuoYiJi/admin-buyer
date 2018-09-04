@@ -61,7 +61,7 @@ export default {
     goodsIds() {
       let arr = []
       this.shopMatch.forEach((item, index) => {
-        arr[index] = item.id
+        arr[index] = item.goodsId
       })
       return arr;
     }
@@ -100,12 +100,17 @@ export default {
             type: 'error'
         })
       }else {
+        console.log(this.goodsIds);
         this.$API.s_addMatch({
           title: this.title,
           goodsIds: this.goodsIds.toString()
         }).then(response => {
           console.log(response);
           if(response.code === 1) {
+            this.$Toast({
+                content: '创建成功',
+                type: 'success'
+            })
             this.$router.back(-1)
           }
         })
