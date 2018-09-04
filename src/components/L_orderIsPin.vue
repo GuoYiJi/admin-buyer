@@ -64,6 +64,7 @@ export default {
       shopNum: 0,
       items: this.default,
       isPin: [],
+      type: '1'
 
     };
   },
@@ -87,7 +88,7 @@ export default {
       console.log(type)
       this.type = type
       const listData = await this.getNextPage({
-        ob: type,
+        orderType: type,
         // state: 1
       })
 
@@ -100,7 +101,7 @@ export default {
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: 1,
+        orderType: this.type,
         state: 9
         // state: this.tag
       };

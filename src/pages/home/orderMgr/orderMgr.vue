@@ -52,6 +52,10 @@
       <div v-else-if="tag == 8">
         <orderRefund />
       </div>
+      <!-- 取消 -->
+      <div v-else-if="tag == 9">
+        <orderOff />
+      </div>
     </div>
     <!-- <div class="loading" v-if="canLoad">
       <div v-if="showLoad"><loading  /></div>
@@ -71,6 +75,7 @@ import orderYesGoods from "@/components/L_orderYesGoods";
 import orderYesGod from "@/components/L_orderYesGod";
 import closeOrder from "@/components/L_orderClose";
 import orderRefund from "@/components/L_orderRefund";
+import orderOff from "@/components/L_orderOff";
 //orderYesGod
 export default {
   components: {
@@ -84,6 +89,7 @@ export default {
     orderYesGod,
     closeOrder,
     orderRefund,
+    orderOff
   },
   data() {
     return {
@@ -128,7 +134,11 @@ export default {
         {
           id: 8,
           text: "售后"
-        }
+        },
+        {
+          id: 9,
+          text: "取消"
+        },
       ],
       shopNum: 0,
       showLoad: false,
@@ -145,7 +155,9 @@ export default {
       closeOrder: [],
       isPin: [],
       shopListRefund: [],
-      layerList: []
+      layerList: [],
+      orderType: 1,
+      WarehouseData: []
     };
   },
   methods: {
@@ -181,10 +193,18 @@ export default {
     //     this.showLoad = false;
     //   }, 2000);
     // }
-
+ 
   },
   async mounted() {
-    // debugger
+    //selectWarehouse
+          const selectWarehouseData = await this.$API.selectWarehouse({
+            orderId: this.orderID,
+          });
+          this.WarehouseData = selectWarehouseData.data
+          this.dpName = this.WarehouseData.companyName
+          console.log(this.dpName)
+          // console.log(selectWarehouseData)
+          wx.setStorageSync('dpName', this.dpName)
     // this.shopNum = 0;
     // const listData = await this.getNextPage();
     // this.shopList = this.shopList.concat(listData.data.list); 

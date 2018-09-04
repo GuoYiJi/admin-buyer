@@ -28,7 +28,7 @@
           <div class="box">
             <p >
               <!-- 拼团组件 -->
-              <CollageOnPaly :onPlayList="onPlayList"/>
+              <CollageOnPaly :onPlayList="onPlayList" ref="child" @getNextPage="getNextPage"/>
             </p>
           </div>
         </div>
@@ -64,12 +64,17 @@ export default {
       shopNum: 0,
       items: this.default,
       onPlayList: [],
+      type: '1'
 
     };
   },
  
   methods: {
-    handleTag(tag) {
+    parent(){
+      this.$.refs.child.childFn()
+      console.log(11111)
+    },
+    async handleTag(tag) {
       this.tag = tag;
       var type;
       this.shopNum = 0;
@@ -82,12 +87,22 @@ export default {
         this.ascePrice = !this.ascePrice;
         type = this.ascePrice ? 4 : 5;
       }
-      this.type = type;
+      this.type = type
+      const listData = await this.getNextPage({
+        orderType: this.type,
+        // state: 1
+      })
+
+      this.orderList = listData.data.list
+      console.log(this.orderList)
+      if(listData.data.list.length < this.pageSize) {
+        this.canLoad = false
+      }
     },
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: 1,
+        orderType: this.type,
         state: 1
         // state: this.tag
       };

@@ -30,7 +30,7 @@
           </scroll-view>
         </div>
         <div class="foot">
-          <div class="picture_1" v-for="(pingUser,idPin) in item.pingUser" :key="idPin" v-if="pingUser.head == 3">
+          <div class="picture_1" v-for="(pingUser,idPin) in item.pingUser" :key="idPin" v-if="idPin < 3">
             <img class="imgTwo" :src="pingUser.head">
           </div>
           <div class="btn">
@@ -265,6 +265,7 @@ page
 .number_1
   margin-top: 10px
   // height: 184px
+  // height: 400px
   background: #fff
   line-height: 90px
   font-size: 26px

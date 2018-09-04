@@ -3,6 +3,10 @@
   <div class="hug">
      <!--订单内容带子订单-->
     <div class="nav" v-for="(item,idx) in orderList" :key="idx">
+      <div v-if="radioShow" class="radioHug">
+        <div class="radio" v-if="!Arrays[idx]" @click="radioClick(item.skuList[0].id,idx,1)"></div>
+        <img class="radioImg" @click="radioClick(item.skuList[0].id,idx,2)" v-if="Arrays[idx]" :src="img" />
+      </div>
       <div class="listHug" :style="'flex: 0 0 '+ listWidth +'rpx;'">
         <div class="list" style="width:100%;">
         <div class="kuang">
@@ -17,20 +21,25 @@
               <div class="sPimgHug">
                 <img class="sPimg" :src="item.image"/>
               </div>
-            <div class="textThad" v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
+            <div class="textThad" >
               <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
-                <div class="title">{{itemzz.name}}</div>
+                <div class="title">{{item.name}}</div>
                 <div class="huo">
-                  <text class="name">{{itemzz.stallInfo3}}</text>
-                  <div class="type">货期:{{itemzz.delivery}}</div>
-                  <span class="number">X{{itemzz.countNum}}</span>
+                  <text class="name">{{item.stallInfo3}}</text>
+                  <div class="type">货期:{{item.delivery}}</div>
+                  <span class="number">X{{item.countNum}}</span>
                   <div >
                     <div class="maShuo">
                       <div style="width:80%;float:left;">
                           <div class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
                       </div>
-                      <span v-if="editClick" class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
+                      <!-- <scroll-view scroll-x="true" style=" width:80%  display: flex" >
+
+                      </scroll-view> -->
+                      <span v-if="editClick" class="edit" @click="edit(item,item.orderId,idx)">编辑</span>
                       <span v-if="!editClick" class="edit">编辑</span>
+                      <!-- <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
+                      <span class="edit" @click="edit(item)">编辑</span> -->
                     </div>
                   </div>
               <!-- </div> -->
@@ -56,12 +65,12 @@
             <span class="remaining">剩余件数</span>
           </div>
           <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
-            <div class="title_2" v-for="(itemaa,idss) in orderDeliverArray[idx]" :key="idss">
-              <span class="colour">{{itemaa.color}}</span>
-              <span class="standby">{{itemaa.size}}</span>
-              <span class="standby">{{itemaa.num}}</span>
-              <span class="shipments">{{itemaa.canNumer}}</span>
-              <span class="remaining">{{itemaa.waitNum}}</span>
+            <div class="title_2" v-for="(itemss,idss) in orderDeliverArray[idx]" :key="idss">
+              <span class="colour">{{itemss.color}}</span>
+              <span class="standby">{{itemss.size}}</span>
+              <span class="standby">{{itemss.num}}</span>
+              <span class="shipments">{{itemss.canNumer}}</span>
+              <span class="remaining">{{itemss.waitNum}}</span>
             </div>
           <!-- </div> -->
         </div>
@@ -79,9 +88,9 @@
             <img class="collage_img" :src="item.picture">
             <img class="collage_img" :src="item.picture">
           </div>
-          <span class="details" @click="details(item.id)">查看详情</span>
-          <span class="Deliver" @click="Deliver(item.id)">发货</span>
-          <span v-if="(btn==1)" class="collage">查看子拼团</span>
+          <!-- <span class="details" @click="details()">查看详情</span>
+          <span class="Deliver" @click="Deliver()">发货</span>
+          <span v-if="(btn==1)" class="collage">查看子拼团</span> -->
         </div>
       </div>
     </div>
@@ -161,6 +170,15 @@
         </div>
       </div>
     </div>
+    <!--  底部按钮  -->
+    <div class="bottomHug">
+        <div v-show="bottomShow" class="bottomHugBtn" @click="bottomHugBtn()">批量处理</div>
+        <div style="overflow:hidden;float:right" v-show="bottomHug">
+          <div class="bottomHugBtn" @click="bottomFinish()">完成</div>
+          <div class="bottomHugBtn BHB" @click="bottomEdit()">编辑</div>
+        </div>
+    </div>
+    <i-toast id="toast" />
   </div>
 
 
@@ -193,7 +211,7 @@ export default {
             goodsOrder: [],
             skuCodeAllList: [],
             numAllList: [],
-            idzz: '',
+            idzz: [],
             orderIdzz: [],
             orderDeliver: [],
             orderDeliverArray: [],
@@ -238,12 +256,135 @@ export default {
       this.addurl = config.url+'/api/order/goods/addChildren'
       console.log(this.addurl)
       this.appId = config.appId
-      console.log(this.orderList)
       // this.init();
     },
     async mounted() {
     },
     methods: {
+      //   批量编辑
+      bottomEdit(){
+        var that = this;
+        var array = that.Arrays;
+        if(that.buttomBloom){
+          that.editShow = true;
+           var List = this.orderList;
+          for(var i=0; i<array.length; i++){
+            if(array[i]){
+              console.log('true',i)
+              that.edit(List[i],List[i].orderId,i)
+            }else{
+              console.log('false')
+            }
+          }
+        }else{
+          that.$Toast({
+            content: '请选择商品',
+            type: 'warning'
+          })
+        }
+
+      },
+      //   完成按钮
+      bottomFinish(){
+        this.bottomShow = true;
+        this.bottomHug = false;
+        this.editClick = true;
+        this.radioShow = false;
+        this.listWidth = 702;
+        var len = this.Arrays;
+        var arr = [];
+        for(var i=0; i<len.length; i++){
+          arr[i] = false;
+        }
+        this.Arrays = arr;
+        this.radioId = '';
+        this.buttomBloom = false;
+      },
+      //   父组件触发函数
+      childMethod(){
+         var that = this;
+        setTimeout( res => {
+          console.log(this.orderList,'hhhhhhhhh')
+          var List = this.orderList;
+          var arr = [];
+          var len = List.length;
+           var arrTwo = [];
+          for(var i=0;i<len;i++){
+              arr[i] = false;
+              //    找到deliverList
+              var array = [];
+              var orderLisetArr = List[i].deliverList;
+              for(var k=0; k<orderLisetArr.length; k++){
+                var obj = {};
+                var skuCodeList  = orderLisetArr[k].skuCode.split(',')
+                obj.color = skuCodeList[0];
+                obj.size = skuCodeList[1];
+                obj.canNumer = orderLisetArr[k].canDeliverNumber
+                obj.num = orderLisetArr[k].num
+                obj.waitNum = orderLisetArr[k].remainNum
+                array.push(obj)
+                // console.log(array,obj,382);
+                }
+                  arrTwo[i] = array;
+                // console.log(arrTwo,orderLisetArr,787878)
+                // return
+          }
+          this.Arrays = arr;
+          this.orderDeliverArray = arrTwo;
+          console.log(this.orderDeliverArray,789789);
+        },500)
+      },
+        //    单选按钮
+      radioClick(id,i,type){
+        var that = this;
+        console.log(id,i,898989)
+        that.buttomBloom = true;
+        console.log(that.radioId,'ppppppp')
+        if(type == 1){
+          if(that.radioId != ''){
+            if(that.radioId != id){
+                that.$Toast({
+                  content: '同款商品才可以批量编辑',
+                  type: 'warning'
+                })
+            }else{
+              that.Arrays[i] = true;
+              this.selectArray.push(i);
+            }
+          }else{
+            that.radioId = id;
+            that.Arrays[i] = true;
+            this.selectArray.push(i);
+            console.log(that.Arrays)
+          }
+        }else{
+            // that.radioId = '';
+            that.Arrays[i] = false;
+            var arr = [];
+            for(var j=0; j<that.selectArray.length; j++){
+              if(that.selectArray[j] == i){
+                  console.log('重复')
+                  that.selectArray.splice(j, 1);
+              }else{
+                console.log('不重复')
+              }
+            }
+            if(that.selectArray.length < 1){
+              console.log('lllllll')
+              that.radioId = '';
+              that.buttomBloom = false;
+            }
+        }
+
+      },
+      //   批量处理
+      bottomHugBtn() {
+        this.bottomShow = false;
+        this.bottomHug = true;
+        this.editClick = false;
+        this.radioShow = true;
+        this.listWidth = 642;
+      },
         // 上传图片
         upload() {
             var that = this;
@@ -298,7 +439,7 @@ export default {
         },
         // 编辑弹窗保存
         save() {
-          // console.log(this.orderIds)
+          console.log(this.idzz)
            let object = {
               sessionId: this.azzSessionId,
               shopId: this.appId,
@@ -316,6 +457,7 @@ export default {
                 content: "是否确认保存！",
                 success: function(res) {
                     that.isShow = false;
+                    that.bottomFinish();
                     console.log(res);
                     if (res.confirm) {
                           console.log("用户点击确定");
@@ -355,22 +497,18 @@ export default {
         },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum,Indexs) {
-          // this.orderIds = itemss.orderIds
-          
           this.orderIds = idNum
           this.isShow = !this.isShow;
           this.orderDeliver = [];
-          // this.goodsId = itemss.goodsId
           // this.skuCode = []
           // let vueNum =  this.value1
           let orderLisetArr = itemss.skuList
           let deliverList = itemss.deliverList
           let array = [];
+           console.log(orderLisetArr,deliverList,463,8888888888888888888888)
           for(var i=0; i<orderLisetArr.length;i++){
             let obj = {};
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-            
-            this.orderIds = orderLisetArr[i].orderId
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
             obj.canNumer = orderLisetArr[i].canNumer
@@ -382,58 +520,15 @@ export default {
           }
           // this.orderDeliverArray[Indexs] = array;
           this.orderDeliver = array;
-          console.log(this.orderDeliver)
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
 
           // console.log(this.idzz)
         },
-      //   父组件触发函数
-      childMethod(){
-         var that = this;
-        setTimeout( res => {
-          console.log(this.orderList,'hhhhhhhhh')
-          var List = this.orderList;
-          var arr = [];
-          var len = List.length;
-          // console.log(len)
-           var arrTwo = [];
-          for(var i=0;i<len;i++){
-              arr[i] = false;
-              //    找到deliverList
-              var array = [];
-              var orderLisetArr = List[i].orderGoods;
-              // console.log(orderLisetArr)
-              for(var j=0;j<orderLisetArr.length;j++){
-                let deliverListArr = orderLisetArr[j].deliverList
-                for(var k=0; k<deliverListArr.length; k++){
-                  var obj = {};
-                  var skuCodeList  = deliverListArr[k].skuCode.split(',')
-                  obj.color = skuCodeList[0];
-                  obj.size = skuCodeList[1];
-                  obj.canNumer = deliverListArr[k].canDeliverNumber
-                  obj.num = deliverListArr[k].num
-                  obj.waitNum = deliverListArr[k].remainNum
-                  array.push(obj)
-                  
-                  // this.orderDeliverArray = array;
-                  // console.log(this.orderDeliverArray,789789);
-                  // console.log(array,obj,382);
-                }     
-                arrTwo[i] = array;
-              // this.$set(this.orderDeliverArray, )
-              }
-              this.Arrays = arr;
-              this.orderDeliverArray = arrTwo;
-              // console.log(this.orderDeliverArray,789789);
-          }
-        },500)
-      },
         // 发布
-        Deliver(id) {
+        Deliver() {
             console.log(123123);
-            this.idzz = id
             this.isShows = !this.isShows;
         },
         details(){
@@ -444,7 +539,12 @@ export default {
           let object = {
               sessionId: this.azzSessionId,
               shopId: this.appId,
-              orderId: this.idzz,
+              orderDeliver:
+              [{
+                orderGoodsId: this.orderGoodsId,
+                canDeliverNumber: this.value1,
+                id: this.idzz
+              }],
               logistics:
               {
                 image: this.tempFilePaths,
@@ -479,9 +579,6 @@ export default {
           this.isShows = !this.isShows;
 
         }
-    },
-    async mounted() {
-      console.log(this.orderList)
     },
 
 };

@@ -20,7 +20,7 @@
           </li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  >
+      <scroll-view :scroll-y="true" lower-threshold='80' style="height: 80%;" @scroll="lower" >
         <div class="scroll-box">
           <div class="box">
             <p>
@@ -67,6 +67,7 @@ export default {
       orderList: [],
       sigleList: [],//可拆单的数组
       noSigleList: [],//不可拆单的数组
+      type: '1'
 
     };
   },
@@ -88,7 +89,7 @@ export default {
       console.log(type)
       this.type = type
       const listData = await this.getNextPage({
-        orderType: type,
+        orderType: this.type,
         // state: 1
       })
 
@@ -101,7 +102,7 @@ export default {
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: 1,
+        orderType: this.type,
         // state: this.tag
       };
       this.shopNum++;
@@ -109,7 +110,7 @@ export default {
       return this.$API.L_selectOrderPage(obj);
     },
     //滚动下拉事件
-    lowerlower(e) {
+      async lower(e) {
       console.log(e);
       console.log(111111);
       if (!this.canLoad) return;

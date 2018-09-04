@@ -414,7 +414,6 @@ export default {
       this.azzSessionId =  wx.getStorageSync('sessionId')
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
-      console.log(this.addurl)
       this.appId = config.appId
       
     },

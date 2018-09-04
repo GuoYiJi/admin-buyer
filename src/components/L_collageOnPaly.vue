@@ -81,6 +81,7 @@ export default {
       }
     },
     methods: {
+      
       //支付
         seePlay(id,index){
           this.pasSeePlay = true
@@ -116,7 +117,6 @@ export default {
         pasSeeClose(){
           this.pasSeePlay = false
             // pasSeePlay: false,
-
         },
         async pasSeeBut(){
           const L_surePayData = await this.$API.L_surePay({
@@ -142,10 +142,12 @@ export default {
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
-        }
+        },
     },
-    mounted() {
+
+     mounted() {
       this.url =  config.url+"/api/order /selectOrderPage"
+
     }
 };
 </script>

@@ -77,7 +77,8 @@ export default {
       FMimg: "",
       remark: "",
       region: [],
-      customItem: "全部"
+      customItem: "全部",
+      Warehouse: []
     };
   },
   methods: {
@@ -89,7 +90,7 @@ export default {
       wx.chooseImage({
         count: 1,
         success: function(file) {
-          console.log(file);
+          console.log(file.tempFilePaths);
           // self.img = file.tempFilePaths[0]
           uploadImg(file.tempFilePaths[0], function(url) {
             self.img = url;
@@ -115,11 +116,14 @@ export default {
         shi: this.region[1],
         qu: this.region[2]
       });
-      wx.showToast({
-        title: "成功",
-        icon: "success",
-        duration: 2000
-      });
+      if(warehouse.code == 1){
+        wx.showToast({
+          title: "成功",
+          icon: "success",
+          duration: 2000
+        });
+        this.$router.back(-1)
+      }
       console.log(warehouse);
     },
     uploadImg(tempFilePath, callback) {
@@ -173,12 +177,24 @@ export default {
       }
     });
   },
-  mounted() {
+  async  mounted() {
     this.name = "";
     this.companyName = "";
     this.address = "";
     this.region = [];
     console.log(this);
+    // /
+    const selectWarehouseData =  await this.$API.selectWarehouse({
+        // addressId: this.selectAdr
+    });
+    console.log(selectWarehouseData)
+    this.Warehouse = selectWarehouseData.data
+    this.img = this.Warehouse.img
+    // this.companyName = this.Warehouse.companyName
+    wx.setStorageSync('dpName',this.Warehouse.companyName)
+
+    console.log(this.img)
+
   }
 };
 </script>

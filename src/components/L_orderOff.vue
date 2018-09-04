@@ -64,7 +64,6 @@ export default {
       items: this.default,
       yesGoods: [],
       yesGoodsAll: [],
-      type: ''
 
     };
   },
@@ -101,8 +100,8 @@ export default {
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: this.type,
-        state: 6
+        orderType: 6,
+        state: 2
         // state: this.tag
       };
       this.shopNum++;

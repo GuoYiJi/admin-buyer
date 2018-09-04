@@ -16,15 +16,15 @@
         </div>
       </div>
     </div>
-    <div class="maiJia">
+    <div class="maiJia" >
       <i class="maiJiaico"></i>
-      <text class="name">耕山小寨</text>
-      <!-- <text class="fuKuan" v-if="(select == 2)">待发货</text> -->
-      <text class="fuKuan" v-if="(select == 0)">拼团成功，待发货</text>
+      <text class="name" >{{dpName}}</text>
+      <text class="fuKuan" v-if="L_selectDetail">
+        {{L_selectDetail.state==1?'未支付':L_selectDetail.state==2?'取消':L_selectDetail.state==3?'已支付':L_selectDetail.state==4?'支付失败':L_selectDetail.state==5?'未发货':L_selectDetail.state==6?'已发货':L_selectDetail.state==7?'交易成功':L_selectDetail.state==8?'交易关闭':'拼单中'}} 
+      </text>
     </div>
-    <div class="list" v-for="(item,idx) in orderGoodsSku" :key="idx">
-      
-      <div class="kuang"  @click="orderListArr(item.goodsId)">
+    <div class="list" v-for="(item,idx) in orderGoodsList" :key="idx">
+      <div class="kuang" >
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -32,7 +32,7 @@
             <text class="name">{{item.stallInfo3}}</text>
             <div class="type">货期:{{item.delivery}}</div>
             <!-- <text class="name">{{item.stallInfo3}}</text> -->
-            <span class="number">X{{item.remainNum}}</span>
+            <span class="number">X{{item.num}}</span>
           </div>
           <div class="maShuo">
             <scroll-view scroll-x="true" style=" width:180px  " >
@@ -52,8 +52,9 @@
         </div> 
         <div class="title_2" v-for="(itemss,idss) in orderDeliver" :key="idss">
           <span class="colour">{{itemss.color}}</span>
-          <span class="standby">{{itemss.size}}</span>
-          <span class="shipments">{{itemss.canNumer}}</span>
+          <span class="size">{{itemss.size}}</span>
+          <span class="standby">{{itemss.num}}</span>
+          <span class="shipments">{{vule}}</span>
           <span class="remaining">{{itemss.waitNum}}</span>
         </div>
       </div>
@@ -217,7 +218,9 @@ export default {
             skuId: '',
             orderGoodsId: '',
             orderGoodsSku: [],
-            deliverListSku: []
+            deliverListSku: [],
+            dpName: '',
+            
 
         };
     },
@@ -345,39 +348,51 @@ export default {
         },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum) {
-          this.orderIds = idNum
-          console.log(itemss)
           this.isShow = !this.isShow;
+          this.orderIds = idNum
+          console.log(itemss )
           // this.skuCode = []
           // let vueNum =  this.value1
-          let orderLisetArr = this.orderGoodsSku
-          let deliverList = this.deliverListSku
-          console.log(deliverList)
+          // let orderLisetArr = this.orderGoodsSku
+          // let deliverList = this.deliverListSku
           let array = [];
-          for(var i=0; i<orderLisetArr.length;i++){
-            console.log(orderLisetArr)
-            let obj = {};
-            let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-            console.log(skuCodeList)
-            obj.color = skuCodeList[0];
-            obj.size = skuCodeList[1];
-            var canNumer = 0;
-            for(var j=0;j<deliverList.length;j++){
-              if(orderLisetArr[i].skuId == deliverList[j].skuId ){
-                  canNumer = deliverList[j].canDeliverNumber
-              }
-              
-            console.log(orderLisetArr)
-            }
-            obj.canNumer = canNumer
-            obj.num = orderLisetArr[i].num
-            obj.id = orderLisetArr[i].id
-            obj.skuId = orderLisetArr[i].skuId
-            obj.waitNum = orderLisetArr[i].remainNum
-            obj.orderGoodsId = deliverList[i].orderGoodsId
-            // console.log(obj)
+          let obj = {};
+          let skuCodeList  = itemss.skuCode.split(',')
+          obj.color = skuCodeList[0];
+          obj.size = skuCodeList[1];
+          // obj.canNume = 
+          obj.waitNum = itemss.remainNum
+          // console.log(skuCodeList)
+          obj.num = itemss.num
+          obj.skuId = itemss.skuId
+          obj.id = itemss.id
+          //   obj.waitNum = orderLisetArr[i].remainNum
+          //   obj.id = orderLisetArr[i].id
+          //   obj.skuId = orderLisetArr[i].skuId
+
+          // for(var i=0; i<orderLisetArr.length;i++){
+          //   console.log(orderLisetArr)
+          //   let obj = {};
+          //   let skuCodeList  = orderLisetArr[i].skuCode.split(',')
+          //   console.log(skuCodeList)
+          //   obj.color = skuCodeList[0];
+          //   obj.size = skuCodeList[1];
+          //   var canNumer = 0;
+          //   for(var j=0;j<deliverList.length;j++){
+          //     if(orderLisetArr[i].skuId == deliverList[j].skuId ){
+          //         canNumer = deliverList[j].canDeliverNumber
+          //     }
+          //   console.log(orderLisetArr)
+          //   }
+          //   obj.canNumer = canNumer
+          //   obj.num = orderLisetArr[i].num
+          //   obj.id = orderLisetArr[i].id
+          //   obj.skuId = orderLisetArr[i].skuId
+          //   obj.waitNum = orderLisetArr[i].remainNum
+          //   obj.orderGoodsId = deliverList[i].orderGoodsId
+          //   // console.log(obj)
             array.push(obj)
-          }
+          // }
           this.orderDeliver = array
           console.log( this.orderDeliver)
           this.orderDeliver.forEach((item, index) => {
@@ -389,12 +404,7 @@ export default {
           let object = {
               sessionId: this.azzSessionId,
               shopId: this.appId,
-              orderDeliver:  
-              [{
-                orderGoodsId: this.orderGoodsId,
-                canDeliverNumber: this.value1,
-                id: this.idzz
-              }],
+              orderId: this.idzz,
               logistics: 
               {
                 image: this.tempFilePaths,
@@ -441,24 +451,18 @@ export default {
       // console.log(L_selectOrderData)
       this.L_selectDetail = L_selectOrderData.data
       this.idzz = this.L_selectDetail.id
-      console.log(this.idzz)
-      // console.log(this.L_selectDetail.warehouse)
       this.warehouseData =this. L_selectDetail.orderAddress
-      console.log( this.warehouseData)
-      // this.pingUserData = this.L_selectDetail.pingUser
       this.orderGoodsList =  this.L_selectDetail.orderGoods
-      // console.log(this.orderGoodsList.orderGoods)
       for(var i = 0; i<this.orderGoodsList.length; i++){
         this.orderGoodsSku = this.orderGoodsList[i].orderGoods
         this.deliverListSku = this.orderGoodsList[i].deliverList
-        console.log(this.orderGoodsSku)
       }
       
       this.azzSessionId =  wx.getStorageSync('sessionId')
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
-      console.log(this.addurl)
       this.appId = config.appId
+      this.dpName = wx.getStorageSync('dpName')
     }
 };
 </script>
@@ -583,15 +587,15 @@ page
       display: flex
       font-size: 26px
       margin: 0 71px 0
-      .colour_1
+      .colour
         flex: 1
-      .size_1
+      .size
         flex: 1
-      .standby_1
+      .standby
         flex: 1
-      .shipments_1
+      .shipments
         flex: 1
-      .remaining_1
+      .remaining
         flex: 1
     .title_3
       display: flex

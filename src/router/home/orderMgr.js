@@ -2,7 +2,7 @@ const orderMgr = [{
         path: '/pages/home/orderMgr/orderMgr',
         // name: 'orderMgr',
         config: {
-            navigationBarTitleText: '商品清单',
+            navigationBarTitleText: '订单管理',
             'usingComponents': {
                 'i-input-number': '/iview/input-number/index',
                 'i-panel': '/iview/panel/index',

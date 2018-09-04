@@ -88,11 +88,12 @@ export default {
       applyFor: [],
       passRefund: [],
       noPassRefund: [],
-      shopListRefund: []
+      shopListRefund: [],
+      type: ''
     };
   },
   methods: {
-    handleTag(tag) {
+    async handleTag(tag) {
       this.tag = tag;
       var type;
       this.shopNum = 0;
@@ -105,27 +106,27 @@ export default {
         this.ascePrice = !this.ascePrice;
         type = this.ascePrice ? 4 : 5;
       }
-      this.type = type;
+      this.type = type
+      const listData = await this.getNextPage({
+        orderType: type,
+        // state: 1
+      })
+
+      this.yesGoods = listData.data.list
+      console.log(this.yesGoods)
+      if(listData.data.list.length < this.pageSize) {
+        this.canLoad = false
+      }
     },
     getNextPage() {
       var obj = {
-        pageSize: 20,
-        orderType: 1,
+        pageSize: 30,
+        orderType: this.type,
         // state: this.tag
       };
       this.shopNum++;
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
-    },
-    getNextPageRefund() {
-      var obj = {
-        pageSize: 20,
-        orderType: 1,
-        // state: this.tag
-      };
-      this.shopNum++;
-      obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderRefund(obj);
     },
     async lower(e) {
       // console.log(e);

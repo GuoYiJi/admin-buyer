@@ -85,11 +85,12 @@ export default {
       nameID: '2',
       allID: '1',
       sumID: '5',
+      type: ''
 
     };
   },
   methods: {
-    handleTag(tag) {
+    async handleTag(tag) {
       this.tag = tag;
       var type;
       this.shopNum = 0;
@@ -102,12 +103,22 @@ export default {
         this.ascePrice = !this.ascePrice;
         type = this.ascePrice ? 4 : 5;
       }
-      this.type = type;
+      this.type = type
+      const listData = await this.getNextPage({
+        orderType: type,
+        // state: 1
+      })
+
+      this.yesGoods = listData.data.list
+      console.log(this.yesGoods)
+      if(listData.data.list.length < this.pageSize) {
+        this.canLoad = false
+      }
     },
     getNextPage() {
       var obj = {
         pageSize: 30,
-        orderType: 1,
+        orderType: this.type,
         state: 8
       };
       this.shopNum++;
@@ -127,7 +138,7 @@ export default {
         this.yesGod = this.yesGod.concat(listData.data.list);
         this.showLoad = false;
       }, 2000);
-    }
+    },
 
   },
   async mounted() {
