@@ -1,7 +1,7 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": true,
 		"minified": true,
@@ -9,8 +9,8 @@
 	},
 	"miniprogramRoot": "./dist/",
 	"compileType": "miniprogram",
-	"appid": "wxaf3800e911f44ce8",
-	"projectname": "test",
+	"appid": "wx3a5f4001c0e1d32f",
+	"projectname": "xiaopao",
 	"condition": {
 		"search": {
 			"current": -1,

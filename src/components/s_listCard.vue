@@ -1,29 +1,31 @@
 <template>
   <div class="order-shop-card">
     <div class="item-card">
-      <div v-if="edit" class="select-box" @click="select"><i class="select" :class="check && 'active'"></i></div>
-      <div class="img"><img :src="getImg1"></div>
+      <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i>
+      <i class="img" :style="{background: 'url(' + shop.images + ')'}"></i>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
-        <p class="tips"><span>档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span></p>
-        <p class="sellnum">货期:{{shop.delivery}}丨销量:{{shop.sellCount}}</p>
+        <span class="stall">档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span>
+        <span class="count">
+          <p>货期:{{shop.delivery}}丨销量:{{shop.sellCount}}</p>
+          <button class="edit" @click="toOpen('visible4')">编辑</button>
+        </span>
         <p class="collage_price">拼团价: {{groupPrice ? '￥' + groupPrice : '未设置'}}</p>
         <p class="price">
           <span>售价:￥{{shop.sellPrice}}</span>
           <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
-          
         </p>
-        <span class="more-icon" @click="toOpen('visible4')">编辑</span>
       </div>
     </div>
     <i-modal :visible="visible4" @ok="comfirmGPrice('visible4')" @cancel="toClose('visible4')">
-      <div class="m_box">
-        <p>售价：￥{{shop.sellPrice}}</p>
-        <p>利润：￥{{shop.profit}}</p>
-        <div class="col_price">拼团价：<div class="p_input"><input v-model="groupPrice"  type="number"/></div>元</div>
-      </div>
-      
+      <ul class="m_box">
+        <li>售价：￥{{shop.sellPrice}}</li>
+        <li>利润：￥{{shop.profit}}</li>
+        <li>拼团价：<input v-model="groupPrice"  type="number"/>元</li>
+      </ul>
+
     </i-modal>
+    <i-message id="message" />
   </div>
 </template>
 <script>
@@ -53,13 +55,20 @@ export default {
         return this.shop.images.split(',')[0]
       } else {
         return noImage
-      }  
+      }
     },
   },
   methods: {
     select(){
+      if(this.groupPrice == '') {
+        this.$Message({
+          content: '请先拼团价格',
+          type: 'warning'
+        })
+        return
+      }
       this.check = !this.check
-      this.$emit('switchSel', this.shop.id, this.check)
+      this.$emit('switchSel', this.shop.id, this.groupPrice, this.check)
     },
     comfirmGPrice(name){
       this.toClose(name)
@@ -70,57 +79,44 @@ export default {
           id: this.shop.id,
           price: this.groupPrice
         }
-        
+
         this.$emit('setGroupPrice',obj)
       }
-      
+
     }
-    
+
   }
 }
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.m_box
-  padding-left:  130px
-  text-align: left
-  color: #000
-  p
-    padding-bottom: 15px
-  .col_price
-    // height: 52px
-    // line-height: 52px
-    .p_input
-      +border(1px,all, #ccc)
-      width: 167px
+ul.m_box
+  padding: 10px 80px 0
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  background-color: #ffffff
+  font-size: 32px
+  li
+    width: 100%
+    padding: 5px 0
+    overflow: hidden
+    text-align: left
+    display: flex
+    align-items: center
+    font-size: 32px
+    +singleFile
+    &:last-of-type
+      border: none
+    input
       display: inline-block
-      margin-right: 10px
-.collage_price
-  color: #333
-  font-size: 24px
-.select-box
-  width: 60px
-  position: relative
-.select
-  +select()
-.active
-  +select-active
-.order-shop-card
-  
-.more-icon
-  +icon(40px)
-  width: 70px
-  +center
-  right: 24px
-  +border(1px,all,#EE7527)
-  border-radius: 10px
-  color: #EE7527
-  text-align: center
-  line-height: 40px
-  font-size: 24px
-.sellnum
-  font-size: 24px
-  color: #999 
+      width: 167px
+      height: 45px
+      line-height: 45px
+      text-align: center
+      border: 2px solid #CCCCCC
+      margin: 0 10px
+      overflow: hidden
 .item-card
   display: flex
   text-align: left
@@ -129,32 +125,74 @@ export default {
   background: #fff
   position: relative
   margin-bottom: 8px
+  i.select
+    display: inline-block
+    width: 40px
+    height: 40px
+    border-radius: 50%
+    margin: auto 20px
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 100% 100%
+  i.active
+    background-image: url("~@/assets/img/storeMgr/select.png")
+  i.close
+    background-image: url("~@/assets/img/home/select.png")
   .img
     +icon(240px)
     border-radius: 12px
-    overflow: hidden
+    margin-right: 20px
   .desc
-    padding-left: 20px
-    max-width: 450px
+    flex: 1
+    overflow: hidden
+    display: flex
+    flex-wrap: wrap
     .title
+      width: 100%
       +moreLine(2)
       font-size: 28px
     .tips
-      padding-top: 8px 
+      width: 100%
+      display: flex
+      justify-content: space-between
+      align-items: center
+      padding-top: 8px
       color: #999
-      span
-        padding: 8px 9px 8px 5px
-        background: #F5F5F5
-        font-size: 22px
+    span.stall
+      width: 100%
+      font-size: 26px
+      color: #999999
+      +singleFile
+      background-color: #F5F5F5
+    span.count
+      width: 100%
+      display: flex
+      justify-content: space-between
+      p
+        flex: 1
+        font-size: 26px
+        color: #999999
+        +singleFile
+      button.edit
+        color: #EE7527
+        border: 2px solid #EE7527
+        border-radius: 10px
+        padding: 5px
+        font-size: 26px
+    .collage_price
+      width: 100%
+      text-align: left
+      font-size: 28px
+      color: #333333
+      +singleFile
     .price
+      width: 100%
       color: #FF0000
       font-weight: bold
-      font-size: 28px
+      font-size: 30px
+      +singleFile
       .sell
         color: #333
-        font-size: 26px
-        font-weight: 500
-
-    
-
+        font-size: 28px
+        font-style: normal
 </style>

@@ -64,13 +64,13 @@ export default {
   display: flex
   flex-wrap: wrap
   .coupon
-    flex: 1
     margin: 30px 23px
     font-size: 34px
     .img
       +bg-img('marketingMgt/Coupon.png')
       width: 102px
       height: 102px
+      border-radius: 50%
     .text
       margin-top: 10px
 </style>

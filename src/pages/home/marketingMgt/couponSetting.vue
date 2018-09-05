@@ -253,7 +253,7 @@ export default {
       padding-left: 70%
 .btn
   height: 98px
-  background: #CCCCCC
+  background: #F67C2F
   text-align: center
   line-height: 98px
   position: fixed

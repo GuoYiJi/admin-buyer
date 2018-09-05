@@ -36,7 +36,7 @@ export default {
       console.log(this.isLimitCount);
       if (this.switch1 == false) {
         this.isLimitCount = 0;
-        this.disa = true;
+        this.disa = false;
         wx.setStorageSync("isLimitCount", this.isLimitCount);
         this.please_input = "";
         wx.setStorageSync("please_input", this.please_input);

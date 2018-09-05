@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <!-- 商品选择列表 -->
     <div class="sort-select">
       <div class="top-nav">
         <ul>
@@ -13,7 +14,7 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -27,9 +28,10 @@
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
+      <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
     <i-message id="message" />
-    
+
   </div>
 </template>
 <script>
@@ -38,6 +40,7 @@ import scard from '@/components/s_listCard'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import { mapState } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
@@ -48,6 +51,13 @@ export default {
   computed: {
     groupNum(){
       return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+      // return this.$SETGROUNPPRICE.length > 0 ? ``
+    },
+    ...mapState(["shopSelectList"])
+  },
+  watch: {
+    edit(currentValue, oldValue) {
+      this.edit = !this.edit
     }
   },
   data() {
@@ -57,24 +67,23 @@ export default {
       ascePrice: true,
       tag: 1,
       showRight1: false,
-      edit: false,
+      edit: true,
       allCheck: false,
       //loading
       shopNum: 0,
-      shopList: [],
+      shopList: [],//商品列表
       showLoad: false,
       canLoad: true,
       pageSize: 20,
       type: 0,
-      selIds: [],
+      selIds: [],//选择的ids
       state: 1,
-      groupPriceData: []
+      groupPriceData: [],//选择的id和拼团价
     };
   },
   methods: {
     confirm(){
-      //校验选择拼团商品的价格
-
+      this.$router.back(-1);
     },
     async handleTag(tag){
       this.tag = tag
@@ -94,7 +103,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -150,23 +159,41 @@ export default {
       }
 
     },
-    switchSel(id,bool){
+    // 根据选中状态处理ids: GoodsId, 拼团价, 是否已勾选
+    switchSel(id, groupPrice, bool){
       if(bool){
-        this.selIds.push(id)
+        if(this.selIds && this.selIds.some(item => item == id)) {
+          const start = this.selIds.indexOf(id)
+          this.selIds[start] = id;
+          this.groupPriceData[start] = groupPrice;
+          this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
+        }else {
+          this.selIds.push(id);
+          this.groupPriceData.push(groupPrice)
+          this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
+        }
+        // console.log(this.groupPriceData);
       }else {
         const start = this.selIds.indexOf(id)
-        this.selIds.splice(start,1)
+        this.selIds.splice(start, 1)
+        this.groupPriceData.splice(start, 1)
+        // console.log(this.groupPriceData);
+        this.$store.commit('SPLICEROUNPPRICE', start);
       }
-      console.log(this.selIds)
+      // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
+      console.log(this.shopSelectList);
     },
+    // 设置拼团id和价格数组
+    // obj: {id: this.shop.id, price: this.groupPrice}
     setGroupPrice(obj){
       for(var i=0,l; l=this.groupPriceData[i++];){
         if(l.id == obj.id) return l.price = obj.price
       }
       this.groupPriceData.push(obj)
+      console.log(this.groupPriceData);
     }
 
-  
+
   },
   async mounted() {
     console.log(this.shopList)
@@ -177,7 +204,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
 
 };
@@ -201,7 +228,7 @@ export default {
 
 
 
- 
+
 .box
   padding: 2% 0 50px 0%
 .home
@@ -230,7 +257,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -241,18 +268,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

@@ -1,5 +1,6 @@
 <template>
 <div class="home">
+  <i-toast id="toast" />
   <div class="title_box">
     <input class="input_title" placeholder="请输入标题" v-model="title"/>
   </div>
@@ -15,7 +16,7 @@
       <span class="desc"> 货期:{{shopMatch[0].delivery}}丨销量:{{shopMatch[0].sellCount}}</span>
       <span class="sell"><strong>售价:￥{{shopMatch[0].sellPrice}}</strong> 利润:￥{{shopMatch[0].profit}}</span>
     </div>
-    <div class="shop-card add_shop" @click="pageTo('/pages/home/shopMgr/matchList')" v-else>+添加商品</div>
+    <div class="shop-card add_shop" @click="toRoute('home/shopMgr/matchList')" v-else>+添加商品</div>
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
@@ -29,19 +30,17 @@
       <span class="desc">货期:{{item.delivery}}丨销量:{{item.sellCount}}</span>
       <span class="sell"><strong>售价:￥{{item.sellPrice}}</strong> 利润:￥{{item.profit}}</span>
     </div>
-    <div class="shop-cards add_shop" @click="pageTo('/pages/home/shopMgr/matchList')">+添加商品</div>
+    <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList')">+添加商品</div>
   </div>
   <p class="bottom"></p>
-  <p class="save" @click="QD()">确定</p>
+  <p class="save" @click="submit()">确定</p>
 </div>
 </template>
 <script>
 import wx from "wx";
 import scard from "@/components/group_card";
 import mixin from "@/mixin";
-import {
-  mapState
-} from "vuex";
+import { mapState } from "vuex";
 export default {
   mixins: [mixin],
   components: {
@@ -53,20 +52,27 @@ export default {
       id: '',
       title: '',
       shopId: '',
-      goodsIds: [],
+      // goodsIds: [],
       selectShopArr: []
     };
   },
   computed: {
     ...mapState(["shopMatch"]),
+    goodsIds() {
+      let arr = []
+      this.shopMatch.forEach((item, index) => {
+        arr[index] = item.goodsId
+      })
+      return arr;
+    }
   },
   methods: {
-    pageTo(url) {
-      this.$router.push(url);
-    },
-    toRoute(path,shopNum){
-      this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
-    },
+    // pageTo() {
+    //   this.$router.push('shopMgr/matchList');
+    // },
+    // toRoute(path,shopNum){
+    //   this.$router.push({ path, query: {type: 'groupSetting',shopNum: shopNum }} )
+    // },
     toCancel(index) {
       console.log(index);
       // this.shopMatch.splice(index, 1);
@@ -76,25 +82,48 @@ export default {
       // this.matchGoodsList[index] = null;
       // this.$set(this.matchGoodsList, index, {images: null,name: null, delivery: null, sellCount: null, sellPrice: null, profit: null });
     },
-    QD() {
+    addShopList(){
+      // this.$router.push('/pages/home/shopMgr/matchList')
+      this.$router.push('/pages/')
+      // console.log(this.$router.push( '/pages/home/orderMgr/mail/delivery'))
+    },
+    submit() {
       // const s_addMatch = await API.s_addMatch();
-      this.$API.s_addMatch({
-        title: this.title,
-        goodsIds: this.goodsIds.toString()
-      }).then(response => {
-        console.log(response);
-      })
+      if(!this.title) {
+        this.$Toast({
+            content: '未设置系列标题',
+            type: 'error'
+        })
+      }else if(this.shopMatch.length > 9){
+        this.$Toast({
+            content: '最多添加9个商品, 请检查',
+            type: 'error'
+        })
+      }else {
+        console.log(this.goodsIds);
+        this.$API.s_addMatch({
+          title: this.title,
+          goodsIds: this.goodsIds.toString()
+        }).then(response => {
+          console.log(response);
+          if(response.code === 1) {
+            this.$Toast({
+                content: '创建成功',
+                type: 'success'
+            })
+            this.$router.back(-1)
+          }
+        })
+      }
     }
   },
-  mounted() {
-    // console.log(this.shopMatch);
-    // if(this.shopMatch && this.shopMatch.length > 0) {
-    //   this.shopMatch.forEach(item => {
-    //     this.selectShopArr.push(item.id);
-    //   })
-    // }
-    // console.log(this.goodsIds);
-  }
+  // updated() {
+  //   console.log(this.shopMatch);
+  //   this.shopMatch.forEach((item, index) => {
+  //     this.goodsIds[index] = item.id;
+  //   })
+  //   console.log(this.goodsIds);
+  // }
 };
 </script>
 <style lang="sass" scoped>
@@ -102,10 +131,10 @@ export default {
 .home
   padding: 20px 22px
   .title_box
-    width: 93%
+    width: 100%
     height: 200px
     border: 1px solid #CCCCCC
-    margin: 0 auto
+    // margin: 0 auto
     overflow: hidden
     input
       width: 100%
@@ -193,6 +222,7 @@ export default {
     .shop-cards
       margin-top: 40px
       flex: 0 0 30%
+      display: flex
       min-height: 464px
       flex-wrap: wrap
       .img_box
@@ -223,16 +253,18 @@ export default {
         font-size: 26px
         color: #000
         overflow: hidden
-        // +singleFile
+        +singleFile
       span.desc
         width: 100%
         text-align: left
         color: #999999
         font-size: 22px
+        +singleFile
       span.sell
         width: 100%
         color: #333333
         font-size: 23px
+        +singleFile
         strong
           display: inline-block
           color: #FF0000
@@ -245,6 +277,7 @@ export default {
     height: 98px
     line-height: 98px
     font-size: 32px
+    color: #FFFFFF
     background-color: #F67C2F
     text-align: center
 </style>

@@ -3,20 +3,20 @@
     <div class="search-box" >
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
-        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索订单号、收货人姓名、手机号</p>  
+        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索订单号、收货人姓名、手机号</p>
       </div>
     </div>
     <div class="nav">
       <div class="list">
-        <span 
-          v-for="(item,idx) in navData" 
-          :key="idx" 
-          class="item" 
-          :class="[tag === item.id && 'active']"  
+        <span
+          v-for="(item,idx) in navData"
+          :key="idx"
+          class="item"
+          :class="[tag === item.id && 'active']"
           @click="handleNav(item.id)"
         >{{item.text}}</span>
         <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
-      </div>  
+      </div>
     </div>
     <!-- <scroll-view scroll-y lower-threshold='80' style="height: 80%;" @scrolltolower="lower"  > -->
     <div class="content">
@@ -207,7 +207,7 @@ export default {
           wx.setStorageSync('dpName', this.dpName)
     // this.shopNum = 0;
     // const listData = await this.getNextPage();
-    // this.shopList = this.shopList.concat(listData.data.list); 
+    // this.shopList = this.shopList.concat(listData.data.list);
     // if (listData.data.list.length < 30) {
     //   this.canLoad = false;
     // }
@@ -244,7 +244,7 @@ export default {
     //   }
 
     // }
-    
+
   }
 };
 </script>
@@ -265,10 +265,10 @@ export default {
       .search
         +bg-img('home/search.png')
         +icon(38px)
-        margin-top: 7px  
+        margin-top: 7px
     .search-icon
       position: absolute
-      left: 60px 
+      left: 60px
     .input-box
       background-color: #f5f5f5
       border-radius: 4px
@@ -281,7 +281,7 @@ export default {
 .active
   color: #F67C2F
   // font-weight: 600
-.nav 
+.nav
   overflow: hidden
   text-align: center
   background: #f5f5f5
@@ -289,10 +289,10 @@ export default {
   width: 100%
   padding-top: 1px;/*no*/
   box-shadow: 0px 4px 6px 0px rgba(0, 69, 162, 0.06);/*no*/
-  .list  
+  .list
     font-size: 26px
     color: #000
-    background: #f5f5f5    
+    background: #f5f5f5
     overflow-y: hidden
     overflow-x: auto
     height: 90px
@@ -300,10 +300,10 @@ export default {
     display: flex
     width: 100%
     .item
-      flex: 0 0 20%    
+      flex: 0 0 20%
       line-height: 70px
       box-sizing: border-box
-.line 
+.line
   display: block
   height: 1px;/*no*/
   width: 8%
@@ -313,5 +313,5 @@ export default {
   bottom: 23px
   margin: 0 6%
   transition: left .3s ease-in
-    
+
 </style>

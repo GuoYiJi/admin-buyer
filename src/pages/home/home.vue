@@ -169,4 +169,3 @@ export default {
     padding-bottom: 50px
 
 </style>
-

@@ -13,7 +13,8 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" edit="true" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            <!-- shopMatch.some(item => item.id === shop.id -->
+            <scard ref="scard" edit="true" :key="index" :check="shopMatch.some(item => item.goodsId === shop.id )" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -26,7 +27,7 @@
       </scroll-view>
     </div>
     <div class="footer">
-      <p class="save" @click="confirm">确定{{groupNum}}</p>
+      <p class="save" @click="confirm">确定({{shopMatch.length}})</p>
     </div>
     <i-message id="message" />
 
@@ -39,6 +40,7 @@ import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
 import { $getUrl } from '@/utils'
+import { mapState } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
@@ -47,9 +49,10 @@ export default {
     selsearch
   },
   computed: {
-    groupNum(){
-      return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
-    }
+    // groupNum(){
+    //   return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+    // }
+    ...mapState(["shopMatch"]),
   },
   data() {
     return {
@@ -67,23 +70,30 @@ export default {
       canLoad: true,
       pageSize: 20,
       type: 0,
+      status: 0,//0-编辑, 1-添加
       selIds: [],
-      state: 1,
-      groupPriceData: []
+      state: '',
+      groupPriceData: [],
     };
   },
   methods: {
+    //确定, 把选中的数据覆盖shopMatch
     confirm(){
       //添加商品
-      if(this.selIds.length == 0) return this.handleError('请选择至少一件商品！')
-      let arr = []
-      for(var i=0,l; l=this.shopList[i++];){
-        if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
+      if(this.shopMatch.length === 0) {
+        this.$Toast({
+          content: '至少选择一个商品',
+          type: 'error'
+        })
+      }else {
+        this.$router.back(-1);
       }
-      this.$store.commit('ADDMATCH', arr)
-      // wx.setStorageSync('selectShopArr', arr);
-      // this.$router.back(-1);
-      this.$router.push('/'+ $getUrl())
+      // let arr = []
+      // for(var i=0,l; l=this.shopList[i++];){
+      //   if(this.selIds.indexOf(l.id) >= 0) arr.push(l)
+      // }
+      // this.$store.commit('PUSHMATCH', arr)
+      // this.$router.push('/'+ $getUrl())
       // console.log(arr)
     },
     async handleTag(tag){
@@ -124,13 +134,13 @@ export default {
       return this.$API.searchShopGroup(params)
       // return this.$API.s_getCanGroup(params)
     },
+    // 获取下页数据
     getNextPage(params) {
       this.shopNum++;
       //追加条件，根据tag追加
       if(this.tag == 5){
         params = Object.assign(params, this.selParam)
       }
-
       params.pageNumber = this.shopNum;
       return this.searchShop(params)
       // return this.$API.getAdr(obj);
@@ -160,19 +170,52 @@ export default {
       }
 
     },
-    switchSel(id,bool){
+    //取消选中操作, 删除此位置的数据
+    switchSel(id,bool, shop){
+      // console.log(shop);
       if(bool){
-        this.selIds.push(id)
+        // const index = 0;
+        // this.shopMatch.forEach((item, index) => {
+        //   if(item.goodsId === id) {
+        //     index = index
+        //   }
+        // })
+        // console.log(index);
+        //往shopMatch添值
+        console.log(shop);
+        this.$store.commit('PUSHMATCH', {
+          delivery: shop.delivery,//货期
+          goodsId: shop.id,//商品ID
+          images: shop.images,
+          name: shop.name,//名称
+          profit: shop.profit,//利润
+          sellCount: shop.sellCount,//销量
+          sellPrice: shop.sellPrice,//售价
+        })
+        // this.selIds.push(id)
+        // console.log(this.shopMatch);
       }else {
-        const start = this.selIds.indexOf(id)
-        this.selIds.splice(start,1)
+        // const start = this.selIds.indexOf(id)
+        // console.log(this.shopMatch.indexOf(id));
+        this.shopMatch.forEach((item, index) => {
+          if(item.goodsId === shop.id) {
+            this.$store.commit('SPLICEMATCH', index)
+          }
+        })
+        // console.log(compareIndex);
+
+        // console.log(this.shopMatch);
+        // this.selIds.splice(start,1)
       }
-      console.log(this.selIds)
+      // console.log(this.selIds)
+      console.log(this.shopMatch);
     },
+    //选中操作
     setGroupPrice(obj){
       for(var i=0,l; l=this.groupPriceData[i++];){
         if(l.id == obj.id) return l.price = obj.price
       }
+      // this.$store.commit('SPLICEMATCH', ADDMATCH)
       this.groupPriceData.push(obj)
     }
 
@@ -180,7 +223,6 @@ export default {
   },
   async mounted() {
     //判断是否
-
     this.shopNum = 0;
     const listData = await this.getNextPage({ob: 0,state: this.state});
     this.shopList = listData.data.list;
@@ -188,7 +230,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-
+    console.log(this.shopMatch);
   },
 
 };
@@ -205,13 +247,23 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
+  .save
+
+.loading
+  height: 70px
+
+
+
+
 .box
   padding: 2% 0 50px 0%
 .home
   height: 100%
 
 .scroll-box
+  // padding: 10px 0
   height: 800px
+  // overflow: auto
   p
     margin: 5px 0
 .option-icon
@@ -225,7 +277,11 @@ export default {
 .sort-select
   height: 100%
 .top-nav
+  // left: 0
+  // right: 0
+  // top: 180px
   background: #fff
+  // z-index: 9999
   text-align: center
   ul
     display: flex

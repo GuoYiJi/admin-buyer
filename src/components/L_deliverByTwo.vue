@@ -170,6 +170,7 @@
         </div>
       </div>
     </div>
+    <i-toast id="toast" />
     <!--  底部按钮  -->
     <div class="bottomHug">
         <div v-show="bottomShow" class="bottomHugBtn" @click="bottomHugBtn()">批量处理</div>
@@ -178,7 +179,6 @@
           <div class="bottomHugBtn BHB" @click="bottomEdit()">编辑</div>
         </div>
     </div>
-    <i-toast id="toast" />
   </div>
 
 
@@ -585,219 +585,254 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page
-  background: #f5f5f5
-.nav
-  overflow: hidden
-  display: flex
-  padding-left: 24px
-.radioHug
-  overflow: hidden
-  float: left
-  position: relative
-  width: 36px
-  display: flex
-  flex: 0 0 60px
-.radio
-  width: 36px
-  height: 36px
-  border-radius: 50%
-  position: absolute
-  top: 50%
-  transform: translateY(-50%)
-  border: 2px solid #CCC
-.radioImg
-  position: absolute
-  top: 50%
-  transform: translateY(-50%)
-  width: 40px
-  height: 40px
-  display: block
-.list
-  background: #fff
-  // margin: 10px 24px
-  margin-top: 10px
-  margin-bottom: 10px
-  margin-right: 24px
-  .kuang
-    padding-bottom: 10px
+.hug
+  width: 100%
+  min-height: 100%
+  .nav
     overflow: hidden
-    .title_1
-      height: 68px
+    display: flex
+    padding-left: 24px
+    .radioHug
+      overflow: hidden
+      float: left
+      position: relative
+      width: 36px
       display: flex
-      line-height: 68px
-      border-bottom: 1px solid #f4f4f4
-      font-size: 26px
-      .name
-        flex: 5
-        padding-left: 20px
-      .fuKuan
-        flex: 1
-    .topHug
-      display: flex
-      .sPimgHug
-        flex: 0 0 30%
-        text-align: center
-        .sPimg
-          width: 160px
-          height: 160px
+      flex: 0 0 60px
+      .radio
+        width: 36px
+        height: 36px
+        border-radius: 50%
+        position: absolute
+        top: 50%
+        transform: translateY(-50%)
+        border: 2px solid #CCC
+      .radioImg
+        position: absolute
+        top: 50%
+        transform: translateY(-50%)
+        width: 40px
+        height: 40px
+        display: block 
+    .listHug
+      .list
+        background: #fff
+        // margin: 10px 24px
+        margin-top: 10px
+        margin-bottom: 10px
+        margin-right: 24px
+        .kuang
+          padding-bottom: 10px
+          overflow: hidden
+          .title_1
+            height: 68px
+            display: flex
+            line-height: 68px
+            border-bottom: 1px solid #f4f4f4
+            font-size: 26px
+            .name
+              flex: 5
+              padding-left: 20px
+            .fuKuan
+              flex: 1
+          .topHug
+            display: flex
+            .sPimgHug
+              flex: 0 0 30%
+              text-align: center
+              .sPimg
+                width: 160px
+                height: 160px
+                display: inline-block
+                position: relative
+                margin-top: 21px
+                // margin: 21px auto 0
+                // float: left
+          .textThad
+            display: inline-block
+            flex: 0 0 70%
+            position: relative
+            margin: 10px 0
+            font-size: 24px
+            .title
+              +moreLine(2)
+            .huo
+              +singleFile
+              padding-right: 30px
+              .name
+                display: inline-block
+                background: #ccc
+                color: #fff
+                padding: 4px 8px
+              .type
+                margin: 0 0 0 20px
+                display: inline-block
+                color: #999
+              .number
+                float: right
+                margin-right: 12rpx
+                color: #999
+          .maShuo
+            color: #999
+            display: flex
+            .text
+              // flex: 11
+              margin-left: 10px
+              disabled: block
+            .edit
+              flex: 2
+              display: inline-block
+              width: 100px
+              height: 40px
+              font-size: 26px
+              // background:#ccc
+              text-align: center
+              border: 1px solid #F67C2F
+              color: #F67C2F
+              border-radius: 8px
+        .jiaGe
+          // height: 70px
+          width: 100%
+          background: #fff
+          font-size: 22px
+          padding-top: 4rpx
           display: inline-block
           position: relative
-          margin-top: 21px
-          // margin: 21px auto 0
-          // float: left
-    .textThad
-      display: inline-block
-      flex: 0 0 70%
-      position: relative
-      margin: 10px 0
-      font-size: 24px
-      .title
-        +moreLine(2)
-      .huo
-        +singleFile
-        padding-right: 30px
-        .name
-          display: inline-block
-          background: #ccc
-          color: #fff
-          padding: 4px 8px
-        .type
-          margin: 0 0 0 20px
-          display: inline-block
-          color: #999
-        .number
-          float: right
-          margin-right: 12rpx
-          color: #999
-    .maShuo
-      color: #999
-      display: flex
-      .text
-        // flex: 11
-        margin-left: 10px
-        disabled: block
-      .edit
-        flex: 2
-        display: inline-block
-        width: 100px
-        height: 40px
-        font-size: 26px
-        // background:#ccc
-        text-align: center
-        border: 1px solid #F67C2F
-        color: #F67C2F
-        border-radius: 8px
-  .jiaGe
-    // height: 70px
-    width: 100%
-    background: #fff
-    font-size: 22px
-    padding-top: 4rpx
-    display: inline-block
-    position: relative
-    .jiaGe_1
-      margin: 20px
-    .text
-      display: inline-block
-      right: 100px;
-      top: 20px
-      position: absolute
-    .jiaGet
-      right: 30px;
-      top: 20px
-      position: absolute
-      display: inline-block
-      color: #FF0000
+          .jiaGe_1
+            margin: 20px
+          .text
+            display: inline-block
+            right: 100px;
+            top: 20px
+            position: absolute
+          .jiaGet
+            right: 30px;
+            top: 20px
+            position: absolute
+            display: inline-block
+            color: #FF0000
+    
+        .type_1
+          padding-top: 10px
+          // height: 159px
+          text-align: center
+          background: #fff
+          border-bottom: 1px solid #f1f1f1
+          line-height: 52px
+          .title
+            display: flex
+            font-size: 26px
+            color: #999
+            margin: 0 60px 0
+            .colour
+              flex: 1
+            .size
+              flex: 1
+            .standby
+              flex: 1
+            .shipments
+              flex: 1
+            .remaining
+              flex: 1
+          .title_2
+            display: flex
+            font-size: 26px
+            margin: 0 71px 0
+            .colour
+              flex: 1
+            .size
+              flex: 1
+            .standby
+              flex: 1
+            .shipments
+              flex: 1
+            .remaining
+              flex: 1
+        .btn
+          position: relative
+          font-size: 24px
+          display: flex
+          background: #fff
+          width: 100%
+          height: 100px
+          border-top: 1px solid #f4f4f4
+          padding-bottom: 12px
+          .collage_1
+            display: block
+            padding: 10px 0 0 20px
+            height: 94px
+            background: #fff
+            .collage_img
+              width: 84px
+              height: 84px
+              margin: 0 5px 0
+              border: 1px solid #eee
+          .details
+            width: 130px
+            height: 60px
+            border-radius: 8px
+            background: #F67C2F
+            color: #fff
+            line-height: 60px
+            text-align: center
+            margin: 20px 0 0 20px
+            position: absolute
+            right: 180px
+          .collage
+            width: 130px
+            height: 60px
+            border-radius: 8px
+            background: #F67C2F
+            color: #fff
+            line-height: 60px
+            text-align: center
+            margin: 20px 0 0 20px
+            position: absolute
+            right: 0px
+          .Deliver
+            width: 128px
+            height: 58px
+            border-radius: 8px
+            border: 1px solid #999
+            color: #999
+            line-height: 60px
+            text-align: center
+            margin: 20px
+            position: absolute
+            right: 0px
 
-  .type_1
-    padding-top: 10px
-    // height: 159px
-    text-align: center
-    background: #fff
-    border-bottom: 1px solid #f1f1f1
-    line-height: 52px
-    .title
-      display: flex
-      font-size: 26px
-      color: #999
-      margin: 0 60px 0
-      .colour
-        flex: 1
-      .size
-        flex: 1
-      .standby
-        flex: 1
-      .shipments
-        flex: 1
-      .remaining
-        flex: 1
-    .title_2
-      display: flex
-      font-size: 26px
-      margin: 0 71px 0
-      .colour
-        flex: 1
-      .size
-        flex: 1
-      .standby
-        flex: 1
-      .shipments
-        flex: 1
-      .remaining
-        flex: 1
-  .btn
-    position: relative
-    font-size: 24px
-    display: flex
-    background: #fff
-    width: 100%
-    height: 100px
-    border-top: 1px solid #f4f4f4
-    padding-bottom: 12px
-    .collage_1
-      display: block
-      padding: 10px 0 0 20px
-      height: 94px
-      background: #fff
-      .collage_img
-        width: 84px
-        height: 84px
-        margin: 0 5px 0
-        border: 1px solid #eee
-    .details
-      width: 130px
-      height: 60px
-      border-radius: 8px
-      background: #F67C2F
-      color: #fff
-      line-height: 60px
-      text-align: center
-      margin: 20px 0 0 20px
-      position: absolute
-      right: 180px
-    .collage
-      width: 130px
-      height: 60px
-      border-radius: 8px
-      background: #F67C2F
-      color: #fff
-      line-height: 60px
-      text-align: center
-      margin: 20px 0 0 20px
-      position: absolute
-      right: 0px
-    .Deliver
-      width: 128px
-      height: 58px
-      border-radius: 8px
-      border: 1px solid #999
-      color: #999
-      line-height: 60px
-      text-align: center
-      margin: 20px
-      position: absolute
-      right: 0px
+      
+
+
+
+
+
+// .nav
+//   overflow: hidden
+//   display: flex
+//   padding-left: 24px
+// .radioHug
+//   overflow: hidden
+//   float: left
+//   position: relative
+//   width: 36px
+//   display: flex
+//   flex: 0 0 60px
+// .radio
+//   width: 36px
+//   height: 36px
+//   border-radius: 50%
+//   position: absolute
+//   top: 50%
+//   transform: translateY(-50%)
+//   border: 2px solid #CCC
+// .radioImg
+//   position: absolute
+//   top: 50%
+//   transform: translateY(-50%)
+//   width: 40px
+//   height: 40px
+//   display: block 
 
 .number_1
   margin-top: 10px
@@ -1085,24 +1120,24 @@ page
 .bottomHug
   width: 100%
   height: 98px
+  line-height: 98px
   border-top: 1px solid #CCC
   position: fixed
   bottom: 0
   left: 0
+  z-index: 90
   background-color: #fff
   .bottomHugBtn
     background-color: #F67C2F
     width: 220px
-    height: 98px
+    height: 100%
     float: right
     font-size: 32px
     color: #fff
     text-align: center
-    line-height: 98px
-    vertical-align: middle
   .BHB
     background-color: #ccc
-.topHug
-  display: flex
+// .topHug
+//   display: flex
 
 </style>

@@ -1,8 +1,9 @@
 <template>
-  <div class="order-shop-card" v-if="show">
+  <div class="order-shop-card">
     <div class="item-card" >
-      <div v-if="edit" class="select-box" @click="select"><i class="select" :class="check && 'active'"></i></div>
-      <div class="img"><img :src="getImg1"></div>
+      <!-- :class="check && 'active'" -->
+      <div v-if="edit" class="select-box" @click="select"><i class="select" :class="{'active': check}"></i></div>
+      <div class="img"><img :src="shop.images"></div>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <p class="tips"><span>档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span></p>
@@ -10,7 +11,7 @@
         <p class="price">
           <span>售价:￥{{shop.sellPrice}}</span>
           <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
-          
+
         </p>
         <i class="more-icon" @click="toOpen('visible4')"></i>
       </div>
@@ -27,56 +28,70 @@ import mixin from '@/mixin'
 export default {
   mixins: [mixin],
   props: {
+    //编辑
     edit: {
       type: Boolean,
       default: false
     },
+    //添加商品
     shop: {
       type: Object,
     },
     act: {
       type: String,
       default: '下架'
+    },
+    check: {
+      type: Boolean,
+      default: false
     }
   },
   $watch: {
     edit: (newV,old)=>{
-      // if(!newV) 
+      // if(!newV)
       this.check = false
       console.log(this.check)
     }
   },
   data(){
     return {
-      check: false,
+      // check: false,
       visible4: false,
       visible2: false,
-      show: true,
       // vertical: '',
       actions4: [
         { name: "编辑" },
         { name: "下架" },
-        { name: "分组" }
+        { name: "分组" },
+        { name: "取消" }
       ],
     }
   },
   computed: {
-    getImg1(){
-      if(this.shop.images){
-        return this.shop.images.split(',')[0]
-      } else {
-        return noImage
-      }  
-    },
+    // getImg1(){
+    //   if(this.shop.images){
+    //     return this.shop.images.split(',')[0]
+    //   } else {
+    //     return noImage
+    //   }
+    // },
     // checkState(){
     //   return this.check
     // }
   },
   methods: {
+    //点击选中按钮
     select(){
-      this.check = !this.check
       //通知父组件 选中或取消
-      this.$emit('switchSel', this.shop.id, this.check)
+      if(this.check) {
+        this.check = false
+        console.log(this.shop);
+        this.$emit('switchSel', this.shop.id, false, this.shop)
+      }else {
+        this.check = true
+        this.$emit('switchSel', this.shop.id, true, this.shop)
+      }
+
     },
     // selectAll(bool){
     //   this.check = bool
@@ -93,13 +108,15 @@ export default {
       } else if (index === 2) {
         //group
         this.toRoute('home/shopMgr/classify',{groupIds: this.shop.groupIds,goodsIds: this.shop.id })
+      } else if (index === 3) {
+        this.toClose('visible4')
       }
     },
 
     async comfirmDel(name){
       this[name] = false
       let state = 0
-      if(this.act != '下架') state = 1 
+      if(this.act != '下架') state = 1
       await this.$API.switchShop({
         goodsIds: this.shop.id,
         state: state
@@ -133,7 +150,7 @@ export default {
 .active
   +select-active
 .order-shop-card
-  
+
 .more-icon
   +bg-img('shopMgr/more.png')
   +icon(40px)
@@ -143,7 +160,7 @@ export default {
   right: 24px
 .sellnum
   font-size: 24px
-  color: #999 
+  color: #999
 .item-card
   display: flex
   text-align: left
@@ -162,7 +179,7 @@ export default {
     .title
       +moreLine(2)
     .tips
-      padding-top: 8px 
+      padding-top: 8px
       color: #999
       span
         padding: 8px 9px 8px 5px
@@ -178,6 +195,6 @@ export default {
         font-size: 28px
         font-weight: 500
 
-    
+
 
 </style>
