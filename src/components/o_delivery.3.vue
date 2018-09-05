@@ -2,7 +2,7 @@
 <template>
   <!--订单内容带子订单-->
   <div class="nav">
-    <div class="list" v-for="(item,idx) in noGoodszz" :key="idx">
+    <div class="list" v-for="(item,idx) in sigleList" :key="idx">
       <div class="kuang">
         <div class="title_1">
           <text class="name">订单编号：{{item.orderNo}}</text>
@@ -40,7 +40,7 @@
         <span class="text">共{{item.num}}件商品,合计: </span>
         <span class="jiaGet">{{item.count}}元</span>
       </div>
-      <div class="type_1">
+      <div class="type_1" v-show="colorSex">
         <div class="title">
           <span class="colour">颜色</span>
           <span class="colour">码数</span>
@@ -52,7 +52,6 @@
           <div class="title_2" v-for="(itemxx,idxx) in colorSexArr" :key="idxx" v-if="itemxx.orderIds == item.id">
             <span class="colour">{{itemxx.color}}</span>
             <span class="standby">{{itemxx.size}}</span>
-            <span class="shipments">{{itemxx.num}}</span>
             <span class="shipments">{{itemxx.canNumer}}</span>
             <span class="remaining">{{itemxx.waitNum}}</span>
           </div>
@@ -75,7 +74,7 @@
           <img class="collage_img" :src="item.picture">
         </div>
         <span class="details" @click="details(item.id)">查看详情</span>
-        <span class="Deliver" @click="Deliver(item.id)">发货</span>
+        <span class="Deliver" @click="Deliver()">发货</span>
         <span v-if="(btn==1)" class="collage">查看子拼团</span>
       </div>
     </div>
@@ -195,7 +194,8 @@ export default {
             orderIds: '',
             skuId: '',
             orderGoodsId: '',
-            colorSexArr: [],
+            colorSex: false,
+            colorSexArr: []
             // count: 0,
             // items: []
         };
@@ -235,6 +235,7 @@ export default {
           this.colorSexArr.push(itemss)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
+            console.log(111111111111111111111111111)
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
@@ -254,6 +255,8 @@ export default {
         },
         // 编辑弹窗保存
         save() {
+          // console.log(this.idzz)
+          this.colorSex = true
           let object = {
             sessionId: this.azzSessionId,
             shopId: this.appId,
@@ -309,7 +312,6 @@ export default {
         },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum) {
-          this.orderDeliver =[]
           this.orderIds = idNum
           console.log(itemss)
           this.isShow = !this.isShow;
@@ -323,6 +325,8 @@ export default {
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
+            // console.log(skuCodeList)
+            let a  = this.numAllList.concat(skuCodeList)
             var canNumer = 0;
             for(var j=0;j<deliverList.length;j++){
               if(orderLisetArr[i].skuId == deliverList[j].skuId ){
@@ -334,47 +338,66 @@ export default {
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
-            // obj.orderGoodsId = deliverList[i].orderGoodsId
+            obj.orderGoodsId = deliverList[i].orderGoodsId
             obj.orderIds = idNum
+            // console.log(obj)
             array.push(obj)
           }
           this.orderDeliver = array
-          console.log(this.orderDeliver)
-          // console.log( array)
+          console.log( this.orderDeliver)
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
 
         },
         // 发布
-        Deliver(id) {
-          this.idzz = id
-          console.log(this.idzz);
-          this.isShows = !this.isShows;
+        Deliver() {
+            console.log(123123);
+            this.isShows = !this.isShows;
         },
         details(id){
           this.$router.push( {path:'/pages/home/orderMgr/mail/delivery', query:{orderId: id}})
-        },
-        async btn() {
           console.log(111)
-          const L_deliverGoodsData = await this.$API.L_deliverGoods({
-            orderId: this.idzz,
-            logisticsNo: this.logisticsNo,
-            type: this.index,
-
-          });
-          this.L_deliverGoodsList = L_deliverGoodsData
-          if(this.L_deliverGoodsList.code == 1){
-            wx.showToast({               
-              title: '发货成功',               
-              icon: 'success',  
-              duration: 2000  
-            })  
-            this.isShows = !this.isShows;
-            
-
-          }
-
+        },
+        btn() {
+          let object = {
+              sessionId: this.azzSessionId,
+              shopId: this.appId,
+              orderDeliver:  
+              [{
+                orderGoodsId: this.orderGoodsId,
+                canDeliverNumber: this.value1,
+                id: this.idzz
+              }],
+              logistics: 
+              {
+                image: this.tempFilePaths,
+                logisticsNo: this.logisticsNo,
+                type: this.select
+              }
+            }
+            console.log(JSON.stringify(object))
+          wx.request({
+            url: this.url, //仅为示例，并非真实的接口地址
+            data: JSON.stringify(object),
+            header: {
+              'content-type': 'application/json'
+            },
+            method: 'post',
+            success: function(res) {
+              console.log(res.data)
+              if(res.data.code == 1){
+                wx.showToast({
+                  title: '发货成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+                // this.isShows = false
+              }else{
+                // this.isShows = false
+              }
+            }
+          })
         },
         btnzz(){
           this.isShows = !this.isShows;
@@ -382,7 +405,7 @@ export default {
         }
     },
     props: {
-      noGoodszz: {
+      sigleList: {
         type: Array,
         default: []  
       },
@@ -396,19 +419,7 @@ export default {
       
     },
     async mounted() {
-      // console.log(this.sigleList)
-      let goodsAllList = []
-      goodsAllList = this.sigleList
-      console.log(goodsAllList)
-      for(var i=0; i<goodsAllList.length;i++){
-        let orderGoodslist = goodsAllList[i].orderGoods
-        console.log(orderGoodslist)
-        for(var j=0 ; j<orderGoodslist.length;j++){
-          let deliverList =  orderGoodslist[j].deliverList
-          console.log(deliverList)
-        }
-        
-      }
+      
     },
 };
 </script>

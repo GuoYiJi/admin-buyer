@@ -1,485 +1,559 @@
 
 <template>
-  <!--订单内容带子订单-->
-  <div class="nav">
-    <div class="list" v-for="(item,idx) in sigleList" :key="idx">
-      <div class="kuang">
-        <div class="title_1">
-          <text class="name">订单编号：{{item.orderNo}}</text>
-          <text class="fuKuan">
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
-          </text>
-        </div>
-        <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
-         <img class="sPimg" :src="itemzz.image"/>
-          <div class="textThad" >
-            <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
-              <div class="title">{{itemzz.name}}</div>
-              <div class="huo">
-                <text class="name">{{itemzz.stallInfo3}}</text>
-                <div class="type">货期:{{itemzz.delivery}}</div>
-                <span class="number">X{{itemzz.countNum}}</span>
-                <div >
-                  <div class="maShuo">
-<<<<<<< HEAD
-                    <scroll-view scroll-x="true" style=" width:80%  display: flex" >
-                      <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
-=======
-                    <scroll-view scroll-x="true" style=" width:180px " >
-                      <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
->>>>>>> remotes/origin/Lqi
-                    </scroll-view>
-                    <span class="edit" @click="edit(itemzz,item.id)">编辑</span>
+<scroll-view scroll-x="true" style=" width:180px ">
+  <span class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
+</scroll-view>
+<span class="edit" @click="edit(itemzz,item.id)">编辑</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jiaGe">
+  <div class="jiaGe_1">
+    <span>共1个款，合计3件</span>
+    <br/>
+    <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
+    <div class="hug">
+      <!--订单内容带子订单-->
+      <div class="nav" v-for="(item,idx) in orderList" :key="idx">
+        <div class="listHug" :style="'flex: 0 0 '+ listWidth +'rpx;'">
+          <div class="list" style="width:100%;">
+            <div class="kuang">
+              <div class="title_1">
+                <text class="name">订单编号：{{item.orderNo}}</text>
+                <text class="fuKuan">
+              {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
+            </text>
+              </div>
+              <!-- <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz"> -->
+              <div class="topHug">
+                <div class="sPimgHug">
+                  <img class="sPimg" :src="item.image"/>
+
+              </div>
+                <div class="textThad" v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
+                  <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
+                  <div class="title">{{itemzz.name}}</div>
+                  <div class="huo">
+                    <text class="name">{{itemzz.stallInfo3}}</text>
+                    <div class="type">货期:{{itemzz.delivery}}</div>
+                    <span class="number">X{{itemzz.countNum}}</span>
+                    <div>
+                      <div class="maShuo">
+                        <div style="width:80%;float:left;">
+                          <div class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
+                        </div>
+                        <span v-if="editClick" class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
+                        <span v-if="!editClick" class="edit">编辑</span>
+                      </div>
+                    </div>
+                    <!-- </div> -->
                   </div>
                 </div>
+              </div>
             </div>
-<<<<<<< HEAD
-          </div>
-
-=======
-          </div>      
->>>>>>> remotes/origin/Lqi
-        </div>
-      </div>
-      <div class="jiaGe">
-        <div class="jiaGe_1" >
-          <span>共1个款，合计3件</span>
-          <br/>
-          <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
-        </div>
-        <span class="text">共{{item.num}}件商品,合计: </span>
-        <span class="jiaGet">{{item.count}}元</span>
-      </div>
-      <div class="type_1" v-show="colorSex">
-        <div class="title">
-          <span class="colour">颜色</span>
-          <span class="colour">码数</span>
-          <span class="standby">待发数</span>
-          <span class="shipments">发货件数</span>
-          <span class="remaining">剩余件数</span>
-        </div>
-        <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
-          <div class="title_2" v-for="(itemxx,idxx) in colorSexArr" :key="idxx" v-if="itemxx.orderIds == item.id">
-            <span class="colour">{{itemxx.color}}</span>
-            <span class="standby">{{itemxx.size}}</span>
-            <span class="shipments">{{itemxx.canNumer}}</span>
-            <span class="remaining">{{itemxx.waitNum}}</span>
-          </div>
-        <!-- </div> -->
-      </div>
-      <div class="number_1">
-<<<<<<< HEAD
-        <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
-          <div class="completed_1">子订单编号
-            {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
-          ：{{childrenzz.orderNo}}</div>
-          <i class="sanjiao"></i>
-        </div>
-=======
-        <scroll-view scroll-y lower-threshold='80' style="height: 80%;  overflow-y: hidden;">
-          <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
-            <div class="completed_1">子订单编号
-              {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
-            ：{{childrenzz.orderNo}}</div>
-            <i class="sanjiao"></i>
-          </div>
-        </scroll-view>
->>>>>>> remotes/origin/Lqi
-      </div>
-      <div class="btn">
-        <div class="collage_1">
-          <img class="collage_img" :src="item.picture">
-          <img class="collage_img" :src="item.picture">
-          <img class="collage_img" :src="item.picture">
-        </div>
-        <span class="details" @click="details(item.id)">查看详情</span>
-        <span class="Deliver" @click="Deliver()">发货</span>
-        <span v-if="(btn==1)" class="collage">查看子拼团</span>
-      </div>
-    </div>
-    <!-- 编辑弹窗 -->
-    <div v-show="isShow">
-      <div class="demo-container">
-        <div class="title_s">
-          <ul class="s_item_box">
-            <li class="s_item">码数</li>
-            <li class="s_item">码数</li>
-            <li class="s_item">待发数</li>
-            <li class="s_item i-input">发货件数</li>
-            <li class="s_item">剩余件数</li>
-          </ul>
-        </div>
-        <div class="title_t" >
-<<<<<<< HEAD
-
-=======
->>>>>>> remotes/origin/Lqi
-          <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
-            <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
-              <li class="s_item">{{itemss.color}}</li>
-              <li class="s_item">{{itemss.size}}</li>
-              <li class="s_item">{{itemss.num}}</li>
-              <li class="s_item i-input">
-                <div class="numAll">
-                  <div class="numCut"> <button @click="subtract(idss)">-</button></div>
-                  <div class="numInput">
-                    <!-- {{inputValueArr[idss]}} -->
-                    <input type="text" value="0"  v-model="inputValueArr[idss]">
-                    </div>
-                  <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
+            <div class="jiaGe">
+              <div class="jiaGe_1">
+                <span>共{{item.skuListSize}}个款，合计{{item.countNum}}件</span>
+                <br/>
+                <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
+              </div>
+              <span class="text">共{{item.num}}件商品,合计: </span>
+              <span class="jiaGet">{{item.count}}元</span>
+            </div>
+            <div class="type_1">
+              <div class="title">
+                <span class="colour">颜色</span>
+                <span class="colour">码数</span>
+                <span class="standby">待发数</span>
+                <span class="shipments">发货件数</span>
+                <span class="remaining">剩余件数</span>
+              </div>
+              <scroll-view scroll-y lower-threshold='80' style="height: 80%;  overflow-y: hidden;">
+                <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
+                <div class="title_2" v-for="(itemaa,idss) in orderDeliverArray[idx]" :key="idss">
+                  <span class="colour">{{itemaa.color}}</span>
+                  <span class="standby">{{itemaa.size}}</span>
+                  <span class="standby">{{itemaa.num}}</span>
+                  <span class="shipments">{{itemaa.canNumer}}</span>
+                  <span class="remaining">{{itemaa.waitNum}}</span>
                 </div>
-              </li>
-              <li class="s_item">{{itemss.waitNum}}</li>
-            </ul>
-          </scroll-view>
-          <!-- </div>-->
-        </div>
-        <div class="foot">
-          <span class="save" @click="save()">保存</span>
-          <span class="cancel" @click="cancel()">取消</span>
+                <!-- </div> -->
+            </div>
+            <div class="number_1">
+              <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+                <div class="completed_1">子订单编号
+                  {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
+                  ：{{childrenzz.orderNo}}</div>
+                <i class="sanjiao"></i>
+              </div>
+            </div>
+            <div class="btn">
+              <div class="collage_1">
+                <img class="collage_img" :src="item.picture">
+                <img class="collage_img" :src="item.picture">
+                <img class="collage_img" :src="item.picture">
+
+          </div>
+              <span class="details" @click="details(item.id)">查看详情</span>
+              <span class="Deliver" @click="Deliver(item.id)">发货</span>
+              <span v-if="(btn==1)" class="collage">查看子拼团</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- 发布弹窗 -->
-    <div v-show="isShows">
-      <div class="box">
-        <div class="kuang_1">
-          <div class="title">请填写物流信息</div>
-          <div class="logistics">
-            <picker @change="bindPickerChange" :value="index" :range="array">
-              <view class="picker">
-                物流公司:
-                <span class="picker_o">{{array[index]}}
+      <!-- 编辑弹窗 -->
+      <div v-show="isShow">
+        <div class="demo-container">
+          <div class="title_s">
+            <ul class="s_item_box">
+              <li class="s_item">码数</li>
+              <li class="s_item">码数</li>
+              <li class="s_item">待发数</li>
+              <li class="s_item i-input">发货件数</li>
+              <li class="s_item">剩余件数</li>
+            </ul>
+          </div>
+          <div class="title_t">
+            <scroll-view scroll-y lower-threshold='80' style="height: 83%;">
+              <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
+                <li class="s_item">{{itemss.color}}</li>
+                <li class="s_item">{{itemss.size}}</li>
+                <li class="s_item">{{itemss.num}}</li>
+                <li class="s_item i-input">
+                  <div class="numAll">
+                    <div class="numCut"> <button @click="subtract(idss)">-</button></div>
+                    <div class="numInput">
+                      <!-- {{inputValueArr[idss]}} -->
+                      <input type="text" value="0" v-model="inputValueArr[idss]">
+
+                    </div>
+                    <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
+                  </div>
+                </li>
+                <li class="s_item">{{itemss.waitNum}}</li>
+              </ul>
+            </scroll-view>
+            <!-- </div>-->
+          </div>
+          <div class="foot">
+            <span class="save" @click="save(1)">保存</span>
+            <span class="cancel" @click="cancel()">取消</span>
+          </div>
+        </div>
+      </div>
+      <!-- 发布弹窗 -->
+      <div v-show="isShows">
+        <div class="box">
+          <div class="kuang_1">
+            <div class="title">请填写物流信息</div>
+            <div class="logistics">
+              <picker @change="bindPickerChange" :value="index" :range="array">
+                <view class="picker">
+                  物流公司:
+                  <span class="picker_o">{{array[index]}}
                   <i class="drop"></i>
                 </span>
-              </view>
-            </picker>
+                </view>
+              </picker>
+            </div>
+            <div class="courier">
+              <span class="span">快递单号:</span>
+              <input class="input" type="text" v-model="logisticsNo" placeholder="请填写快递单号">
+
           </div>
-          <div class="courier">
-            <span class="span">快递单号:</span>
-            <input class="input" type="text" v-model="logisticsNo" placeholder="请填写快递单号">
+            <div class="title_s">上传快递信息凭证：(仅一张)</div>
+            <div class="upload" @click="upload()">
+              <span class="text" v-if="(tempFilePaths == '')">+可上传图片</span>
+              <img v-if="(tempFilePaths != '')" :src="tempFilePaths">
+
           </div>
-          <div class="title_s">上传快递信息凭证：(仅一张)</div>
-          <div class="upload" @click="upload()">
-            <span class="text" v-if="(tempFilePaths == '')">+可上传图片</span>
-            <img v-if="(tempFilePaths != '')" :src="tempFilePaths">
-          </div>
-          <div class="message" @click="message()">
-            <i class="message_img" :v-model="select" v-if="(select == 0)"></i>
-            <i class="message_img img" v-if="(select == 1)"></i>
-            <span>无快递信息</span>
-          </div>
-          <div class="btn">
-            <span class="btn_1" @click="btnzz()">取消</span>
-            <span class="btn_2" @click="btn()">确认发货</span>
+            <div class="message" @click="message()">
+              <i class="message_img" :v-model="select" v-if="(select == 0)"></i>
+              <i class="message_img img" v-if="(select == 1)"></i>
+              <span>无快递信息</span>
+            </div>
+            <div class="btn">
+              <span class="btn_1" @click="btnzz()">取消</span>
+              <span class="btn_2" @click="btn()">确认发货</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 <script>
 import wx from "wx";
 import config from "@/config";
+import img from "@/assets/img/storeMgr/select.png"
 // import inumber from
 export default {
-    components: {},
-    data() {
-        return {
-            value1: 1,
-            value2: 1,
-            value3: 1,
-            shuoo: 0,
-            isShow: false,
-            isShows: false,
-            index: 0,
-            select: 0,
-            tempFilePaths: "",
-            array: ["-请选择物流公司-", "顺丰", "申通"],
-            navData: [],
-            L_selectOrderzz: [],
-            // number: '',
-            skuCode: [],
-            goodsOrder: [],
-            skuCodeAllList: [],
-            numAllList: [],
-            idzz: [],
-            orderIdzz: [],
-            orderDeliver: [],
-            logisticsNo: '',
-            azzSessionId: '',
-            url: '',
-            appId: '',
-            sexList: [],
-            addurl: '',
-            inputValueArr: [],
-            valueArr: [],
-            orderIds: '',
-            skuId: '',
-            orderGoodsId: '',
-<<<<<<< HEAD
-=======
-            colorSex: false,
-            colorSexArr: []
->>>>>>> remotes/origin/Lqi
-            // count: 0,
-            // items: []
-        };
+  components: {},
+  inject: ['reload'],
+  data() {
+    return {
+      img,
+      value1: 1,
+      value2: 1,
+      value3: 1,
+      shuoo: 0,
+      isShow: false,
+      isShows: false,
+      index: 0,
+      select: 0,
+      tempFilePaths: "",
+      array: ["-请选择物流公司-", "顺丰", "申通"],
+      navData: [],
+      L_selectOrderzz: [],
+      // number: '',
+      skuCode: [],
+      goodsOrder: [],
+      skuCodeAllList: [],
+      numAllList: [],
+      idzz: '',
+      orderIdzz: [],
+      orderDeliver: [],
+      orderDeliverArray: [],
+      logisticsNo: '',
+      azzSessionId: '',
+      url: '',
+      appId: '',
+      sexList: [],
+      addurl: '',
+      inputValueArr: [],
+      valueArr: [],
+      orderIds: '',
+      skuId: '',
+      orderGoodsId: '',
+      colorSex: false,
+      colorSexArr: []
+      bottomShow: true,
+      bottomHug: false,
+      listWidth: 702,
+      editClick: true,
+      radioShow: false,
+      radioId: '',
+      Arrays: [],
+      buttomBloom: false,
+      selectArray: [],
+      // count: 0,
+      // items: []
+    };
+  },
+  props: {
+    orderList: {
+      type: Array,
+      default: []
     },
-    methods: {
-        // 上传图片
-        upload() {
-            var that = this;
-            wx.chooseImage({
-                count: 1, // 默认9
-                sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
-                sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
-                success: function(res) {
-                    // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-                    var tempFilePaths = res.tempFilePaths;
-                    console.log(tempFilePaths, 123123);
-                    that.tempFilePaths = tempFilePaths[0];
-                }
-            });
-        },
-        bindPickerChange(e) {
-            console.log(e.mp.detail.value);
-            this.index = e.mp.detail.value;
-        },
-        message() {
-            console.log(this);
-            if (this.select == 0) {
-                this.select = 1;
-            } else if (this.select == 1) {
-                this.select = 0;
-            }
-<<<<<<< HEAD
-        },
-=======
-        }, 
->>>>>>> remotes/origin/Lqi
-        add(index,itemss){
-          this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
-          this.value1 = this.inputValueArr[index]
-          console.log(this.value1)
-          this.colorSexArr.push(itemss)
-          // console.log(this.inputValueArr)
-          if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
-            this.orderIdzz= itemss.skuId
-            this.idzz= itemss.id
-            this.orderGoodsId= itemss.orderGoodsId
-
-            console.log(this.idzz)
-          }
-        },
-        subtract(index){
-          if(this.inputValueArr[index]  == 0){
-            this.idzz[index] = null
-            this.orderIdzz[index] = null
-            return;
-          }
-
-          this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
-          console.log(this.inputValueArr)
-        },
-        // 编辑弹窗保存
-        save() {
-<<<<<<< HEAD
-          console.log(this.idzz)
-=======
-          // console.log(this.idzz)
-          this.colorSex = true
->>>>>>> remotes/origin/Lqi
-          let object = {
-            sessionId: this.azzSessionId,
-            shopId: this.appId,
-            orderIds: this.orderIds,
-<<<<<<< HEAD
-            orderDeliver:
-=======
-            orderDeliver:  
->>>>>>> remotes/origin/Lqi
-            [{
-              num: this.value1,
-              // canDeliverNumber: ,
-              skuId: this.orderIdzz
-            }],
-          }
-            var that = this;
-            wx.showModal({
-                // title: "提示",
-                content: "是否确认保存！",
-                success: function(res) {
-                    that.isShow = false
-                    console.log(res);
-                    if (res.confirm) {
-                          console.log("用户点击确定");
-                        wx.request({
-                          url: that.addurl, //仅为示例，并非真实的接口地址
-                          data: JSON.stringify(object),
-                          header: {
-                            'content-type': 'application/json'
-                          },
-                          method: 'post',
-                          success: function(res) {
-                            console.log(res.data)
-                            if(res.data.code == 1){
-                              wx.showToast({
-                                title: '保存成功',
-                                icon: 'success',
-                                duration: 2000
-                              })
-                            }else{
-                            }
-<<<<<<< HEAD
-
-=======
-                            
->>>>>>> remotes/origin/Lqi
-                            // this.isShows = false
-                          }
-                        })
-                        setTimeout(function() {
-                        }, 500);
-                    } else if (res.cancel) {
-                        console.log("用户点击取消");
-                    }
-                }
-            });
-        },
-        // 编辑弹窗取消
-        cancel() {
-          this.isShow = false
-        },
-        // 显示隐藏编辑弹窗
-        async edit(itemss,idNum) {
-          this.orderIds = idNum
-          console.log(idNum)
-          this.isShow = !this.isShow;
-          // this.skuCode = []
-          // let vueNum =  this.value1
-          let orderLisetArr = itemss.skuList
-          let deliverList = itemss.deliverList
-          let array = [];
-          for(var i=0; i<orderLisetArr.length;i++){
-            let obj = {};
-            let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-            obj.color = skuCodeList[0];
-            obj.size = skuCodeList[1];
-            // console.log(skuCodeList)
-            let a  = this.numAllList.concat(skuCodeList)
-            var canNumer = 0;
-            for(var j=0;j<deliverList.length;j++){
-              if(orderLisetArr[i].skuId == deliverList[j].skuId ){
-                  canNumer = deliverList[j].canDeliverNumber
-              }
-            }
-            obj.canNumer = canNumer
-            obj.num = orderLisetArr[i].num
-            obj.id = orderLisetArr[i].id
-            obj.skuId = orderLisetArr[i].skuId
-            obj.waitNum = orderLisetArr[i].remainNum
-            obj.orderGoodsId = deliverList[i].orderGoodsId
-            obj.orderIds = idNum
-            // console.log(obj)
-            array.push(obj)
-          }
-          this.orderDeliver = array
-          console.log( this.orderDeliver)
-          this.orderDeliver.forEach((item, index) => {
-            this.inputValueArr[index] = 0;
-          })
-<<<<<<< HEAD
-          // console.log(this.idzz)
-=======
->>>>>>> remotes/origin/Lqi
-
-        },
-        // 发布
-        Deliver() {
-            console.log(123123);
-            this.isShows = !this.isShows;
-        },
-        details(id){
-          this.$router.push( {path:'/pages/home/orderMgr/mail/delivery', query:{orderId: id}})
-          console.log(111)
-        },
-        btn() {
-          let object = {
-              sessionId: this.azzSessionId,
-              shopId: this.appId,
-              orderDeliver:
-              [{
-                orderGoodsId: this.orderGoodsId,
-                canDeliverNumber: this.value1,
-                id: this.idzz
-              }],
-              logistics:
-              {
-                image: this.tempFilePaths,
-                logisticsNo: this.logisticsNo,
-                type: this.select
-              }
-            }
-            console.log(JSON.stringify(object))
-          wx.request({
-            url: this.url, //仅为示例，并非真实的接口地址
-            data: JSON.stringify(object),
-            header: {
-              'content-type': 'application/json'
-            },
-            method: 'post',
-            success: function(res) {
-              console.log(res.data)
-              if(res.data.code == 1){
-                wx.showToast({
-                  title: '发货成功',
-                  icon: 'success',
-                  duration: 2000
-                })
-                // this.isShows = false
-              }else{
-                // this.isShows = false
-              }
-            }
-          })
-        },
-        btnzz(){
-          this.isShows = !this.isShows;
-
+    orderListLen: '',
+  },
+  // props: ['orderList'],
+  //   data: function () {
+  //   return { orderList: this.orderList }
+  // },
+  created() {
+    this.azzSessionId = wx.getStorageSync('sessionId')
+    this.url = config.url + '/api/order/addChildren'
+    this.addurl = config.url + '/api/order/goods/addChildren'
+    console.log(this.addurl)
+    this.appId = config.appId
+    console.log(this.orderList)
+    // this.init();
+  },
+  async mounted() {},
+  methods: {
+    // 上传图片
+    upload() {
+      var that = this;
+      wx.chooseImage({
+        count: 1, // 默认9
+        sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
+        success: function(res) {
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          var tempFilePaths = res.tempFilePaths;
+          console.log(tempFilePaths, 123123);
+          that.tempFilePaths = tempFilePaths[0];
         }
+      });
     },
-    props: {
-      sigleList: {
-        type: Array,
-        default: []
-      },
+    bindPickerChange(e) {
+      console.log(e.mp.detail.value);
+      this.index = e.mp.detail.value;
     },
-    created(){
-      this.azzSessionId =  wx.getStorageSync('sessionId')
-      this.url = config.url+'/api/order/addChildren'
-      this.addurl = config.url+'/api/order/goods/addChildren'
-      console.log(this.addurl)
-      this.appId = config.appId
+    message() {
+      console.log(this);
+      if (this.select == 0) {
+        this.select = 1;
+      } else if (this.select == 1) {
+        this.select = 0;
+      }
+    },
+    add(index, itemss) {
+      console.log(itemss)
+      this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
+      console.log(this.inputValueArr)
+      this.value1 = this.inputValueArr[index]
+      console.log(this.value1)
+      // console.log(this.inputValueArr)
+      if (this.inputValueArr[index] > 0) {
+        console.log(111111111111111111111111111)
+        this.orderIdzz = itemss.skuId
+        this.idzz = itemss.id
+        this.orderGoodsId = itemss.orderGoodsId
+        console.log(this.idzz)
+      }
+    },
+    subtract(index) {
+      if (this.inputValueArr[index] == 0) {
+        this.idzz[index] = null
+        this.orderIdzz[index] = null
+        return;
+      }
 
+      this.$set(this.inputValueArr, index, this.inputValueArr[index] - 1)
+      console.log(this.inputValueArr)
     },
-    async mounted() {
+    // 编辑弹窗保存
+    save() {
+      // console.log(this.idzz)
+      this.colorSex = true
+      let object = {
+        sessionId: this.azzSessionId,
+        shopId: this.appId,
+        orderIds: this.orderIds,
+        orderDeliver: [{
+          num: this.value1,
+          // canDeliverNumber: ,
+          skuId: this.orderIdzz
+        }],
+      }
+      // console.log(this.orderIds)
+      let object = {
+        sessionId: this.azzSessionId,
+        shopId: this.appId,
+        orderIds: this.orderIds,
+        orderDeliver: [{
+          num: this.value1,
+          // canDeliverNumber: ,
+          skuId: this.orderIdzz
+        }],
+      }
+      var that = this;
+      wx.showModal({
+        // title: "提示",
+        content: "是否确认保存！",
+        success: function(res) {
+          that.isShow = false;
+          console.log(res);
+          if (res.confirm) {
+            console.log("用户点击确定");
+            wx.request({
+              url: that.addurl, //仅为示例，并非真实的接口地址
+              data: JSON.stringify(object),
+              header: {
+                'content-type': 'application/json'
+              },
+              method: 'post',
+              success: function(res) {
+                console.log(res.data)
+                if (res.data.code == 1) {
+                  wx.showToast({
+                    title: '保存成功',
+                    icon: 'success',
+                    duration: 2000
+                  })
+                  that.reload();
+                } else {
+                  console.log(res, '错误')
+                }
+                // this.isShows = false
+              }
+            })
+            setTimeout(function() {}, 500);
+          } else if (res.cancel) {
+            console.log("用户点击取消");
+          }
+        }
+      });
+    },
+    // 编辑弹窗取消
+    cancel() {
+      this.isShow = false;
+    },
+    // 显示隐藏编辑弹窗
+    async edit(itemss, idNum, Indexs) {
+      // this.orderIds = itemss.orderIds
 
+      this.orderIds = idNum
+      this.isShow = !this.isShow;
+      this.orderDeliver = [];
+      // this.goodsId = itemss.goodsId
+      // this.skuCode = []
+      // let vueNum =  this.value1
+      let orderLisetArr = itemss.skuList
+      let deliverList = itemss.deliverList
+      let array = [];
+      for (var i = 0; i < orderLisetArr.length; i++) {
+        let obj = {};
+        let skuCodeList = orderLisetArr[i].skuCode.split(',')
+
+        this.orderIds = orderLisetArr[i].orderId
+        obj.color = skuCodeList[0];
+        obj.size = skuCodeList[1];
+        obj.canNumer = orderLisetArr[i].canNumer
+        obj.num = orderLisetArr[i].num
+        obj.id = orderLisetArr[i].id
+        obj.skuId = orderLisetArr[i].skuId
+        obj.waitNum = orderLisetArr[i].remainNum
+        array.push(obj)
+      }
+      // this.orderDeliverArray[Indexs] = array;
+      this.orderDeliver = array;
+      console.log(this.orderDeliver)
+      this.orderDeliver.forEach((item, index) => {
+        this.inputValueArr[index] = 0;
+      })
+
+      // console.log(this.idzz)
     },
+    //   父组件触发函数
+    childMethod() {
+      var that = this;
+      setTimeout(res => {
+        console.log(this.orderList, 'hhhhhhhhh')
+        var List = this.orderList;
+        var arr = [];
+        var len = List.length;
+        // console.log(len)
+        var arrTwo = [];
+        for (var i = 0; i < len; i++) {
+          arr[i] = false;
+          //    找到deliverList
+          var array = [];
+          var orderLisetArr = List[i].orderGoods;
+          // console.log(orderLisetArr)
+          for (var j = 0; j < orderLisetArr.length; j++) {
+            let deliverListArr = orderLisetArr[j].deliverList
+            for (var k = 0; k < deliverListArr.length; k++) {
+              var obj = {};
+              var skuCodeList = deliverListArr[k].skuCode.split(',')
+              obj.color = skuCodeList[0];
+              obj.size = skuCodeList[1];
+              obj.canNumer = deliverListArr[k].canDeliverNumber
+              obj.num = deliverListArr[k].num
+              obj.waitNum = deliverListArr[k].remainNum
+              array.push(obj)
+
+              // this.orderDeliverArray = array;
+              // console.log(this.orderDeliverArray,789789);
+              // console.log(array,obj,382);
+            }
+            arrTwo[i] = array;
+            // this.$set(this.orderDeliverArray, )
+          }
+          this.Arrays = arr;
+          this.orderDeliverArray = arrTwo;
+          // console.log(this.orderDeliverArray,789789);
+        }
+      }, 500)
+    },
+    // 发布
+    Deliver(id) {
+      console.log(123123);
+      this.idzz = id
+      this.isShows = !this.isShows;
+    },
+    details() {
+      this.$router.push('mail/delivery')
+      console.log(111)
+    },
+    btn() {
+      let object = {
+        sessionId: this.azzSessionId,
+        shopId: this.appId,
+        orderId: this.idzz,
+        logistics: {
+          image: this.tempFilePaths,
+          logisticsNo: this.logisticsNo,
+          type: this.select
+        }
+      }
+      console.log(JSON.stringify(object))
+      wx.request({
+        url: this.url, //仅为示例，并非真实的接口地址
+        data: JSON.stringify(object),
+        header: {
+          'content-type': 'application/json'
+        },
+        method: 'post',
+        success: function(res) {
+          console.log(res.data)
+          if (res.data.code == 1) {
+            wx.showToast({
+              title: '发货成功',
+              icon: 'success',
+              duration: 2000
+            })
+            // this.isShows = false
+          } else {
+            // this.isShows = false
+          }
+        }
+      })
+    },
+    btnzz() {
+      this.isShows = !this.isShows;
+
+    }
+  },
+  async mounted() {
+    console.log(this.orderList)
+  },
+
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 page
   background: #f5f5f5
-
+.nav
+  overflow: hidden
+  display: flex
+  padding-left: 24px
+.radioHug
+  overflow: hidden
+  float: left
+  position: relative
+  width: 36px
+  display: flex
+  flex: 0 0 60px
+.radio
+  width: 36px
+  height: 36px
+  border-radius: 50%
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+  border: 2px solid #CCC
+.radioImg
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+  width: 40px
+  height: 40px
+  display: block
 .list
-  width: 702px
   background: #fff
-  margin: 10px 24px
+  // margin: 10px 24px
+  margin-top: 10px
+  margin-bottom: 10px
+  margin-right: 24px
   .kuang
     padding-bottom: 10px
+    overflow: hidden
     .title_1
       height: 68px
       display: flex
@@ -491,15 +565,22 @@ page
         padding-left: 20px
       .fuKuan
         flex: 1
-    .sPimg
-      width: 160px
-      height: 160px
-      display: inline-block
-      position: relative
-      margin: 21px 20px 0
+    .topHug
+      display: flex
+      .sPimgHug
+        flex: 0 0 30%
+        text-align: center
+        .sPimg
+          width: 160px
+          height: 160px
+          display: inline-block
+          position: relative
+          margin-top: 21px
+          // margin: 21px auto 0
+          // float: left
     .textThad
       display: inline-block
-      width: 494px
+      flex: 0 0 70%
       position: relative
       margin: 10px 0
       font-size: 24px
@@ -507,6 +588,7 @@ page
         +moreLine(2)
       .huo
         +singleFile
+        padding-right: 30px
         .name
           display: inline-block
           background: #ccc
@@ -524,9 +606,9 @@ page
       color: #999
       display: flex
       .text
-        flex: 11
+        // flex: 11
         margin-left: 10px
-
+        disabled: block
       .edit
         flex: 2
         display: inline-block
@@ -538,13 +620,9 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
-<<<<<<< HEAD
-  .jiaGe
-=======
         margin-left: 10px
 
-  .jiaGe 
->>>>>>> remotes/origin/Lqi
+  .jiaGe
     // height: 70px
     width: 100%
     background: #fff
@@ -577,7 +655,7 @@ page
       display: flex
       font-size: 26px
       color: #999
-      margin: 0 71px 0
+      margin: 0 60px 0
       .colour
         flex: 1
       .size
@@ -610,6 +688,7 @@ page
     width: 100%
     height: 100px
     border-top: 1px solid #f4f4f4
+    padding-bottom: 12px
     .collage_1
       display: block
       padding: 10px 0 0 20px
@@ -619,6 +698,7 @@ page
         width: 84px
         height: 84px
         margin: 0 5px 0
+        border: 1px solid #eee
     .details
       width: 130px
       height: 60px
@@ -761,6 +841,7 @@ page
   bottom: 0
   box-shadow: 0px -3px 10px rgba(8,0,0,0.32)
   font-size: 28px
+  z-index: 100
   .title_s
     height: 108px
     text-align: center
@@ -794,16 +875,9 @@ page
             button
               width: 80px
               height: 40px
-<<<<<<< HEAD
-
-
-
 
 
   .foot
-=======
-  .foot 
->>>>>>> remotes/origin/Lqi
     width: 100%
     position: fixed
     bottom: 0px
@@ -939,4 +1013,27 @@ page
         line-height: 100px
         text-align: center
         color: #fff
+.bottomHug
+  width: 100%
+  height: 98px
+  border-top: 1px solid #CCC
+  position: fixed
+  bottom: 0
+  left: 0
+  background-color: #fff
+  .bottomHugBtn
+    background-color: #F67C2F
+    width: 220px
+    height: 98px
+    float: right
+    font-size: 32px
+    color: #fff
+    text-align: center
+    line-height: 98px
+    vertical-align: middle
+  .BHB
+    background-color: #ccc
+.topHug
+  display: flex
+
 </style>

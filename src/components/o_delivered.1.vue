@@ -30,7 +30,7 @@
           <div class="box">
             <p>
               <!-- 发货组件 -->
-              <delivery :orderList="orderList"  ref="chufa" />
+              <delivery :sigleList="sigleList"  ref="chufa" />
 
             </p>
             <!-- <p >
@@ -77,11 +77,6 @@ export default {
       CollageNoGoods,
       delivery,
     },
-    provide(){
-      return {
-        reload:this.reload,
-      }
-    },
     data() {
       return {
         asceSale: true,
@@ -92,75 +87,16 @@ export default {
         navList: [],
         onPlayList: [],
         noGoodszz: [],
-        orderList: [],//可拆单的数组
+        sigleList: [],//可拆单的数组
         selectReceiptName: [],
         type: '1',
-        searchIn: false,
-        asceSale: true,
-        ascePrice: true,
-        ascePriceOd: true,
-        asceSaleName: true,
-        asceSaleDK: true,
-        showRight1: false,
-        showLoad: false,
-        canLoad: true,
-        type: '',
-        stallInfo: [],
-        stallInfozz: [],
-        delivery: [],
-        flag: false,
-        isRouterAlive:true,
 
 
       };
     },
     methods: {
-       
-        reload(){
-          // this.$router.go(0);
-          this.isRouterAlive = false;
-          this.$nextTick(() => (this.isRouterAlive = true))
-          this.action();
-        },
-        async action(){
-          console.log(11)
-          this.shopNum = 0;
-          const listData = await this.getNextPage({ob: 0});
-          this.orderList = [];
-          this.orderList = this.orderList.concat(listData.data.list);
-          // this.flag = true;
-
-          // console.log(this.orderList.skuList)
-          let skuList = []
-          for(var i=0;i<this.orderList.length;i++){
-            let orderlistArr = this.orderList[i].orderGoods
-            console.log(orderlistArr)
-            for(var k=0;k<orderlistArr.length;k++){
-              skuList = this.orderlistArr[k].skuList
-              for(var j=0;j<skuList.length;j++){
-              console.log(111)
-              let stallInfos = {
-                stallInfodx: skuList[j].stallInfo2
-              }
-              console.log(stallInfos)
-              let stallInfozzsxx = {
-                stallInfodk: skuList[j].stallInfo3,
-              }
-              let deliverys = {
-                deliveryxh: skuList[j].delivery,
-              }
-              this.stallInfo = stallInfos
-              this.stallInfozzs = stallInfozzsxx
-              this.delivery = deliverys
-              console.log(this.stallInfozz)
-              console.log(this.delivery)
-            }
-
-            }
-          }
-          console.log(this.$refs.chufa,202)
+        chufa(){
           this.$refs.chufa.childMethod();
-          return
         },
         async handleTag(tag) {
             this.tag = tag;
@@ -186,7 +122,6 @@ export default {
 
               this.isPin = listData.data.list
               console.log(this.isPin)
-              this.$refs.chufa.childMethod();
               if(listData.data.list.length < this.pageSize) {
                 this.canLoad = false
               }
@@ -217,8 +152,8 @@ export default {
             receiptName: this.btn
           });
           this.noGoodszz = this.noGoodszz.concat(listData.data.list); 
-          this.orderList = this.noGoodszz 
-          console.log(this.orderList)
+          this.sigleList = this.noGoodszz 
+          console.log(this.sigleList)
            this.isShows = !this.isShows;
         },
       getNextPage() {
@@ -233,46 +168,6 @@ export default {
         obj.pageNumber = this.shopNum;
         return this.$API.L_selectOrderPage(obj);
       },
-    async action(){
-       console.log(11)
-      this.shopNum = 0;
-      const listData = await this.getNextPage({ob: 0});
-      this.orderList = [];
-      this.orderList = this.orderList.concat(listData.data.list);
-      // this.flag = true;
-
-      // console.log(this.orderList.skuList)
-      let skuList = []
-      for(var i=0;i<this.orderList.length;i++){
-        let orderGoods = this.orderList[i].orderGoods
-        // console.log(this.orderList[i].skuList)
-        for(var k=0;k<orderGoods.length;k++){
-          skuList = orderGoods[i].skuList
-          
-        }
-        for(var j=0;j<skuList.length;j++){
-          console.log(111)
-          let stallInfos = {
-            stallInfodx: skuList[j].stallInfo2
-          }
-          console.log(stallInfos)
-          let stallInfozzsxx = {
-            stallInfodk: skuList[j].stallInfo3,
-          }
-          let deliverys = {
-            deliveryxh: skuList[j].delivery,
-          }
-          this.stallInfo = stallInfos
-          this.stallInfozzs = stallInfozzsxx
-          this.delivery = deliverys
-          console.log(this.stallInfozz)
-          console.log(this.delivery)
-        }
-      }
-      console.log(this.$refs.chufa,202)
-      this.$refs.chufa.childMethod();
-      return
-    },
       async lower(e) {
         console.log(e);
         if (!this.canLoad) return;
@@ -295,7 +190,10 @@ export default {
       const listData = await this.getNextPage();
       console.log(listData);
       this.onPlayList = this.onPlayList.concat(listData.data.list); 
-      this.orderList = this.onPlayList 
+      this.sigleList = this.onPlayList 
+      for(var i=0;i<this.sigleList.length;i++){
+        console.log(this.sigleList[i])
+      }
       // console.log(this.onPlayList.children)
       // for(var i=0;i<this.onPlayList.length;i++){
       //     console.log(222222)
@@ -305,22 +203,17 @@ export default {
       //     this.noGoodszz.push(this.onPlayList[i])
       //     console.log(this.noGoodszz)
       //   }else{
-      //     this.orderList.push(this.onPlayList[i])
+      //     this.sigleList.push(this.onPlayList[i])
       //   }
       // }
       // console.log(this.noGoodszz);
       if (listData.data.list.length < 30) {
         this.canLoad = false;
       }
-     this.$refs.chufa.childMethod();
 
       
     
-    },
-    //离开当前页面后执行
-    destroyed: function () {
-        this.flag = false;
-    },
+  }
 };
 </script>
 <style lang="sass" scoped>

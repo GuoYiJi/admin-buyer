@@ -20,12 +20,12 @@
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" v-for="(pin,idPin) in isPin.pingUser" :key="idPin" v-if="pin.head.length < 4">
+          <div class="picture_1" v-for="(pin,idPin) in isPin.pingUser" :key="idPin" v-if="pin < 3">
             <img class="imgTwo" :src="pin.head">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
+            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
