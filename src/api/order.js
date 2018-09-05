@@ -28,16 +28,8 @@ export default class order {
     L_selectLogistics = params => http.post('api/order/selectLogistics', params)
         //api/goods/selectGoodsDetail 商品详情
     L_selectGoodsDetail = params => http.post('api/goods/selectGoodsDetail', params)
-<<<<<<< HEAD
         //api/goods/add
     L_addOrder = params => http.post('api/goods/add', params)
-
-
-
-
-
-}
-=======
         ///api/freight/findFreight
     L_findFreight = params => http.post('api/freight/findFreight', params)
         //api/warehouse/changeExpress
@@ -45,4 +37,3 @@ export default class order {
         //api/goods/add
     L_addOrder = params => http.post('api/goods/add', params)
 }
->>>>>>> remotes/origin/Lqi

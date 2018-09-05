@@ -47,14 +47,10 @@ export default {
       showLoad: false,
       canLoad: true,
       pageSize: 20,
-<<<<<<< HEAD
       type: 0,//接口'ob'字段, 排序
       state: 0,//接口'state'字段, 0未开始, 1进行中, 2已经过期
-=======
       type: 0,
       state: 0
-
->>>>>>> remotes/origin/Lqi
     };
   },
   methods: {

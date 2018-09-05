@@ -228,7 +228,7 @@ export default {
       skuId: '',
       orderGoodsId: '',
       colorSex: false,
-      colorSexArr: []
+      colorSexArr: [],
       bottomShow: true,
       bottomHug: false,
       listWidth: 702,
@@ -320,16 +320,6 @@ export default {
     save() {
       // console.log(this.idzz)
       this.colorSex = true
-      let object = {
-        sessionId: this.azzSessionId,
-        shopId: this.appId,
-        orderIds: this.orderIds,
-        orderDeliver: [{
-          num: this.value1,
-          // canDeliverNumber: ,
-          skuId: this.orderIdzz
-        }],
-      }
       // console.log(this.orderIds)
       let object = {
         sessionId: this.azzSessionId,
