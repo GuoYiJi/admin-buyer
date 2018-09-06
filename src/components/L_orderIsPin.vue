@@ -20,14 +20,10 @@
           </li>
         </ul>
       </div>
-      <!-- <div v-for="item in shopList">
-        <div>{{item.deliverTime}}</div>
-      </div> -->
       <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
         <div class="scroll-box">
           <div class="box">
             <p >
-              <!-- 拼团组件 -->
               <CollageIsPin :isPin="isPin"/>
             </p>
           </div>

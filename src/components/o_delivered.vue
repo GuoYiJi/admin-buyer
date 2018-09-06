@@ -180,12 +180,11 @@ export default {
             }
               this.type = type
               const listData = await this.getNextPage({
-                orderType: this.type,
+                orderType: type,
                 // state: 1
               })
-
-              this.isPin = listData.data.list
-              console.log(this.isPin)
+              this.orderList = listData.data.list
+              console.log(this.orderList)
               this.$refs.chufa.childMethod();
               if(listData.data.list.length < this.pageSize) {
                 this.canLoad = false
@@ -236,16 +235,12 @@ export default {
     async action(){
        console.log(11)
       this.shopNum = 0;
-      const listData = await this.getNextPage({ob: 0});
+      const listData = await this.getNextPage({orderType: 0});
       this.orderList = [];
       this.orderList = this.orderList.concat(listData.data.list);
-      // this.flag = true;
-
-      // console.log(this.orderList.skuList)
       let skuList = []
       for(var i=0;i<this.orderList.length;i++){
         let orderGoods = this.orderList[i].orderGoods
-        // console.log(this.orderList[i].skuList)
         for(var k=0;k<orderGoods.length;k++){
           skuList = orderGoods[i].skuList
           
@@ -296,19 +291,6 @@ export default {
       console.log(listData);
       this.onPlayList = this.onPlayList.concat(listData.data.list); 
       this.orderList = this.onPlayList 
-      // console.log(this.onPlayList.children)
-      // for(var i=0;i<this.onPlayList.length;i++){
-      //     console.log(222222)
-      //   if(this.onPlayList[i].children == null || this.onPlayList[i].children == 0)
-      //   {
-      //     console.log(1111)
-      //     this.noGoodszz.push(this.onPlayList[i])
-      //     console.log(this.noGoodszz)
-      //   }else{
-      //     this.orderList.push(this.onPlayList[i])
-      //   }
-      // }
-      // console.log(this.noGoodszz);
       if (listData.data.list.length < 30) {
         this.canLoad = false;
       }

@@ -8,11 +8,11 @@
             {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}} 
             </p> 
         </div>
-        <div class="middle">
+        <div class="middle" @click="sanJiaoBut(item)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao"  @click="sanJiaoBut(item)"></i> 
+          <i class="sanJiao"  ></i> 
         </div>
         <div class="jieShuan">
           <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
@@ -22,15 +22,13 @@
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
-            <img class="imgThree" :src="item.picture">
-            <img class="imgFour" :src="item.picture">
+          <div class="picture_1" v-for="(pin,idPin) in item.pingUser" :key="idPin" v-if="idPin < 3">
+            <img class="imgTwo" :src="pin.head">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="item.state == 1" class="close" @click="close(item.id,index)">关闭订单</span>
-            <span v-if="(btn==1)" class="collage">查看子拼团</span>
+            <span v-if="(item.state == 1) " class="close" @click="close(item.id,index)">关闭订单</span>
+            <span v-if="(item.layer==-1) && (item.state == 9) " @click="seeSuborder(item.id)" class="collage">查看子拼团</span>
           </div>
         </div>
       </div>
@@ -107,14 +105,19 @@ export default {
           }
 
         },
+        //查看商品详情
         sanJiaoBut(item){
           console.log(123)
            this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
         },
+        //关闭订单
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
-
-        }
+        },
+        //跳转到子订单
+        seeSuborder(id){
+          this.$router.push({path:'suborders/suborders',query:{id}})
+        },
     },
     created() {
     },

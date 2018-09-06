@@ -12,7 +12,7 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" v-if="!shop.del">
-            <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" :edit="edit" />
+            <GroupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -22,21 +22,20 @@
       </scroll-view>
     </div>
     <div class="footer">
-      <p class="style2" @click="toRoute('shopMgr/collage/collageMsg')">创建拼团</p>
+      <p class="style2" @click="pageTo('shopMgr/collage/collageMsg')">创建拼团</p>
     </div>
   </div>
 </template>
 <script>
 import wx from "wx";
-import scard from "@/components/s_card";
+import GroupCard from "@/components/s_groupCard"
 import mixin from '@/mixin'
-import loading from "@/commond/loading";
+import loading from "@/commond/loading"
 export default {
   mixins: [mixin],
   components: {
-    scard,
+    GroupCard,
     loading,
-
   },
   data() {
     return {
@@ -48,21 +47,33 @@ export default {
       showLoad: false,
       canLoad: true,
       pageSize: 20,
-      type: 0,
-      state: 0
-
+      type: 0,//接口'ob'字段, 排序
+      state: 0,//接口'state'字段, 0未开始, 1进行中, 2已经过期
     };
   },
   methods: {
+    //选择操作
+    switchSel(goodsId, bool, shop) {
+      console.log(goodsId, bool, shop);
+    },
+    //搜索商品
     searchShop(params){
       params.pageSize = this.pageSize
       return this.$API.s_getShopGroup(params)
     },
+    //下拉加载
     getNextPage(params) {
       this.shopNum++;
       params.pageNumber = this.shopNum;
       return this.searchShop(params)
     },
+    //编辑模式切换
+    // openEdit() {
+    //   console.log("我执行了");
+    //   this.edit = true
+    //   console.log(this.edit);
+    // },
+    //点击Tag请求
     async handleTag(tag) {
       this.tag = tag;
       this.state = tag
@@ -81,10 +92,13 @@ export default {
       if(listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
-      //切换拼团
     },
-    toRoute(path) {
-      this.$router.push("/pages/home/" + path);
+    // toRoute(path) {
+    //   this.$router.push("/pages/home/" + path);
+    // },
+    pageTo(url) {
+      console.log(111111111);
+      this.$emit('toRoute', url, {isEdit: false})
     },
     async lower(e) {
       // console.log(e);

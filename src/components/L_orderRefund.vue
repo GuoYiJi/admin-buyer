@@ -20,28 +20,14 @@
           </li>
         </ul>
       </div>
-      <!-- <div v-for="item in shopList">
-        <div>{{item.deliverTime}}</div>
-      </div> -->
       <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
         <div class="scroll-box">
           <div class="box">
-            <p>
-              <!-- 拆单组件 -->
-              <!-- <delivery /> -->
-            </p>
             <p >
               <!-- 未通过 -->
-              <CollageRefund :noPassRefund="noPassRefund" />
-            </p>
-            
-            <p>
-              <!-- 通过 -->
-              <payment :passRefund="passRefund"/>
-            </p>
-            <p>
-              <!-- 申请中 -->
-              <afterSales :applyFor="applyFor"/>
+              <CollageRefund :shopListRefund="shopListRefund" />
+              <!-- <payment :passRefund="passRefund"/> -->
+              <!-- <payment :passRefund="passRefund"/> -->
             </p>
           </div>
         </div>
@@ -58,7 +44,7 @@ import payment from "@/components/o_payment";
 import CollageRefund from "@/components/L_collageRefund";
 // import delivery from "@/components/L_delivery";
 import afterSales from "@/components/o_afterSales";
-// import loading from "@/commond/loading";
+import loading from "@/commond/loading";
 export default {
   components: {
     payment,
@@ -66,7 +52,7 @@ export default {
     // delivery,
     afterSales,
     CollageRefund,
-    // loading
+    loading
 
   },
   data() {
@@ -111,9 +97,8 @@ export default {
         orderType: type,
         // state: 1
       })
-
-      this.yesGoods = listData.data.list
-      console.log(this.yesGoods)
+      this.shopListRefund = listData.data.list
+      console.log(this.shopListRefund)
       if(listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
@@ -126,19 +111,19 @@ export default {
       };
       this.shopNum++;
       obj.pageNumber = this.shopNum;
-      return this.$API.L_selectOrderPage(obj);
+      return this.$API.L_selectOrderRefund(obj);
     },
     async lower(e) {
       // console.log(e);
       if (!this.canLoad) return;
       if (this.showLoad) return;
       this.showLoad = true;
-      const listDatazz = await this.getNextPageRefund();
+      const listDatazz = await this.getNextPage();
+      this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
       setTimeout(() => {
-        if (listDatazz.data.list.length < 20) {
+        if ( this.shopListRefund.length < 20) {
           this.canLoad = false;
         }
-        this.shopList = this.shopList.concat(listDatazz.data.list);
         this.showLoad = false;
       }, 2000);
     }
@@ -146,24 +131,9 @@ export default {
   },
   async mounted() {
     this.shopNum = 0;
-    const listDatazz = await this.getNextPageRefund();
+    const listDatazz = await this.getNextPage();
     this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
-    console.log(this.shopListRefund)
-    // this.groupOrder = this.shopListRefund
-    for(var i=0;i<this.shopListRefund.length;i++){//申请中
-      if(this.shopListRefund[i].state == 0){//
-        // console.log(11111)
-        this.applyFor.push(this.shopListRefund[i])
-        console.log(this.applyFor)
-      }else if(this.shopListRefund[i].state == 1){//通过
-        this.passRefund.push(this.shopListRefund[i])
-        // console.log(this.noOrder)
-      }else{//未通过
-        this.noPassRefund.push(this.shopListRefund[i])
-        // console.log(this.yesPlay)
-      }
-    }
-    if (listDatazz.data.list.length < 20) {
+    if (this.shopListRefund.length < 20) {
       this.canLoad = false;
     }
   }

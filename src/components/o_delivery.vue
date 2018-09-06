@@ -5,87 +5,99 @@
     <div class="nav" v-for="(item,idx) in orderList" :key="idx">
       <div class="listHug" :style="'flex: 0 0 '+ listWidth +'rpx;'">
         <div class="list" style="width:100%;">
-        <div class="kuang">
-          <div class="title_1">
-            <text class="name">订单编号：{{item.orderNo}}</text>
-            <text class="fuKuan">
-              {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
-            </text>
-          </div>
-          <!-- <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz"> -->
-            <div class="topHug">
+          <div class="kuang">
+            <div class="title_1">
+              <text class="name">订单编号：{{item.orderNo}}</text>
+              <text class="fuKuan">
+                {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
+              </text>
+            </div>
+            <!-- 非拼团总订单  start******************** -->
+            <div class="topHug" v-if="item.layer !== -1" v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
               <div class="sPimgHug">
-                <img class="sPimg" :src="item.image"/>
+                <img class="sPimg" :src="itemzz.image"/>
               </div>
-            <div class="textThad" v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
-              <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
+              <div class="textThad" >
+                <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
                 <div class="title">{{itemzz.name}}</div>
                 <div class="huo">
                   <text class="name">{{itemzz.stallInfo3}}</text>
                   <div class="type">货期:{{itemzz.delivery}}</div>
                   <span class="number">X{{itemzz.countNum}}</span>
-                  <div >
-                    <div class="maShuo">
-                      <div style="width:80%;float:left;">
-                          <div class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
-                      </div>
-                      <span v-if="editClick" class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
-                      <span v-if="!editClick" class="edit">编辑</span>
+                  <div class="maShuo">
+                    <div style="width:80%;float:left;">
+                        <div class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
                     </div>
+                    <span v-if="editClick" class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
+                    <span v-if="!editClick" class="edit">编辑</span>
                   </div>
-              <!-- </div> -->
+                </div>  
+                <!-- </div> -->
+              </div>
             </div>
+            <!-- 非拼团总订单  end******************** -->
+
+            <!-- 拼团总订单  start******************** -->
+            <div class="topHug" v-if="item.layer === -1 || item.goods">
+              <div class="sPimgHug">
+                <img class="sPimg" :src="item.goods.image"/>
+              </div>
+              <div class="textThad" >
+                <div class="title">{{item.goods.name}}</div>
+                <div class="huo">
+                  <text class="name">{{item.goods.stallInfo3}}</text>
+                  <div class="type">货期:{{item.goods.delivery}}</div>
+                </div>
+              </div>
+            </div>
+            <!-- 拼团总订单  end******************** -->
+          </div>
+          <div class="jiaGe">
+            <div class="jiaGe_1" v-for="(itemzz,idzz) in item.orderGoods" :key="idzz">
+              <span >共{{itemzz.skuList.length}}个款，合计{{item.num}}件</span>
+              <br/>
+              <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
+            </div>
+            <span class="text">共{{item.num}}件商品,合计: </span>
+            <span class="jiaGet">{{item.count}}元</span>
+          </div>
+          <div class="type_1" v-if="(item.layer!=-1)">
+            <div class="title">
+              <span class="colour">颜色</span>
+              <span class="colour">码数</span>
+              <span class="standby">待发数</span>
+              <span class="shipments">发货件数</span>
+              <span class="remaining">剩余件数</span>
+            </div>
+            <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
+              <div class="title_2" v-for="(itemaa,idss) in orderDeliverArray[idx]" :key="idss">
+                <span class="colour">{{itemaa.color}}</span>
+                <span class="standby">{{itemaa.size}}</span>
+                <span class="standby">{{itemaa.num}}</span>
+                <span class="shipments">{{itemaa.canNumer}}</span>
+                <span class="remaining">{{itemaa.waitNum}}</span>
+              </div>
+            <!-- </div> -->
+          </div>
+          <div class="number_1" v-if="(item.layer!=-1)">
+            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+              <div class="completed_1">子订单编号
+                {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
+              ：{{childrenzz.orderNo}}</div>
+              <i class="sanjiao"></i>
             </div>
           </div>
-        </div>
-        <div class="jiaGe">
-          <div class="jiaGe_1" >
-            <span>共{{item.skuListSize}}个款，合计{{item.countNum}}件</span>
-            <br/>
-            <span v-if="item.shopAddress">收货人:{{item.shopAddress.name}} {{item.shopAddress.mobile}}</span>
-          </div>
-          <span class="text">共{{item.num}}件商品,合计: </span>
-          <span class="jiaGet">{{item.count}}元</span>
-        </div>
-        <div class="type_1">
-          <div class="title">
-            <span class="colour">颜色</span>
-            <span class="colour">码数</span>
-            <span class="standby">待发数</span>
-            <span class="shipments">发货件数</span>
-            <span class="remaining">剩余件数</span>
-          </div>
-          <!-- <div  v-for="(itemzz,idzz) in orderDeliver" :key="idzz"> -->
-            <div class="title_2" v-for="(itemaa,idss) in orderDeliverArray[idx]" :key="idss">
-              <span class="colour">{{itemaa.color}}</span>
-              <span class="standby">{{itemaa.size}}</span>
-              <span class="standby">{{itemaa.num}}</span>
-              <span class="shipments">{{itemaa.canNumer}}</span>
-              <span class="remaining">{{itemaa.waitNum}}</span>
+          <div class="btn">
+            <div class="collage_1" v-for="(itempin,idpin) in item.pingUser" :key="idpin" v-if="idpin < 3">
+              <img class="collage_img" :src="itempin.head">
             </div>
-          <!-- </div> -->
-        </div>
-        <div class="number_1">
-          <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
-            <div class="completed_1">子订单编号
-              {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
-            ：{{childrenzz.orderNo}}</div>
-            <i class="sanjiao"></i>
+            <span class="details" v-if="(item.layer!=-1)" @click="details(item.id)">查看详情</span>
+            <span class="Deliver" v-if="(item.layer!=-1)" @click="Deliver(item.id)">发货</span>
+            <span v-if="(item.layer==-1)" class="collage" @click="seeSuborder(item.id)">查看子拼团</span>
           </div>
-        </div>
-        <div class="btn">
-          <div class="collage_1">
-            <img class="collage_img" :src="item.picture">
-            <img class="collage_img" :src="item.picture">
-            <img class="collage_img" :src="item.picture">
-          </div>
-          <span class="details" @click="details(item.id)">查看详情</span>
-          <span class="Deliver" @click="Deliver(item.id)">发货</span>
-          <span v-if="(btn==1)" class="collage">查看子拼团</span>
         </div>
       </div>
     </div>
-  </div>
     <!-- 编辑弹窗 -->
     <div v-show="isShow">
       <div class="demo-container">
@@ -162,8 +174,6 @@
       </div>
     </div>
   </div>
-
-
 </template>
 <script>
 import wx from "wx";
@@ -386,8 +396,6 @@ export default {
           this.orderDeliver.forEach((item, index) => {
             this.inputValueArr[index] = 0;
           })
-
-          // console.log(this.idzz)
         },
       //   父组件触发函数
       childMethod(){
@@ -397,14 +405,12 @@ export default {
           var List = this.orderList;
           var arr = [];
           var len = List.length;
-          // console.log(len)
            var arrTwo = [];
           for(var i=0;i<len;i++){
               arr[i] = false;
               //    找到deliverList
               var array = [];
               var orderLisetArr = List[i].orderGoods;
-              // console.log(orderLisetArr)
               for(var j=0;j<orderLisetArr.length;j++){
                 let deliverListArr = orderLisetArr[j].deliverList
                 for(var k=0; k<deliverListArr.length; k++){
@@ -416,17 +422,11 @@ export default {
                   obj.num = deliverListArr[k].num
                   obj.waitNum = deliverListArr[k].remainNum
                   array.push(obj)
-                  
-                  // this.orderDeliverArray = array;
-                  // console.log(this.orderDeliverArray,789789);
-                  // console.log(array,obj,382);
                 }     
                 arrTwo[i] = array;
-              // this.$set(this.orderDeliverArray, )
               }
               this.Arrays = arr;
               this.orderDeliverArray = arrTwo;
-              // console.log(this.orderDeliverArray,789789);
           }
         },500)
       },
@@ -438,7 +438,10 @@ export default {
         },
         details(){
           this.$router.push('mail/delivery')
-          console.log(111)
+        },
+        //跳转到子订单
+        seeSuborder(id){
+          this.$router.push({path:'suborders/suborders',query:{id}})
         },
         btn() {
           let object = {
@@ -452,9 +455,10 @@ export default {
                 type: this.select
               }
             }
-            console.log(JSON.stringify(object))
+          console.log(JSON.stringify(object))
+          let that = this  
           wx.request({
-            url: this.url, //仅为示例，并非真实的接口地址
+            url: that.url, //仅为示例，并非真实的接口地址
             data: JSON.stringify(object),
             header: {
               'content-type': 'application/json'
@@ -468,9 +472,15 @@ export default {
                   icon: 'success',
                   duration: 2000
                 })
-                // this.isShows = false
+                that.reload();
+                that.isShows = !that.isShows
               }else{
-                // this.isShows = false
+                wx.showToast({
+                  title: res.data,desc,
+                  icon: 'success',
+                  duration: 2000
+                })
+                that.isShows = !that.isShows
               }
             }
           })

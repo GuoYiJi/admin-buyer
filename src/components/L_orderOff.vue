@@ -27,7 +27,8 @@
         <div class="scroll-box">
           <div class="box">
             <p >
-              <CollageYesGoods :yesGoods="yesGoods"/>
+              <!-- <CollageYesGoods :yesGoods="yesGoods"/> -->
+              <CollageClose :closeOrder="closeOrder"/>
             </p>
           </div>
         </div>
@@ -42,12 +43,13 @@
 import wx from "wx";
 import payment from "@/components/o_payment";
 import Ldelivery from "@/components/L_delivery";
-import CollageYesGoods from "@/components/L_collageYesGoods";
+import CollageClose from "@/components/L_collageClose";
 import loading from "@/commond/loading";
 export default {
   components: {
     payment,
-    CollageYesGoods,
+    // CollageYesGoods,
+    CollageClose,
     Ldelivery,
     loading,
 
@@ -62,7 +64,7 @@ export default {
       tag: 1,
       shopNum: 0,
       items: this.default,
-      yesGoods: [],
+      closeOrder: [],
       yesGoodsAll: [],
 
     };
@@ -118,7 +120,7 @@ export default {
         if (listData.data.list.length < 30) {
           this.canLoad = false;
         }
-        this.yesGoods = this.yesGoods.concat(listData.data.list);
+        this.closeOrder = this.closeOrder.concat(listData.data.list);
         this.showLoad = false;
       }, 2000);
     }
@@ -129,9 +131,9 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.yesGoods = this.yesGoods.concat(listData.data.list);
+    this.closeOrder = this.closeOrder.concat(listData.data.list);
     // console.log(this.orderList)
-    console.log(this.yesGoods);
+    console.log(this.closeOrder);
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
