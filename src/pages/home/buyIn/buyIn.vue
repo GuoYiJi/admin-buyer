@@ -355,7 +355,7 @@ export default {
 .box
   padding: 2% 0 110px 0%
 .scroll-box
-  height: 950px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0

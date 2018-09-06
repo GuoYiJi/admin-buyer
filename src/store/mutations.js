@@ -25,6 +25,10 @@ export default {
   },
 
   // 拼团
+  DELETE_ROUNPPRICE: (state, value) => {
+    state.shopSelectList = value
+  },
+
   PUSTROUNPPRICE: (state, value) => {
     state.shopSelectList.push(value)
   },

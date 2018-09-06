@@ -49,7 +49,7 @@
 </template>
 <script>
 import wx from "wx"
-import scard from '@/components/s_card'
+import scard from '@/components/s_listCardDiscount'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
@@ -110,7 +110,7 @@ export default {
       const listData = await this.getNextPage({
         ob: type,
         state: this.state,
-        labelId: this.groupTag
+        // labelId: this.groupTag
       })
       this.shopList = listData.data.list
       if(listData.data.list.length < this.pageSize) {
@@ -149,7 +149,7 @@ export default {
       const listData = await this.getNextPage({
         ob: this.type,
         state: this.state,
-        labelId: this.groupTag
+        // labelId: this.groupTag
       });
       setTimeout(() => {
         if (listData.data.list.length < this.pageSize) {
@@ -166,7 +166,7 @@ export default {
       const listData = await this.getNextPage({
         ob: 0,
         state: this.state,
-        labelId: this.groupTag
+        // labelId: this.groupTag
       })
       this.shopList = listData.data.list;
       if (listData.data.list.length < this.pageSize) {
@@ -204,7 +204,9 @@ export default {
       this.shopList = newArr
 
       this.$success('下架成功！')
-
+      setTimeout(() => {
+        this.$router.go(0)
+      })
     },
     toGroup(){
       if(this.selIds.length == 0) return this.handleError('请至少选择一件商品！')

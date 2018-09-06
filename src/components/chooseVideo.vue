@@ -2,12 +2,13 @@
   <div class="add_video">
     <div v-if="src" class="add">
       <p><video :src="src" show-play-btn="false" objectFit="fill"  controls="false" ></video></p>
+      <!-- <i class="cancel_shop" @click="toCancel()"></i> -->
       <!-- <p class="show_pro"><progress percent="20" show-info /></p> -->
     </div>
     <div class="add">
       <div ><p @tap="bindButtonTap">+视频</p></div>
     </div>
-    
+
     <i-message id="message" />
   </div>
 </template>
@@ -96,10 +97,10 @@ export default {
 @import '~@/assets/css/mixin'
 .add
   background: #EAEAEA
+  position: relative
   +icon(200px)
   line-height: 200px
   text-align: center
-  position: relative
   margin-right: 20px
   video
     +icon(200px)
@@ -109,4 +110,3 @@ export default {
 
 
 </style>
-

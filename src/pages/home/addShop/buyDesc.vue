@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <div class="content" >
-      <div class="adr-card" 
-      v-for="(item,idx) in shopData" 
+      <div class="adr-card"
+      v-for="(item,idx) in shopData"
       :key="idx"
       @click="selectAct(item)">
         <div class="adr">
@@ -39,10 +39,10 @@ export default {
     goback() {
       //set group to vuex addshop
       this.$store.commit("ADDSHOPEXPLAN", this.select );
-
-      this.$router.push({
-        path: "/" + $getUrl(),
-      });
+      this.$router.back(-1)
+      // this.$router.push({
+      //   path: "/" + $getUrl(),
+      // });
     }
   },
   async mounted() {
@@ -88,5 +88,5 @@ export default {
     +center
   .active
     +select-active
-    
+
 </style>

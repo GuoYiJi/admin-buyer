@@ -112,11 +112,12 @@ export default {
       this.tag = tag
     },
     toRoute(url, params) {
-      console.log(222222222222);
-      this.$router.push({path: '/pages/home/' + url, query: params})
+      this.$router.push({path: url, query: params})
     }
   },
-  mounted() {}
+  mounted() {
+
+  }
 };
 </script>
 <style lang="sass" scoped>

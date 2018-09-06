@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i>
-      <i class="img" :style="{background: 'url(' + shop.images + ')'}"></i>
+      <i class="img" :style="{backgroundImage: 'url(' + shop.images + ')'}"></i>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <span class="stall">档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span>
@@ -25,7 +25,7 @@
       </ul>
 
     </i-modal>
-    <i-message id="message" />
+    <i-toast id="toast" />
   </div>
 </template>
 <script>
@@ -61,14 +61,19 @@ export default {
   methods: {
     select(){
       if(this.groupPrice == '') {
-        this.$Message({
-          content: '请先拼团价格',
+        // this.$Message({
+        //   content: '请先拼团价格',
+        //   type: 'warning'
+        // })
+        this.$Toast({
+          content: '请先填写拼团价格',
           type: 'warning'
         })
         return
+      }else {
+        this.check = !this.check
+        this.$emit('switchSel', this.shop.id, this.groupPrice, this.check)
       }
-      this.check = !this.check
-      this.$emit('switchSel', this.shop.id, this.groupPrice, this.check)
     },
     comfirmGPrice(name){
       this.toClose(name)
@@ -142,6 +147,9 @@ ul.m_box
     +icon(240px)
     border-radius: 12px
     margin-right: 20px
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 100% 100%
   .desc
     flex: 1
     overflow: hidden

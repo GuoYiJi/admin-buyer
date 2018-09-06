@@ -3,14 +3,27 @@
     <div class="add_video">
       <p class="a_title">请添加视频: (最多可添加1个)</p>
       <div class="v_box">
-        <vbox @getVideo="getVideo" :videoStr="$route.query.video" />
+        <!-- <vbox @getVideo="getVideo" :videoStr="$route.query.video" /> -->
+        <div v-if="videoSrc" class="add">
+          <p><video :src="videoSrc" show-play-btn="false" objectFit="fill"  controls="false" ></video></p>
+          <!-- <i class="cancel_shop" @click="toCancel()"></i> -->
+          <!-- <p class="show_pro"><progress percent="20" show-info /></p> -->
+        </div>
+        <div class="add">
+          <div ><p @tap="bindButtonTap">+视频</p></div>
+        </div>
       </div>
     </div>
-    <div class="add_video">
-      <p class="a_title">请添加图片:(最多可添加15张)</p>
-      <div class="v_box">
-        <ibox @getImg="getImg" @changeImg="changeImg" :imgStr="$route.query.images" maxNum='15' uploadNum="5"/>
-      </div>
+    <p class="a_title">请添加图片:(最多可添加15张)</p>
+    <div class="add_image">
+        <!-- <ibox @getImg="getImg" @changeImg="changeImg" :imgStr="$route.query.images" maxNum='15' uploadNum="5"/> -->
+        <div v-for="(item, index) in imgList" :key="index" class="add">
+          <img :src="item" />
+          <i class="cancel_shop" @click="toCancel(index)"></i>
+        </div>
+        <div class="addBtn" @tap="bindButtonTapImage">
+          <p>+图片</p>
+        </div>
     </div>
     <div class="line-box">
       <div class="line b_line">
@@ -264,8 +277,8 @@
 </template>
 <script>
 import wx from "wx";
-import vbox from '@/components/chooseVideo'
-import ibox from '@/components/chooseImage'
+// import vbox from '@/components/chooseVideo'
+// import ibox from '@/components/chooseImage'
 import mixin from '@/mixin'
 import config from '@/config'
 import { $getUrl } from '@/utils'
@@ -273,13 +286,18 @@ import { mapState , mapGetters } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
-    vbox,
-    ibox
+    // vbox,
+    // ibox
   },
   data() {
     return {
+      videoSrc: '',
+      uploadNum: 1,
+      maxNum: '',
+      imgStr: '',
+      imgList: [],
       versionId: '',//弹窗标题
-      versionName: [],
+      versionName: [],//选择的品种类型
       clickNum: 0, //品类选择点击次数记录
       editType: false,
       // backTips: false,
@@ -374,13 +392,28 @@ export default {
     ]),
   },
   async mounted() {
+    console.log(this.$route.query);
     //check editShop
     if(this.$route.query.id){
       //数据注入
       this.editType = true
       this.goods = this.$route.query
+    }else if(this.$route.query.isAddVideo === 'true'){
+      //重置缓存数据
+      console.log("初始化data");
+      this.$store.commit('ADDSHOPTYPE', [])
+      this.$store.commit('ADDSHOPGROUP', {})
+      this.$store.commit('ADDSHOPEXPLAN', {})
+      this.goods.video = ''
+      this.goods.imageList = []
+      this.goods.images = ''
+      this.imgList = this.imgStr.split(',')
+      Object.assign(this.$data, this.$options.data())
+      // this.versionName = []
+      // this.clickNum = 0
+      // this.tagIds = ''
+      // this.mktFirstData = {}
     }
-    //init
     //get searchMarket
     this.getMarketData(0)
     //get 排期 品类 版型 面料 分组 标签
@@ -408,6 +441,137 @@ export default {
     this.tagData = tagArr
   },
   methods: {
+    //上传图片
+    uploadImg(tempFilePath) {
+      var that = this;
+      wx.uploadFile({
+        url: config.uploadImageUrl,
+        filePath: tempFilePath,
+        name: "file",
+        formData: {
+          name: tempFilePath.substring(10),
+          key: "img/${filename}",
+          policy: config.imgPolicy,
+          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+          success_action_status: "200",
+          signature: config.imgSignature
+        },
+        success: function(res) {
+          console.log(res);
+          if (res.statusCode == 400) {
+            that.handleError("上传的图片大小不能超过2m!");
+          } else if (res.statusCode == 200) {
+            if(that.maxNum && that.imgList.length >= that.maxNum){
+              that.handleError('不能超过15张图片噢！')
+              return
+            }
+            that.imgList.push(
+              config.uploadImageUrl + "/img" + tempFilePath.substring(10)
+            );
+            // that.$emit('getImg', config.uploadImageUrl + "/img" + tempFilePath.substring(10))
+            that.getImg(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
+          }
+        },
+        fail: function(err) {
+          console.log(err);
+        }
+      })
+    },
+    //控制添加图片张数
+    bindButtonTapImage() {
+      const maxNum = this.maxNum;
+      wx.showLoading({
+        title: '加载中',
+      });
+      var that = this;
+      if ( maxNum && this.imgList.length >= maxNum) {
+        this.handleError(`不能超过${maxNum}张图片噢！`);
+        wx.hideLoading();
+        return;
+      }
+      wx.chooseImage({
+        sizeType: "original",
+        count: this.uploadNum,
+        success: function(res) {
+          console.log(res);
+          var tempFilePath = res.tempFilePaths;
+          console.log(tempFilePath);
+          for (var i = 0, l; (l = tempFilePath[i++]); ) {
+            that.uploadImg(l);
+          }
+        },
+        complete: function() {
+          wx.hideLoading();
+        }
+      });
+    },
+    //报错信息
+    handleError(msg) {
+      this.$Message({
+        content: msg,
+        type: "error"
+      });
+    },
+    //删除图片
+    toCancel(start) {
+      this.imgList.splice(start, 1);
+      // this.$emit('changeImg',this.images)
+    },
+    //添加视频
+    bindButtonTap() {
+      wx.showLoading();
+      console.log(111)
+      var that = this;
+      wx.chooseVideo({
+        sourceType: ["album", "camera"],
+        maxDuration: 60,
+        camera: ["front", "back"],
+        success: function(res) {
+          console.log(res);
+          var tempFilePath = res.tempFilePath;
+          wx.uploadFile({
+            url: config.uploadImageUrl,
+            filePath: tempFilePath,
+            name: "file",
+            formData: {
+              name: tempFilePath,
+              key: "video/${filename}",
+              policy: config.videoPolicy,
+              OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+              success_action_status: "200",
+              signature: config.videoSignature
+            },
+            success: function(res) {
+              console.log(res);
+              if (res.statusCode == 400) {
+                that.handleError("上传的视频大小不能超过20m!");
+              } else if (res.statusCode == 200) {
+                that.videoSrc = config.uploadImageUrl + "/video" + tempFilePath.substring(10);
+                // that.emitSub();
+                that.getVideo(that.videoSrc);
+              }
+            },
+            fail: (err)=>{
+              this.handleError('上传失败，错误原因： '+err.errMsg)
+              console.log(err)
+            }
+          });
+          // that.src =
+          // setTimeout(()=>{
+          //   that.src = config.uploadImageUrl + '/video' + tempFilePath.substring(10)
+          //   console.log(that.src)
+          // },3000)
+          // that.src = res.tempFilePath
+        },
+        fail: (err)=>{
+          this.handleError('上传失败，错误原因： '+err.errMsg)
+          console.log(err)
+        },
+        complete: function() {
+          wx.hideLoading();
+        }
+      });
+    },
     // 关闭弹窗
     closeVersion(id) {
       this.versionId = 0
@@ -450,6 +614,7 @@ export default {
     async save(state){
       var value = await wx.getStorageSync('sessionId')
       if( this.imageList.length > 0){
+        this.goods.image = this.imageList.slice(0,1).toString()
         this.goods.images = this.imageList.slice(0,5).join(',')
       }
       if(this.imageList.length > 5){
@@ -574,7 +739,8 @@ export default {
 
       setTimeout(()=>{
         //跳转到商品列表
-        this.toRoute('home/shopMgr/shopMgr')
+        // this.toRoute('home/shopMgr/shopMgr')
+        this.$router.back(-1)
       },2000)
 
     },
@@ -681,9 +847,9 @@ export default {
     getImg(src){
       this.imageList.push(src)
     },
-    changeImg(imgArr){
-      this.imageList = imgArr
-    },
+    // changeImg(imgArr){
+    //   this.imageList = imgArr
+    // },
     async getMarketData(series, item={}){
       //init
       const pid = item.id || ''
@@ -715,6 +881,10 @@ export default {
         pId: pId
       })
     }
+  },
+  updated() {
+    //do something after updating vue instance
+    console.log(this.imgList);
   }
 
 };
@@ -896,14 +1066,25 @@ export default {
   padding: 4px 8px
 .small
   width: 200px
+.a_title
+  color: #666
+  padding: 20px
+  background: #fff
 .add_video
   background: #fff
-  padding: 20px 24px
-  margin-bottom: 20px
-  .a_title
-    color: #666
-    padding-bottom: 20px
-
+  padding: 20px
+  .v_box
+    .add
+      background: #EAEAEA
+      +icon(200px)
+      line-height: 200px
+      text-align: center
+      margin: 0 20px 20px 0
+      video
+        +icon(200px)
+    .show_pro
+      +center
+      width: 200px
 .b_line
   +border(1px,bottom,#f5f5f5)
 .line-box
@@ -935,4 +1116,36 @@ export default {
     height: 68px
     line-height: 108px
     padding: 20px
+
+.add_image
+  width: 100%
+  background: #fff
+  display: flex
+  flex-wrap: wrap
+  padding: 20px
+  .add,.addBtn
+    display: inline-block
+    width: 200px
+    height: 200px
+    margin: 0 20px 20px 0
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 100% 100%
+  .addBtn
+    background-color: #EAEAEA
+    display: flex
+    align-items: center
+    justify-content: center
+    font-size: 28px
+  .add
+    position: relative
+    .cancel_shop
+      position: absolute
+      top: 10px
+      right: 10px
+      width: 50px
+      height: 50px
+      border-radius: 50%
+      background: url("~@/assets/img/shopMgr/cancel.png") no-repeat center
+      background-size: 100% 100%
 </style>

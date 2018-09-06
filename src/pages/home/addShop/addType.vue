@@ -24,7 +24,7 @@
                   <p @tap="bindButtonTap(index)">{{lineList[index].color + ' ' + lineList[index].tag}}</p>
                 </div>
               </div>
-    
+
             </div>
           </div>
         </div>
@@ -37,7 +37,7 @@
           <p class="del" @click="delLine(index)">删除</p>
         </div>
       </div>
-      
+
       <!-- 弹出层  color标签-->
       <div class="modal_box"  v-if="showColor">
         <div class="modal_time">
@@ -47,7 +47,7 @@
             <p class="confirm" @click="comfirmType('showColor')">确定</p>
           </div>
           <div class="content content_tag">
-            <div class="tag_item" 
+            <div class="tag_item"
               v-for="(item,index) in colorArr" :key="index"
               @click="selects(index,'colorArr')">
               <i class="select" :class="[item.select && 'select-active']"></i>
@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- 弹出层  尺码标签-->
       <div class="modal_box" v-if="showTag">
         <div class="modal_time" >
@@ -66,7 +66,7 @@
           <p class="confirm" @click="comfirmType('showTag')">确定</p>
         </div>
         <div class="content content_tag">
-          <div class="tag_item" 
+          <div class="tag_item"
             v-for="(item,index) in typeArr" :key="index"
             @click="selects(index,'typeArr')">
             <i class="select" :class="[item.select && 'select-active']"></i>
@@ -87,7 +87,7 @@
         </div>
       </div>
       </div>
-      
+
       <div class="bottom"></div>
       <div class="create">
         <p @click="confirm">确定</p>
@@ -259,7 +259,7 @@ export default {
       //     image:图片
       //     attrIds: colorId,sizeId
       //   }]
-      //selectIds 
+      //selectIds
       const colorIdFun = (color)=>{
         for(var i=0,l; l=this.colorArr[i++];){
           if(color == l.name) return l.id
@@ -283,7 +283,8 @@ export default {
       }
       console.log(skuList)
       this.$store.commit("ADDSHOPTYPE", skuList);
-      this.toRoute("home/addShop/addShop");
+      this.$router.back(-1);
+      // this.toRoute("home/addShop/addShop");
       // console.log(skuList)
     }
   },
@@ -317,7 +318,7 @@ export default {
   background: #fff
   .add_line
     display: flex
-    padding: 25px 
+    padding: 25px
     p
       flex: 1
     .num
@@ -337,7 +338,7 @@ export default {
 .create
   position: fixed
   bottom: 0
-  left: 0 
+  left: 0
   right: 0
   z-index: 9
   p
@@ -350,7 +351,7 @@ export default {
 .b_line
   +border(1px,bottom,#f5f5f5)
 .box_content
-  padding: 0 24px 
+  padding: 0 24px
   background: #fff
   margin-bottom: 20px
 .line
@@ -359,7 +360,7 @@ export default {
   line-height: 89px
   position: relative
   .input
-    height: 100% 
+    height: 100%
     padding-right: 8px
     color: #000
     .red
@@ -376,7 +377,7 @@ export default {
   .input_text
     height: 68px
     line-height: 108px
-    padding: 20px  
+    padding: 20px
 .sel_box
   display: flex
   padding: 0 190px
@@ -388,7 +389,7 @@ export default {
       text-align: center
     .select
       +select(30px)
-      
+
     .active
       +select-active
 // .model
@@ -470,9 +471,9 @@ export default {
     line-height: 46px
     font-size: 24px
 
-    
+
 .item_img
-  
+
 .add_box
   background: #EAEAEA
   margin-right: 20px

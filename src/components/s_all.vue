@@ -5,13 +5,13 @@
         <ul>
           <li :class="[tag === 1 && 'nav-active']" @click="handleTag(1)">综合</li>
           <li :class="[tag === 2 && 'nav-active']" @click="handleTag(2)">销量<div class="sort-box"><i class="sort-top" :class="asceSale && 'sort-active'"></i><i :class="!asceSale && 'sort-active'" class="sort-bottom"></i></div></li>
-          
+
           <li :class="[tag === 4 && 'nav-active']" @click="handleTag(4)">价格<div class="sort-box"><i class="sort-top" :class="ascePrice && 'sort-active'"></i><i :class="!ascePrice  && 'sort-active'" class="sort-bottom"></i></div></li>
-          
+
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 70%;" @scrolltolower="lower"  >
+      <scroll-view scroll-y lower-threshold='80' style="height: 100%;" @scrolltolower="lower"  >
         <div class="scroll-box">
           <div class="box">
             <p v-for="(shop,index) in shopList" :key="index"><scard ref="scard" :shop="shop" :edit="edit" /></p>
@@ -23,7 +23,7 @@
         <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
           <selsearch @comSearch="comSearch" />
         </i-drawer>
-        
+
       </scroll-view>
     </div>
     <div class="footer" v-if="!edit">
@@ -110,7 +110,7 @@ export default {
       }
       if(tag === 5) {
         this.toggleRight1()
-        return 
+        return
       }
       this.type = type
       const listData = await this.getNextPage({
@@ -186,7 +186,7 @@ export default {
       this.canLoad = false;
     }
     console.log(this.shopList)
-    
+
   },
   // onShow() { //返回显示页面状态函数
   //   this.onLoad()//再次加载，实现返回上一页页面刷新
@@ -206,17 +206,17 @@ export default {
 
 
 
- 
+
 .box
-  padding: 2% 0 50px 0%
+  padding: 2% 0 0
 .home
   // position: relative
   height: 100%
 .footer
-  position: absolute
+  width: 100%
+  position: fixed
   bottom: 0
   left: 0
-  right: 0
   height: 98px
   line-height: 98px
   display: flex
@@ -264,7 +264,7 @@ export default {
   background: #fff
   // z-index: 9999
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -275,18 +275,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

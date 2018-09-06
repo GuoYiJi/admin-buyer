@@ -1,13 +1,11 @@
 <template>
-  <div class="add_video">
-    <div v-for="(item, index) in imgList" :key="index" class="add img_list">
-      <img class="item_img" :src="item" />
+  <div class="add_image">
+    <div v-for="(item, index) in imgList" :key="index" class="add">
+      <img :src="item" />
       <i class="cancel_shop" @click="toCancel(index)"></i>
     </div>
-    <div class="add add_box">
-      <div>
-        <p @tap="bindButtonTap">+图片</p>
-      </div>
+    <div class="addBtn" @tap="bindButtonTap">
+      <p>+图片</p>
     </div>
     <i-message id="message" />
   </div>
@@ -120,7 +118,7 @@ export default {
     console.log(this.imgStr)
     if(this.imgStr){
       const imgArr = this.imgStr.split(',')
-      
+
       this.imgList = imgArr
     }
   }
@@ -128,35 +126,33 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.cancel_shop
-  position: absolute
-  +bg-img('shopMgr/cancel.png')
-  right: 12px
-  top: 12px
-  +icon(50px)
-  // background: #fff
-  border-radius: 50px
-.img_list
-  margin-right: 20px
-  margin-bottom: 20px
-  position: relative
-.item_img
-  
-.add_box
-  background: #EAEAEA
-  margin-right: 20px
-  margin-bottom: 20px
-.add
-  +icon(200px)
-  line-height: 200px
-  text-align: center
-  position: relative
-  video
-    +icon(200px)
-.show_pro
-  +center
-  width: 200px
-
-
+.add_image
+  width: 100%
+  display: flex
+  flex-wrap: wrap
+  .add,.addBtn
+    display: inline-block
+    width: 200px
+    height: 200px
+    margin-right: 10px
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 100% 100%
+  .addBtn
+    background-color: #EAEAEA
+    display: flex
+    align-items: center
+    justify-content: center
+    font-size: 28px
+  .add
+    position: relative
+    .cancel_shop
+      position: absolute
+      top: 10px
+      right: 10px
+      width: 50px
+      height: 50px
+      border-radius: 50%
+      background: url("~@/assets/img/shopMgr/cancel.png") no-repeat center
+      background-size: 100% 100%
 </style>
-

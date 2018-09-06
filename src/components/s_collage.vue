@@ -12,7 +12,7 @@
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" v-if="!shop.del">
-            <GroupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
+            <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
@@ -22,19 +22,19 @@
       </scroll-view>
     </div>
     <div class="footer">
-      <p class="style2" @click="pageTo('shopMgr/collage/collageMsg')">创建拼团</p>
+      <p class="style2" @click="pageTo('collage/collageMsg')">创建拼团</p>
     </div>
   </div>
 </template>
 <script>
 import wx from "wx";
-import GroupCard from "@/components/s_groupCard"
+import groupCard from "@/components/s_groupCard"
 import mixin from '@/mixin'
 import loading from "@/commond/loading"
 export default {
   mixins: [mixin],
   components: {
-    GroupCard,
+    groupCard,
     loading,
   },
   data() {

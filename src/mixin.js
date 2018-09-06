@@ -1,25 +1,26 @@
 export default {
   methods: {
-    toOpen(name) {
+    toOpen (name) {
       this[name] = true
     },
-    toClose(name) {
+    toClose (name) {
       this[name] = false
     },
-    toRoute(path,params = {}) {
-      this.$router.push({path: '/pages/' + path , query: params} )
+    toRoute (path, params = {}) {
+      if (path === 'home/addShop/addShop') {
+        this.$router.push({path: '/pages/' + path, query: {isAddVideo: true}})
+        return
+      }
+      this.$router.push({path: '/pages/' + path, query: params})
     },
-    select(name,value) {
+    select (name, value) {
       this[name] = value
     },
-    handleError(msg) {
+    handleError (msg) {
       this.$Message({
         content: msg,
-        type: "error"
-      });
-    },
+        type: 'error'
+      })
+    }
   }
 }
-
-
-

@@ -32,7 +32,7 @@
       </div>
     </scroll-view>
     <div class="footer">
-      <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
+      <button class="edit" @click="toEdit('pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
       <button class="down">下架</button>
     </div>
   </div>

@@ -44,7 +44,7 @@ const route = [{
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
         'i-modal': '/iview/modal/index',
-        'i-message': '/iview/message/index',
+        'i-toast': '/iview/toast/index'
       }
     }
   }, {
@@ -54,6 +54,7 @@ const route = [{
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
         'i-modal': '/iview/modal/index',
+        'i-toast': '/iview/toast/index'
       }
     }
   },
@@ -63,8 +64,9 @@ const route = [{
       navigationBarTitleText: '商品列表',
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
-        'i-message': '/iview/message/index',
+        // 'i-message': '/iview/message/index',
         'i-modal': '/iview/modal/index',
+        'i-toast': '/iview/toast/index'
       }
     }
   }
@@ -74,7 +76,8 @@ const route = [{
     config: {
       navigationBarTitleText: '创建拼团',
       'usingComponents': {
-        'i-message': '/iview/message/index',
+        // 'i-message': '/iview/message/index',
+        'i-toast': '/iview/toast/index'
       }
     }
   }, {

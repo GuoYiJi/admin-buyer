@@ -49,4 +49,6 @@ export default class shopMgr {
 
   //创建折扣商品
   addDisGoods = params => http.post('api/goods/addDisGoods', params)
+  //修改折扣价格
+  updateDisGoods = params => http.post('api/goods/updateDisGoods', params)
 }

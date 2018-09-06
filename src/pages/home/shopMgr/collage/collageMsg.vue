@@ -31,13 +31,13 @@
       <input type="number" class="input_text" placeholder="请输入限购次数" v-model="limitTimes">
     </li>
     <li>
-      <span class="title">限购次数: </span>
+      <span class="title">限购件数: </span>
       <input type="number" class="input_text" placeholder="请输入限购件数" v-model="limitNum">
     </li>
     <li v-if="isEdit">
       <span class="title">拼团价: </span>
       <span class="inputPrice">
-        <input type="number" class="input_text" v-model="price">
+          <input type="number" class="input_text" v-model="price">
         <p>元</p>
       </span>
     </li>
@@ -48,7 +48,7 @@
     </p>
     </li>
   </ul>
-  <i-message id="message" />
+  <i-toast id="toast" />
   <div class="footer">
     <p class="save" v-if="isEdit" @click="editGroup()">保存编辑</p>
     <p class="save" v-else @click="createGroup()">保存创建</p>
@@ -83,7 +83,7 @@ export default {
   computed: {
     ...mapState(["shopSelectList"]),
     showShop() {
-      if (this.shopSelectList) {
+      if (this.shopSelectList.length > 0) {
         console.log(this.shopSelectList);
         return '已选择' + this.shopSelectList.length + '件'
         // return `已选择${this.shopSelectList.length}件`
@@ -91,50 +91,81 @@ export default {
       return '去添加商品'
     },
   },
-  watch: {
-    // isEdit(currentValue, oldValue) {
-    //   this.isEdit = !this.isEdit
-    // },
-    // setDate(currentValue, oldValue) {
-    //   console.log(currentValue);
-    //   this.setDate = currentValue
-    // },
-    // setEndDate(currentValue, oldValue) {
-    //   console.log(currentValue);
-    //   this.setEndDate = currentValue
-    // }
-  },
   methods: {
     //创建拼团
     createGroup() {
       console.log(this.shopSelectList);
-      this.shopSelectList.forEach((item, index) => {
-        this.requestData[index] = {
-          num: this.personNum,
-          startTime: this.setDate,
-          endTime: this.setEndDate,
-          limitNum: this.limitNum,
-          limitTimes: this.limitTimes,
-          price: item.groupPrice,
-          goodsId: item.id
-        };
-      });
-      console.log(this.requestData);
-      const vm = this
-      wx.request({
-        url: this.url + '/api/shop/ping/addPing',
-        data: { pingList: this.requestData, sessionId: wx.getStorageSync('sessionId'), shopId: config.appId },
-        method: 'POST',
-        header: {
-          'content-type': 'application/json' // 默认值
-        },
-        success(res) {
-          console.log(res.data);
-          if(res.data.code == 1) {
-            vm.$router.back(-1);
+      if(!this.personNum) {
+        this.$Toast({
+          content: '请填写成团人数',
+          type: 'warning'
+        })
+      }else if(!this.setDate) {
+        this.$Toast({
+          content: '请设置生效时间',
+          type: 'warning'
+        })
+      }else if(!this.setEndDate) {
+        this.$Toast({
+          content: '请设置过期时间',
+          type: 'warning'
+        })
+      }else if(!this.limitTimes) {
+        this.$Toast({
+          content: '请限制次数',
+          type: 'warning'
+        })
+      }else if(!this.limitNum) {
+        this.$Toast({
+          content: '请限制件数',
+          type: 'warning'
+        })
+      }else if(this.isEdit == true && !this.price) {
+        this.$Toast({
+          content: '请填写拼团价',
+          type: 'warning'
+        })
+      }else if (this.shopSelectList.length == 0) {
+        this.$Toast({
+          content: '请选择商品',
+          type: 'warning'
+        })
+      }else{
+        this.shopSelectList.forEach((item, index) => {
+          this.requestData[index] = {
+            num: this.personNum,
+            startTime: this.setDate,
+            endTime: this.setEndDate,
+            limitNum: this.limitNum,
+            limitTimes: this.limitTimes,
+            price: item.groupPrice,
+            goodsId: item.id
+          };
+        });
+        // console.log(this.requestData);
+        const vm = this
+        wx.request({
+          url: vm.url + '/api/shop/ping/addPing',
+          data: { pingList: vm.requestData, sessionId: wx.getStorageSync('sessionId'), shopId: config.appId },
+          method: 'POST',
+          header: {
+            'content-type': 'application/json' // 默认值
+          },
+          success(res) {
+            console.log(res.data);
+            if(res.data.code == 1) {
+              vm.$Toast({
+                content: '创建拼团成功',
+                duration: 1000,
+                type: 'success'
+              })
+              setTimeout(() => {
+                vm.$router.back(-1);
+              }, 1000)
+            }
           }
-        }
-      })
+        })
+      }
     },
     //编辑拼团
     editGroup() {
@@ -190,9 +221,9 @@ export default {
       this.setEndDate = e.mp.detail.value
     },
     handleError(msg) {
-      this.$Message({
+      this.$Toast({
         content: msg,
-        type: 'error'
+        type: 'warning'
       })
     },
     toRoute(path) {
@@ -210,14 +241,21 @@ export default {
     if(this.$route.query.isEdit === "true") {
       this.isEdit = true;
     }else {
+      //初始化
+      console.log("数据初始化===>");
       this.isEdit = false;
       this.setDate = '',
       this.setEndDate = '',
-      this.limitNum = 0,
-      this.limitTimes = 0,
-      this.personNum = 0,
-      this.price = 0,
-      this.goodsId = ''
+      // this.limitNum = 0,
+      // this.limitTimes = 0,
+      // this.personNum = 0,
+      // this.price = 0,
+      this.limitNum = '',
+      this.limitTimes = '',
+      this.personNum = '',
+      this.price = '',
+      this.goodsId = '',
+      this.$store.commit('DELETE_ROUNPPRICE', [])
     }
     if (this.$route.query.pingInfo) {
       const pingInfo = JSON.parse(this.$route.query.pingInfo);
