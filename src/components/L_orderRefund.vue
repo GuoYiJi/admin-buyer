@@ -25,9 +25,7 @@
           <div class="box">
             <p >
               <!-- 未通过 -->
-              <CollageRefund :shopListRefund="shopListRefund" />
-              <!-- <payment :passRefund="passRefund"/> -->
-              <!-- <payment :passRefund="passRefund"/> -->
+              <afterSales :shopListRefund="shopListRefund" />
             </p>
           </div>
         </div>
@@ -133,6 +131,7 @@ export default {
     this.shopNum = 0;
     const listDatazz = await this.getNextPage();
     this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
+    console.log(this.shopListRefund)
     if (this.shopListRefund.length < 20) {
       this.canLoad = false;
     }

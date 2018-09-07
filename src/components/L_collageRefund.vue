@@ -1,33 +1,34 @@
 <template>
   <div class="nav">
-    <div v-for="(item,index) in noPassRefund" :key="index">
+    <div v-for="(item,index) in shopListRefund" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.orderNo}}</p>
+          <p class="order">订单编号：{{item.orderId}}</p>
           <p class="state">
-            {{item.state==0?'申请退款':item.state==2?'退款成功':'拒绝退款'}}
+            <!-- 0未处理 1已通过 2不通过 3同意(退货，换货）4已经发货 5撤销 -->
+            {{item.state==0?'未处理':item.state==1?'已通过':item.state==2?'不通过':item.state==3?'同意':item.state==4?'已经发货':'撤销'}}
             
           </p> 
         </div>
         <div class="middle" @click="sanJiaoBut(item.id)">
-          <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
+          <div class="picture" v-for="(itemzz,num) in item.goodsList" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
           <i class="sanJiao"></i>
         </div>
         <div class="jieShuan">
-          <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
+          <div class="quantity">共{{item.countGoodsNum}}个款，合计{{item.countGoodsNum}}件</div>
           <div class="money">订单金额：
-            <p class="money1">{{item.count}}元</p>
+            <p class="money1">{{item.price}}元</p>
           </div>
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
+          <!-- <div class="picture_1" >
+            <img class="imgTwo" :src="shopListRefund.picture">
             <img class="imgThree" :src="item.picture">
             <img class="imgFour" :src="item.picture">
-          </div>
+          </div> -->
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
@@ -44,46 +45,12 @@ export default {
     data() {
         return {
             btn: 0,
-            navData: [
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                },
-                {
-                    picture:
-                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
-                    title: 123456,
-                    maShuo: "一",
-                    kuan: 1,
-                    jian: 3,
-                    name: "张三",
-                    phone: 13560234567,
-                    money: 154
-                }
-            ],
+            navData: [],
             groupOrderzz: []
         };
     },
     props: {
-      noPassRefund: {
+      shopListRefund: {
         type: Array,
         default: []
       }
@@ -112,6 +79,7 @@ export default {
         }
     },
     mounted() {
+      console.log(this.shopListRefund)
       
     }
 };
@@ -133,13 +101,13 @@ page
     display: flex
     .order
       display: inline-block
-      flex: 2
+      flex: 5
       margin-left: 20px
     .state
       display: inline-block
       flex: 1
       // padding-left: 60px
-      padding-left: 260px
+      // padding-left: 260px
 
 
   .middle

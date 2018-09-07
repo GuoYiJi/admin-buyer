@@ -1,54 +1,74 @@
 <template>
   <div class="nav">
-    <div class="list" v-for="(item,idx) in applyFor" :key="idx">
+    <div class="list" v-for="(item,idx) in shopListRefund" :key="idx" >
       <div class="kuang clearfix">
         <div class="title">
           <text class="name">订单编号：{{item.orderId}}</text>
-          <text class="fuKuan">买家发起，仅退款</text>
+          <text class="fuKuan">
+            {{item.state==0?'未处理':item.state==1?'已通过':item.state==2?'不通过':item.state==3?'同意':item.state==4?'已经发货':'撤销'}}
+          </text>
         </div>
-        <div class="img">
-          <img class="sPimg" :src="item.image" />
-          <i class="icon"></i>
+        <div class="img"  >
+          <div >
+            <img v-for="(itemzz,num) in item.goodsList" :key="num" class="sPimg" :src="itemzz.image" v-if="num < 3"/>
+          </div>
+          <div>
+            <i class="icon"></i>
+          </div>
         </div>
         <div class="message">
           <div class="message_1">
-            <p class="text_1">共{{item.skuSize}}个款，合计{{item.countGoodsNum}}件</p>
+            <p class="text_1">共{{item.countGoodsNum}}个款，合计{{item.countGoodsNum}}件</p>
             <p class="text_2">订单金额：</p>
-            <p class="text_3">{{}}元</p>
+            <p class="text_3">{{item.price}}元</p>
           </div>
-          <p class="name" v-for="(itemxx,idxx) in item.accountAddress" :key="idxx">收货人:{{itemxx.name}} {{itemxx.mobile}}</p>
+          <!-- <p class="name">收货人:{{item.accountAddress.name}} {{item.accountAddress.mobile}}</p> -->
         </div>
-        <div class="btn">
-          <span class="details" @click="details">查看详情</span>
+        <!-- 判断未操作 -->
+        <div class="btn"  v-if="item.state == 0 || (item.state != 2 && item.state == 4)">
+          <span class="details"  @click="details(item.orderId)">查看详情</span>
           <span class="confirm"  @click="confirm(item,index)">同意</span>
           <span class="close"    @click="passBut(item,idnex)">拒绝</span>
+          <!-- <span class="close"   v-if="(item.state == 4) || (item.state != 2 && item.state == 0) "  @click="passBut(item,idnex)">确认收货</span> -->
+        </div>
+        <!-- 判断是否在发货 -->
+        <div class="btn" v-else-if="(item.state == 4) || (item.state != 2 && item.state == 0) ">
+          <span class="details" @click="details(item.orderId)">查看详情</span>
+          <span class="close"    @click="passBut(item,idnex)">确认收货</span>
+        </div>
+        <!-- 判断是否已经取消或者同意 -->
+        <div class="btn" v-else="item.state == 1 || item.state == 2 ">
+          <span class="details" @click="details(item.orderId)">查看详情</span>
+        </div>
+
+      </div>
+      
+      <div class="closeTipAll" v-show="passhowYes">
+        <div class="closeTip">
+          <div class="closeTip_text">
+            <p class="tipText">是否确认收货？将自动退还 金额￥{{item.price}}</p>
+          </div>
+          <div class="confirm_but">
+            <div><button @click="passYesClose">取消</button></div>
+            <div><button @click="passYesBut">确定</button></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="closeTipAll" v-show="passhow">
-      <div class="closeTip">
-        <div class="closeTip_text">
-          <p>填写拒绝理由</p>
-          <textarea v-model="textword" placeholder="填输入拒绝理由"></textarea>
-        </div>
-        <div class="closeTip_but">
-          <div><button @click="passClose">取消</button></div>
-          <div><button @click="passYes">确定</button></div>
+
+      <div class="closeTipAll" v-show="passhow">
+        <div class="closeTip">
+          <div class="closeTip_text">
+            <p>填写拒绝理由</p>
+            <textarea v-model="textword" placeholder="填输入拒绝理由"></textarea>
+          </div>
+          <div class="closeTip_but">
+            <div><button @click="passClose">取消</button></div>
+            <div><button @click="passYes">确定</button></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="closeTipAll" v-show="passhowYes">
-      <div class="closeTip">
-        <div class="closeTip_text">
-          <p class="tipText">是否确认收货？将自动退还 金额￥{{this.moneyzz}}给收货人名称</p>
-        </div>
-        <div class="confirm_but">
-          <div><button @click="passYesClose">取消</button></div>
-          <div><button @click="passYesBut">确定</button></div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 <script>
@@ -71,7 +91,7 @@ export default {
         };
     },
     props: {
-      applyFor: {
+      shopListRefund: {
         type: Array,
         default: []
       }
@@ -82,6 +102,7 @@ export default {
           this.idzz = item.id
           this.passhowYes = true
           this.currentSelectedIndex = index
+          this.moneyzz = item.price
         },
         passYesClose(){
           this.passhowYes = false
@@ -105,8 +126,8 @@ export default {
           }
 
         },
-        details(){
-          this.$router.push('obligations/collectPerson')
+        details(id){
+          this.$router.push({path:'obligations/collectPerson',query:{orderId: id}})
         },
         passBut(item ,index){
           console.log(item)
@@ -167,26 +188,30 @@ page
     line-height: 68px
     font-size: 26px
     .name
-     flex: 3
+     flex: 9
      padding-left: 20px
     .fuKuan
      flex: 2
-     padding-left: 60px
+    //  padding-left: 60px
   .img
     height: 200px
     // display: inline-block
     display: flex
     border-bottom: 1px solid #f3f3f3
     padding-left: 10px
-    .sPimg
-      width: 160px
-      height: 160px
-      margin: 20px 10px
-    .icon
-     +bg-img('home/shanJiao.png')
-     margin: 86px 0 0 126px
-     width: 16px
-     height: 29px
+    div:nth-child(1)
+      flex: 6
+      .sPimg
+        width: 160px
+        height: 160px
+        margin: 20px 10px
+    div:nth-child(2)
+      flex: 2
+      .icon
+        +bg-img('home/shanJiao.png')
+        margin: 86px 0 0 126px
+        width: 16px
+        height: 29px
   .message
     height: 105px
     font-size: 24px
@@ -218,7 +243,7 @@ page
       color: #fff
       line-height: 60px
       text-align: center
-      margin: 20px 0 0 20px
+      margin: 20px
     .confirm
       width: 128px
       height: 58px
@@ -228,7 +253,7 @@ page
       color: #F67C2F
       line-height: 60px
       text-align: center
-      margin: 20px 0 0 20px
+      margin: 20px
     .close
       width: 128px
       height: 58px
@@ -239,8 +264,7 @@ page
       text-align: center
       margin: 20px
 .closeTipAll 
-  background: rgba(0,0,0,0.4)
-  // background-color: #000
+  background: rgba(0,0,0,0.1)
   width: 100%
   height: 100%
   position: fixed
