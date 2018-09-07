@@ -28,21 +28,19 @@
         <div class="btn"  v-if="item.state == 0 || (item.state != 2 && item.state == 4)">
           <span class="details"  @click="details(item.orderId)">查看详情</span>
           <span class="confirm"  @click="confirm(item,index)">同意</span>
-          <span class="close"    @click="passBut(item,idnex)">拒绝</span>
-          <!-- <span class="close"   v-if="(item.state == 4) || (item.state != 2 && item.state == 0) "  @click="passBut(item,idnex)">确认收货</span> -->
-        </div>
+          <span class="close"    @click="passBut(item,idnex)">拒绝</span></div>
         <!-- 判断是否在发货 -->
         <div class="btn" v-else-if="(item.state == 4) || (item.state != 2 && item.state == 0) ">
           <span class="details" @click="details(item.orderId)">查看详情</span>
           <span class="close"    @click="passBut(item,idnex)">确认收货</span>
         </div>
         <!-- 判断是否已经取消或者同意 -->
-        <div class="btn" v-else="item.state == 1 || item.state == 2 ">
+        <div class="btn" v-else=" item.state == 1 || item.state == 2 ">
           <span class="details" @click="details(item.orderId)">查看详情</span>
         </div>
 
       </div>
-      
+      <!-- 售后同意弹窗 -->
       <div class="closeTipAll" v-show="passhowYes">
         <div class="closeTip">
           <div class="closeTip_text">
@@ -54,7 +52,7 @@
           </div>
         </div>
       </div>
-
+      <!-- 售后拒绝弹窗 -->
       <div class="closeTipAll" v-show="passhow">
         <div class="closeTip">
           <div class="closeTip_text">
@@ -100,6 +98,7 @@ export default {
         confirm(item,index) {
           console.log(item)
           this.idzz = item.id
+          // this.idzz = item.orderId
           this.passhowYes = true
           this.currentSelectedIndex = index
           this.moneyzz = item.price
