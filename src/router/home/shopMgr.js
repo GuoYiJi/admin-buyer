@@ -5,7 +5,7 @@ const route = [{
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
         'i-modal': '/iview/modal/index',
-        'i-message': '/iview/message/index',
+        // 'i-message': '/iview/message/index',
       }
     }
   }, {
@@ -13,7 +13,7 @@ const route = [{
     config: {
       navigationBarTitleText: '编辑商品',
       'usingComponents': {
-        'i-message': '/iview/message/index',
+        // 'i-message': '/iview/message/index',
         'i-modal': '/iview/modal/index',
       }
     }

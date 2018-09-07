@@ -30,7 +30,6 @@
       <p class="save" @click="confirm">确定{{groupNum}}</p>
       <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
-    <i-message id="message" />
 
   </div>
 </template>

@@ -220,12 +220,12 @@ export default {
       }
       this.setEndDate = e.mp.detail.value
     },
-    handleError(msg) {
-      this.$Toast({
-        content: msg,
-        type: 'warning'
-      })
-    },
+    // handleError(msg) {
+    //   this.$Toast({
+    //     content: msg,
+    //     type: 'warning'
+    //   })
+    // },
     toRoute(path) {
       this.$router.push({
         path: '/pages/home/shopMgr/' + path,

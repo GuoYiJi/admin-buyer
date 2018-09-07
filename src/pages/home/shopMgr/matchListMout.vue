@@ -44,7 +44,7 @@
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
     </div>
-    <i-message id="message" />
+
 
   </div>
 </template>

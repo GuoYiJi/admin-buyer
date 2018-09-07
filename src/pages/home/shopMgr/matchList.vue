@@ -29,7 +29,6 @@
     <div class="footer">
       <p class="save" @click="confirm">确定({{shopMatch.length}})</p>
     </div>
-    <i-message id="message" />
 
   </div>
 </template>

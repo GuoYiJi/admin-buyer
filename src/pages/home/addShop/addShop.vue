@@ -5,22 +5,23 @@
       <div class="v_box">
         <!-- <vbox @getVideo="getVideo" :videoStr="$route.query.video" /> -->
         <div v-if="videoSrc" class="add">
-          <p><video :src="videoSrc" show-play-btn="false" objectFit="fill"  controls="false" ></video></p>
+          <video :src="videoSrc" show-play-btn="false" objectFit="fill"  controls="false" ></video>
           <!-- <i class="cancel_shop" @click="toCancel()"></i> -->
           <!-- <p class="show_pro"><progress percent="20" show-info /></p> -->
         </div>
-        <div class="add">
-          <div ><p @tap="bindButtonTap">+视频</p></div>
+        <div class="add" @tap="bindButtonTap">
+          <p>+视频</p>
         </div>
       </div>
     </div>
     <p class="a_title">请添加图片:(最多可添加15张)</p>
     <div class="add_image">
         <!-- <ibox @getImg="getImg" @changeImg="changeImg" :imgStr="$route.query.images" maxNum='15' uploadNum="5"/> -->
-        <div v-for="(item, index) in imgList" :key="index" class="add">
-          <img :src="item" />
-          <i class="cancel_shop" @click="toCancel(index)"></i>
-        </div>
+        <!-- <div v-for="(item, index) in imgList" :key="index" class="add" :style="{backgroundImage: 'url(' + item + ')'}"> -->
+          <!-- <img :src="item" /> -->
+          <!-- <i class="cancel_shop" @click="toCancel(index)"></i>
+        </div> -->
+        <div class="add" v-for="(item, index) in imgList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}"></div>
         <div class="addBtn" @tap="bindButtonTapImage">
           <p>+图片</p>
         </div>
@@ -292,7 +293,7 @@ export default {
   data() {
     return {
       videoSrc: '',
-      uploadNum: 1,
+      uploadNum: 15,
       maxNum: '',
       imgStr: '',
       imgList: [],
@@ -458,9 +459,9 @@ export default {
         },
         success: function(res) {
           console.log(res);
-          if (res.statusCode == 400) {
+          if (parseInt(res.statusCode) == 400) {
             that.handleError("上传的图片大小不能超过2m!");
-          } else if (res.statusCode == 200) {
+          } else if (parseInt(res.statusCode) == 200) {
             if(that.maxNum && that.imgList.length >= that.maxNum){
               that.handleError('不能超过15张图片噢！')
               return
@@ -468,6 +469,7 @@ export default {
             that.imgList.push(
               config.uploadImageUrl + "/img" + tempFilePath.substring(10)
             );
+            console.log('图片列表===>' + that.imgList);
             // that.$emit('getImg', config.uploadImageUrl + "/img" + tempFilePath.substring(10))
             that.getImg(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
           }
@@ -489,6 +491,7 @@ export default {
         wx.hideLoading();
         return;
       }
+      //选择图片
       wx.chooseImage({
         sizeType: "original",
         count: this.uploadNum,
@@ -496,21 +499,26 @@ export default {
           console.log(res);
           var tempFilePath = res.tempFilePaths;
           console.log(tempFilePath);
-          for (var i = 0, l; (l = tempFilePath[i++]); ) {
-            that.uploadImg(l);
-          }
+          tempFilePath.forEach(item => {
+            that.uploadImg(item);
+          })
+        },
+        fail: function() {
+          wx.showLoading({
+            title: '操作失败',
+          })
         },
         complete: function() {
           wx.hideLoading();
         }
       });
     },
-    //报错信息
+    // 报错信息
     handleError(msg) {
       this.$Message({
         content: msg,
         type: "error"
-      });
+      })
     },
     //删除图片
     toCancel(start) {
@@ -1124,7 +1132,7 @@ export default {
   flex-wrap: wrap
   padding: 20px
   .add,.addBtn
-    display: inline-block
+    display: block
     width: 200px
     height: 200px
     margin: 0 20px 20px 0
