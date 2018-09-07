@@ -168,82 +168,16 @@ export default {
     toRoute(path) {
       this.$router.push("/pages/home/" + path);
      },
-    // getNextPage() {
-    //   var obj = {
-    //     pageSize: 30,
-    //     orderType: 1,
-    //     // state: this.tag
-    //   };
-    //   this.shopNum++;
-    //   obj.pageNumber = this.shopNum;
-    //   return this.$API.L_selectOrderPage(obj);
-    // },
-    // async lower(e) {
-    //   console.log(e);
-    //   if (!this.canLoad) return;
-    //   if (this.showLoad) return;
-    //   console.log(this.showLoad)
-    //   this.showLoad = true;
-    //   const listData = await this.getNextPage();
-    //   setTimeout(() => {
-    //     if (listData.data.list.length < 30) {
-    //       this.canLoad = false;
-    //     }
-    //     this.shopList = this.shopList.concat(listData.data.list);
-    //     this.showLoad = false;
-    //   }, 2000);
-    // }
  
   },
   async mounted() {
-    //selectWarehouse
-          const selectWarehouseData = await this.$API.selectWarehouse({
-            orderId: this.orderID,
-          });
-          this.WarehouseData = selectWarehouseData.data
-          this.dpName = this.WarehouseData.companyName
-          console.log(this.dpName)
-          // console.log(selectWarehouseData)
-          wx.setStorageSync('dpName', this.dpName)
-    // this.shopNum = 0;
-    // const listData = await this.getNextPage();
-    // this.shopList = this.shopList.concat(listData.data.list);
-    // if (listData.data.list.length < 30) {
-    //   this.canLoad = false;
-    // }
-    // // console.log(this.shopList)
-    // for(var i=0;i<this.shopList.length;i++){
-    //   //未付款
-    //   if(this.shopList[i].state == 1){
-    //     // console.log(11111)
-    //     this.noPlay.push(this.shopList[i])
-    //     // console.log(this.noPlay)
-    //   }else if(this.shopList[i].state == 2){//取消
-    //     this.noOrder.push(this.shopList[i])
-    //     // console.log(this.noOrder)
-    //   }else if(this.shopList[i].state == 3){//已支付
-    //     this.yesPlay.push(this.shopList[i])
-    //     // console.log(this.yesPlay)
-    //   }else if(this.shopList[i].state == 4){//支付失败
-    //     this.noPlays.push(this.shopList[i])
-    //   }else if(this.shopList[i].state == 5){//未发货
-    //     this.noGoods.push(this.shopList[i])
-    //     // console.log(this.noGoods)
-    //   }else if(this.shopList[i].state == 6){//已发货
-    //     this.yesGoods.push(this.shopList[i])
-    //     // console.log(this.yesGoods)
-    //   }else if(this.shopList[i].state == 7){//交易成功
-    //     this.yesGod.push(this.shopList[i])
-    //   }else if(this.shopList[i].state == 8){//交易关闭
-    //     this.closeOrder.push(this.shopList[i])
-    //     // console.log(this.closeOrder)
-    //   }else if(this.shopList[i].state == 9){//拼单
-    //     this.isPin.push(this.shopList[i])
-    //   }else{
-
-    //   }
-
-    // }
+    const selectWarehouseData = await this.$API.selectWarehouse({
+      orderId: this.orderID,
+    });
+    this.WarehouseData = selectWarehouseData.data
+    this.dpName = this.WarehouseData.companyName
+    console.log(this.dpName)
+    wx.setStorageSync('dpName', this.dpName)
 
   }
 };

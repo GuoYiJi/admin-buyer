@@ -1,40 +1,36 @@
 <template>
   <div class="nav">
-    <div v-for="(item,index) in navData" :key="index">
+    <div v-for="(item,index) in closeOrder" :key="index">
       <div class="kuang">
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
-          <p class="state" v-if="item.ping"> 
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
-
-              ，
-            <span v-for="(itemss,idss) in item.orderGoods" :key="idss">
-              还差{{item.ping.num-itemss.skuList.length}}人
-            </span>
-          </p>
+          <p class="state">
+            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}}
+          </p> 
         </div>
         <div class="middle">
-          <div class="picture" v-for="(itemss,idss) in item.orderGoods" :key="idss">
-            <img class="imgOne" :src="itemss.image">
+          <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
+            <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao"></i>
+          <i class="sanJiao" @click="sanJiaoBut(item)"></i>
         </div>
         <div class="jieShuan">
-          <div class="quantity" v-for="(itemss,idss) in item.orderGoods" :key="idss">
-            共{{itemss.skuList.length}}个款，合计{{item.num}}件
-          </div>
+          <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
           <div class="money">订单金额：
             <p class="money1">{{item.count}}元</p>
           </div>
-          <div class="phone">收货人:{{item.name}} {{item.phone}}</div>
+          <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" v-for="(itemzz,idzz) in item.pingUser" :key="idzz">
-            <img class="imgTwo" :src="itemzz.head">
+          <div class="picture_1" >
+            <img class="imgTwo" :src="item.picture">
+            <img class="imgThree" :src="item.picture">
+            <img class="imgFour" :src="item.picture">
           </div>
           <div class="btn">
-            <span class="see" @click="details(item.id)">查看详情</span>
-            <!-- <span class="close" @click="close()">关闭订单</span> -->
+            <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
+            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
+            <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
       </div>
@@ -47,29 +43,41 @@ export default {
     components: {},
     data() {
         return {
+            btn: 0,
             navData: [],
-            orderId: '',
+            groupOrderzz: []
         };
     },
+    props: {
+      closeOrder: {
+        type: Array,
+        default: []
+      }
+    },
     methods: {
-        async orderGoods(){
-          const L_selectOrderData = await this.$API.L_selectPingChildrenOrder({
-            pingOrderId: this.orderId
-          });
-          
-          this.navData = L_selectOrderData.data
-          console.log(this.navData)
+        close() {
+            wx.showModal({
+                // title: "提示",
+                content: "确定关闭订单！",
+                success: function(res) {
+                    console.log(res);
+                    if (res.confirm) {
+                        console.log("用户点击确定");
+                    } else if (res.cancel) {
+                        console.log("用户点击取消");
+                    }
+                }
+            });
+        },
+        sanJiaoBut(item){
+          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+        },
+        seeBut(id){
+          this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
-        },
-        
-        //跳转详情页面
-        details(id){
-          this.$router.push({path:"/pages/home/orderMgr/mail/delivery",query:{orderId: id}})
-        },
+        }
     },
     mounted() {
-      this.orderId = this.$route.query.id
-      this.orderGoods();
     }
 };
 </script>
@@ -79,7 +87,6 @@ page
   background: #f5f5f5
 .kuang
   width: 702px
-  height: 496px
   background: #fff
   margin: 20px 24px
   .head
@@ -87,7 +94,7 @@ page
     width: 100%
     line-height: 68px
     border-bottom: 1px solid #f5f5f5
-    font-size: 23px
+    font-size: 26px
     display: flex
     .order
       display: inline-block
@@ -173,5 +180,14 @@ page
         color: #999
         line-height: 60px
         margin: 30px 20px 0 0
+      .collage
+        display: inline-block
+        width: 180px
+        height: 60px
+        background: rgba(246,124,47,1)
+        border-radius: 8px
+        color: #fff
+        margin: 30px 20px 0 0
+        line-height: 60px
 
 </style>
