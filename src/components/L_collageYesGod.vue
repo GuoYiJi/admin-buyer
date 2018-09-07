@@ -6,11 +6,11 @@
           <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
         </div>
-        <div class="middle">
+        <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao" @click="sanJiaoBut(item)"></i>
+          <i class="sanJiao"></i>
         </div>
         <div class="jieShuan">
           <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
@@ -68,8 +68,8 @@ export default {
                 }
             });
         },
-        sanJiaoBut(item){
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+        sanJiaoBut(id){
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})

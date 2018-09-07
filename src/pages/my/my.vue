@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="user_head"><img :src="headimg"/></p>
+      <div class="user_head"><img :src="headimg"/></div>
       <!-- <p class="t_name">发生交电话费</p> -->
       <open-data class="t_name" type="userNickName"></open-data>
     </div>
@@ -72,7 +72,7 @@ export default {
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
-    this.headimg = wx.getStorage('avatar')
+    this.headimg = wx.getStorageSync('avatar')
     console.log(this.headimg)
   }
 };

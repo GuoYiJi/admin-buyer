@@ -9,11 +9,11 @@
             
           </p> 
         </div>
-        <div class="middle">
+        <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao" @click="sanJiaoBut(item)"></i>
+          <i class="sanJiao"></i>
         </div>
         <div class="jieShuan">
           <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
@@ -103,8 +103,8 @@ export default {
                 }
             });
         },
-        sanJiaoBut(item){
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+        sanJiaoBut(id){
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
