@@ -17,14 +17,14 @@
         <div class="line">
           <div class="box">
             <p>退货地址</p>
-            <picker mode="region" @change="bindRegionChange" :value="region" :custom-item="customItem">
+            <picker mode="region" @change="bindRegionChange" :value="region">
               <view class="picker">
                 {{region.length > 0 ? region[0] + '-' + region[1] + '-' + region[2] : '请选择您的退货地址' }}
               </view>
             </picker>
             <i class="goback"></i>
           </div>
-        </div>    
+        </div>
         <div class="line">
           <div class="box no-border ">
             <p>详细地址</p>
@@ -40,7 +40,7 @@
           </div>
         </div>
       </div>
-      
+
     </div>
     <div class="footer">
       <p @click="save"><btn :title="'保存'"/></p>
@@ -60,7 +60,6 @@ export default {
   data() {
     return {
       region: [],
-      customItem: "全部",
       name: "",
       phone: "",
       adrDetail: "",
@@ -146,9 +145,9 @@ export default {
       this.switch1 = 0;
       this.phone = "";
       this.adrDetail = "";
-      this.region = "";
+      this.region = ["广东省", "广州市", "海珠区"];
     }
-  }
+  },
 };
 </script>
 <style lang="sass" scoped>
@@ -165,12 +164,12 @@ export default {
   left: 0
   right: 0
   p
-    padding: 0 75px 
+    padding: 0 75px
 .form
   background: #fff
   margin-bottom: 20px
 .line
-  padding: 0 24px 
+  padding: 0 24px
   .box
     display: flex
     padding: 33px 0
@@ -183,5 +182,5 @@ export default {
       width: 75%
 .border
   +border(1px,bottom, #f5f5f5)
-    
+
 </style>

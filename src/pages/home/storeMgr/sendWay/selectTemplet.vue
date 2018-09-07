@@ -2,7 +2,7 @@
   <div class="home">
     <scroll-view scroll-y="true" style="height: 80% " >
       <div class="content">
-        <div class="adr-card" @click="selectAct(item.id,item)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
+        <div class="adr-card" @click="selectAct(item.id, item)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
             <div class="user">
               <p class="name">{{item.name}}</p>
             </div>
@@ -15,6 +15,7 @@
     </scroll-view>
     <p class="bottom"></p>
     <p class="save" @click="saveBut">保存</p>
+    <i-toast id="toast" />
   </div>
 </template>
 <script>
@@ -28,8 +29,6 @@ export default {
       templateId: '',
       areazz: [],
       value1: 1,
-
-
     };
   },
   methods: {
@@ -44,18 +43,28 @@ export default {
       }
     },
     saveBut(){
-      this.$router.push( {path:'/pages/home/storeMgr/sendWay/sendWay', query:{templateId: this.templateId}})
+      // this.$router.push( {path:'/pages/home/storeMgr/sendWay/sendWay', query:{templateId: this.templateId}})
+      if(!this.select) {
+        this.$Toast({
+          content: '您还未选择',
+          type: 'warning'
+        })
+      }else {
+        this.$API.L_changeExpress({
+          templateId: this.templateId
+        }).then(response => {
+          console.log(response);
+          this.$router.back(-1)
+        })
+      }
     }
   },
   async mounted() {
     //L_findFreight
       const L_findFreightData = await this.$API.L_findFreight({
-
       });
       console.log(L_findFreightData)
       this.areaIdAll = L_findFreightData.data
-
-
   }
 };
 </script>
@@ -92,5 +101,5 @@ export default {
     top: 10px
   .active
     +select-active
-    
+
 </style>

@@ -31,7 +31,7 @@ const storeMgr = [
     path: '/pages/home/storeMgr/decorate/cover',
     // name: 'msg',
     config: {
-      navigationBarTitleText: '设置店铺简介'
+      navigationBarTitleText: '设置店铺封面'
     }
   },
   {
@@ -67,7 +67,10 @@ const storeMgr = [
     path: '/pages/home/storeMgr/sendWay/selectTemplet',
     // name: 'msg',
     config: {
-      navigationBarTitleText: '选择运费模板'
+      navigationBarTitleText: '选择运费模板',
+      'usingComponents': {
+        'i-toast': '/iview/toast/index',
+      }
     }
   },
 

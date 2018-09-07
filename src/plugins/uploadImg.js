@@ -7,8 +7,8 @@ import config from '@/config'
  * @param {*} tempFilePath  img url
  * @param {*} callback      success func
  */
-function uplaodImg (tempFilePath,callback) {
-  var that = this;
+function uploadImg (tempFilePath, callback) {
+  var that = this
   console.log(tempFilePath)
   console.log(config)
   wx.uploadFile({
@@ -28,7 +28,7 @@ function uplaodImg (tempFilePath,callback) {
       if (res.statusCode == 400) {
         that.handleError("上传的图片大小不能超过2m!");
       } else if (res.statusCode == 200) {
-        callback(config.uploadImageUrl + "/img" + tempFilePath.substring(10))       
+        callback(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
       }
     },
     fail: function(err) {
@@ -36,4 +36,4 @@ function uplaodImg (tempFilePath,callback) {
     }
   });
 }
-export default uplaodImg
+export default uploadImg

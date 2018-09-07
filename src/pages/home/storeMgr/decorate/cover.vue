@@ -32,6 +32,14 @@ export default {
     // toRoute(file){
     //   this.$router.push('/pages/home/storeMgr/' + file)
     // },
+    //查询素材图片
+    getExpress() {
+      this.$API.L_changeExpress({
+
+      }).then(res => {
+        console.log(res);
+      })
+    },
     chooseImg() {
       const self = this;
       wx.chooseImage({
@@ -83,7 +91,9 @@ export default {
       });
     }
   },
-  mounted() {}
+  mounted() {
+    this.getExpress()
+  }
 };
 </script>
 <style lang="sass" scoped>

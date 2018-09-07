@@ -33,7 +33,8 @@ export default {
       }, 300);
     }
   },
-  mounted() {}
+  mounted() {
+  }
 };
 </script>
 <style lang="sass" scoped>

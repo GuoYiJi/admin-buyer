@@ -21,7 +21,7 @@
           <!-- <img :src="item" /> -->
           <!-- <i class="cancel_shop" @click="toCancel(index)"></i>
         </div> -->
-        <div class="add" v-for="(item, index) in imgList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}"></div>
+        <div class="add" v-for="(item, index) in imageList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}"></div>
         <div class="addBtn" @tap="bindButtonTapImage">
           <p>+图片</p>
         </div>
@@ -408,7 +408,7 @@ export default {
       this.goods.video = ''
       this.goods.imageList = []
       this.goods.images = ''
-      this.imgList = this.imgStr.split(',')
+      this.imgList = []
       Object.assign(this.$data, this.$options.data())
       // this.versionName = []
       // this.clickNum = 0
@@ -854,6 +854,7 @@ export default {
     },
     getImg(src){
       this.imageList.push(src)
+      console.log("imageList ===> " + this.imageList);
     },
     // changeImg(imgArr){
     //   this.imageList = imgArr
@@ -890,10 +891,6 @@ export default {
       })
     }
   },
-  updated() {
-    //do something after updating vue instance
-    console.log(this.imgList);
-  }
 
 };
 </script>
