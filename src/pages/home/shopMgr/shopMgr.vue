@@ -5,17 +5,18 @@
         <p class="search-icon"><i class="search"></i></p>
         <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>
       </div>
-    </div>
-    <div class="nav">
-      <div class="list">
-        <span
-          v-for="(item,idx) in navData"
-          :key="idx"
-          class="item"
-          :class="[tag === item.id && 'active']"
-          @click="handleNav(item.id)"
-        >{{item.text}}</span>
-        <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
+
+      <div class="nav">
+        <div class="list">
+          <span
+            v-for="(item,idx) in navData"
+            :key="idx"
+            class="item"
+            :class="[tag === item.id && 'active']"
+            @click="handleNav(item.id)"
+          >{{item.text}}</span>
+          <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
+        </div>
       </div>
     </div>
     <div class="content">
@@ -123,15 +124,21 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .content
-  // height: 60%
+  padding-top: 200px
 .home
   height: 100%
 .search-box
+  width: 100%
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 10
   padding: 30px 0
   background: #fff
   .input
     display: flex
     padding: 0px 35px
+    margin-bottom: 30px
     p
       width: 10%
       .search

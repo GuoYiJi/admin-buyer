@@ -8,7 +8,7 @@
   <div class="add_shops">
     <div class="shop-card" v-if="shopMatch[0]">
       <div class="img_box">
-        <i class="shopImg" :style="{background: 'url(' + shopMatch[0].images + ')'}">
+        <i class="shopImg" :style="{backgroundImage: 'url(' + shopMatch[0].images + ')'}">
           <i class="cancel_shop" @click="toCancel(0)"></i>
         </i>
       </div>
@@ -22,7 +22,7 @@
   <div class="add_other_shop">
     <div class="shop-cards" v-for="(item,idx) in shopMatch" :key="idx" v-if="idx > 0">
       <div class="img_box">
-        <i class="shopImg" :style="{background: 'url(' + item.images + ')'}">
+        <i class="shopImg" :style="{backgroundImage: 'url(' + item.images + ')'}">
           <i class="cancel_shop" @click="toCancel(idx)"></i>
         </i>
       </div>
@@ -93,6 +93,11 @@ export default {
         this.$Toast({
             content: '未设置系列标题',
             type: 'error'
+        })
+      }else if(this.title.length > 8) {
+        this.$Toast({
+          content: '标题字数最多为8个',
+          type: 'error',
         })
       }else if(this.shopMatch.length > 9){
         this.$Toast({
@@ -213,18 +218,19 @@ export default {
     margin-top: 45px
     display: flex
     flex-wrap: wrap
-    justify-content: space-between
     .add_shop
       display: flex
       justify-content: center
       align-items: center
       border: 2px solid #CCCCCC
     .shop-cards
-      margin-top: 40px
+      margin: 40px 20px 0 0
       flex: 0 0 30%
       display: flex
       min-height: 464px
       flex-wrap: wrap
+      &:nth-child(3n)
+        margin-right: 0
       .img_box
         width: 100%
         height: 332px

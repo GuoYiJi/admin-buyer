@@ -5,7 +5,8 @@ const addShop = [
       navigationBarTitleText: '添加商品',
       'usingComponents': {
         'i-message': '/iview/message/index',
-        'i-modal': '/iview/modal/index'
+        'i-modal': '/iview/modal/index',
+        'i-progress': '/iview/progress/index'
       }
     }
   }, {

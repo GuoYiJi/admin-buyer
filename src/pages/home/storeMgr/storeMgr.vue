@@ -33,16 +33,20 @@ export default {
   methods: {
     toRoute(file) {
       this.$router.push("/pages/home/storeMgr/" + file);
+    },
+    getUserInfo() {
+      this.$API.selectWarehouse({}).then(response => {
+        this.selectWarehouse = response.data
+      })
     }
   },
   onShow() {
     wx.removeStorageSync("FMimg");
     wx.removeStorageSync("remark");
+    this.getUserInfo();
   },
-  async mounted() {
-    const selectWarehouse = await this.$API.selectWarehouse({});
-    this.selectWarehouse = selectWarehouse.data;
-    console.log(this.selectWarehouse);
+  mounted() {
+    this.getUserInfo();
   }
 };
 </script>

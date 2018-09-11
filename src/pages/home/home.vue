@@ -48,7 +48,7 @@
         <p>数据统计</p>
       </div>
     </div>
-    <div class="footer">
+    <!-- <div class="footer">
       <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">
         <i class="f_icon f_store"></i>
         <p>店铺</p>
@@ -57,7 +57,7 @@
         <i class="f_icon f_my"></i>
         <p>我的</p>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -73,16 +73,20 @@ export default {
     };
   },
   methods: {
-    // selectNav(num){
-    //   this.nav = num
-    // }
+    getStatistics() {
+      this.$API.statistics({}).then(response => {
+        this.statistics = response.data
+      })
+    }
   },
   created() {
   },
-  async mounted() {
-    const statistics = await this.$API.statistics({});
-    console.log(statistics);
-    this.statistics = statistics.data;
+  mounted() {
+    this.getStatistics()
+  },
+  onShow() {
+    console.log("我执行了");
+    this.getStatistics()
   }
 };
 </script>
@@ -125,6 +129,8 @@ export default {
     width: 33.3%
     font-size: 28px
     margin-bottom: 100px
+    p
+      color: #333333
     .n_icon
       +icon(82px)
       height: 74px

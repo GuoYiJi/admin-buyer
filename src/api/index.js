@@ -1,4 +1,4 @@
-//封装httpApi
+// 封装httpApi
 import http from './http'
 // 接口命名规范
 
@@ -9,27 +9,26 @@ import SHOPMGR from './shopMgr.js'
 import ORDER from './order'
 import COUPON from './coupon'
 
-function mix(...mixins) {
+function mix (...mixins) {
   class Mix {}
 
   for (let mixin of mixins) {
     // console.log(mixin)
-    copyProperties(Mix.prototype, mixin); // 拷贝实例属性
-    copyProperties(Mix.prototype, Reflect.getPrototypeOf(mixin)); // 拷贝原型属性
+    copyProperties(Mix.prototype, mixin) // 拷贝实例属性
+    copyProperties(Mix.prototype, Reflect.getPrototypeOf(mixin)) // 拷贝原型属性
   }
   // console.log(Mix)
-  return Mix;
+  return Mix
 }
 
-function copyProperties(target, source) {
-
+function copyProperties (target, source) {
   for (let key of Reflect.ownKeys(source)) {
-    if (key !== "constructor" &&
-      key !== "prototype" &&
-      key !== "name"
+    if (key !== 'constructor' &&
+      key !== 'prototype' &&
+      key !== 'name'
     ) {
-      let desc = Object.getOwnPropertyDescriptor(source, key);
-      Object.defineProperty(target, key, desc);
+      let desc = Object.getOwnPropertyDescriptor(source, key)
+      Object.defineProperty(target, key, desc)
     }
   }
 }
@@ -38,18 +37,13 @@ function copyProperties(target, source) {
 class API extends mix(new ADR(), new SHOPMGR(), new ORDER(), new COUPON()) {
   // jiekouTest = params => http.post('api/ads/list',params)
   authLogin = params => http.post('api/account/authLogin', params)
-
-  //search classify group
+  // search classify group
   searchType = params => http.post('api/label/data/selectLabelList', params)
   searchMarket = params => http.post('api/stall/selectStallList', params)
   // 我的新手指南/邀请有奖
   myArticle = params => http.post('/api/article/list', params)
 
-
-  //接口命名加上l前缀，如 l_require = params => http.post('xxx',params)
-
+  // 接口命名加上l前缀，如 l_require = params => http.post('xxx',params)
 }
-
-
 
 export default new API()

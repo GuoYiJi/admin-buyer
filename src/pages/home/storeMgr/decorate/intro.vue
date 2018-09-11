@@ -34,6 +34,10 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$route.query.remark);
+    if(this.$route.query.remark) {
+      this.text = this.$route.query.remark
+    }
   }
 };
 </script>

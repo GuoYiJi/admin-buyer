@@ -2,11 +2,11 @@
   <div class="home">
     <div class="line-box">
       <div class="line" @click="toRoute('sendWay/selectTemplet')">
-        <p class="name">快递邮寄</p> 
+        <p class="name">快递邮寄</p>
         <i class="goback"></i>
       </div>
       <div class="line flex">
-        <p class="name">物流到付</p> 
+        <p class="name">物流到付</p>
         <i-switch :value="switch1" @change="onChange" slot="footer"></i-switch>
       </div>
     </div>
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      'switch1': false,
+      'switch1': true,
       templateId: ''
     };
   },
@@ -43,7 +43,7 @@ export default {
       })
     },
     async butFooter(){
-  
+
       const L_changeExpressData = await this.$API.L_changeExpress({
         templateId: this.templateId,
       });
@@ -69,7 +69,7 @@ export default {
   line-height: 110px
   text-align: left
   position: relative
-  padding: 0px 24px 
+  padding: 0px 24px
   margin: 20px 0
   background: #fff
   .name
@@ -82,5 +82,5 @@ export default {
   left: 0
   right: 0
   p
-    padding: 0 75px 
+    padding: 0 75px
 </style>

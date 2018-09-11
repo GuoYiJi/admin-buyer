@@ -48,9 +48,8 @@ export default {
       canLoad: true,
       pageSize: 20,
       type: 0,//接口'ob'字段, 排序
-      state: 0,//接口'state'字段, 0未开始, 1进行中, 2已经过期
+      state: 1,//接口'state'字段, 0未开始, 1进行中, 2已经过期
       type: 0,
-      state: 0
     };
   },
   methods: {
@@ -122,21 +121,32 @@ export default {
     },
   },
   async mounted() {
-    console.log(this.shopList)
     this.shopNum = 0;
     const listData = await this.getNextPage({
       ob: 0,
       state: this.state,
       // labelId: this.groupTag
     });
-    console.log(listData)
+    // console.log(listData)
     this.shopList = listData.data.list;
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
-
+    // console.log(this.shopList)
   },
+  async onShow() {
+    this.shopNum = 0;
+    const listData = await this.getNextPage({
+      ob: 0,
+      state: this.state,
+      // labelId: this.groupTag
+    });
+    // console.log(listData)
+    this.shopList = listData.data.list;
+    if (listData.data.list.length < this.pageSize) {
+      this.canLoad = false;
+    }
+  }
 };
 </script>
 <style lang="sass" scoped>

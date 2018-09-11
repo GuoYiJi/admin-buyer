@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="user_head"><img :src="headimg"/></p>
+      <div class="user_head"><img :src="headimg"/></div>
       <!-- <p class="t_name">发生交电话费</p> -->
       <open-data class="t_name" type="userNickName"></open-data>
     </div>
@@ -44,7 +44,7 @@
         </div>
       </div> -->
     </div>
-    <div class="footer">
+    <!-- <div class="footer">
       <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">
         <i class="f_icon f_store"></i>
         <p>店铺</p>
@@ -53,7 +53,7 @@
         <i class="f_icon f_my"></i>
         <p>我的</p>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -72,7 +72,7 @@ export default {
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
-    this.headimg = wx.getStorage('avatar')
+    this.headimg = wx.getStorageSync('avatar')
     console.log(this.headimg)
   }
 };

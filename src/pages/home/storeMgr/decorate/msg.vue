@@ -18,7 +18,7 @@
       <p class="blur" v-if="FMimg == ''">未设置</p>
       <p class="blur" v-if="FMimg != ''">已设置</p>
     </div>
-    <div class="line" @click="toRoute('decorate/intro')">
+    <div class="line" @click="pageTo('/pages/home/storeMgr/decorate/intro')">
       <!-- <i class="i_s4 i-icon"></i> -->
       <p class="input">店铺简介</p>
       <p class="blur" v-if="remark == ''">未设置</p>
@@ -100,6 +100,9 @@ export default {
     toRoute(file) {
       this.$router.push("/pages/home/storeMgr/" + file);
     },
+    pageTo(url) {
+      this.$router.push({path: url, query: {remark: this.remark}})
+    },
     chooseImg() {
       const self = this;
       wx.chooseImage({
@@ -179,27 +182,27 @@ export default {
         },
         fail: function(err) {
           console.log(err);
-        }
+        },
       });
     }
   },
-  // onShow() {
-  //   var that = this;
-  //   wx.getStorage({
-  //     key: "FMimg",
-  //     success: function(res) {
-  //       console.log(res.data);
-  //       that.FMimg = res.data;
-  //     }
-  //   });
-  //   wx.getStorage({
-  //     key: "remark",
-  //     success: function(res) {
-  //       console.log(res.data);
-  //       that.remark = res.data;
-  //     }
-  //   });
-  // },
+  onShow() {
+    var that = this;
+    // wx.getStorage({
+    //   key: "FMimg",
+    //   success: function(res) {
+    //     console.log(res.data);
+    //     that.FMimg = res.data;
+    //   }
+    // });
+    wx.getStorage({
+      key: "remark",
+      success: function(res) {
+        console.log(res.data);
+        that.remark = res.data;
+      }
+    });
+  },
   mounted() {
     this.selectWarehouse();
   }

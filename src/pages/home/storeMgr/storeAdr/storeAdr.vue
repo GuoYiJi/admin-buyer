@@ -10,8 +10,8 @@
         <div class="adr">
           <p class="adr-text">{{item.value + item.address}}</p>
         </div>
-        <div class="adr-btn">  
-          <p class="text" @click.stop="selects(item,index)"><i class="select" :class="[item.isChoice == 1 && 'active']"></i>默认地址</p>
+        <div class="adr-btn">
+          <div class="text" @click.stop="selects(item,index)"><i class="select" :class="[item.isChoice == 1 && 'active']"></i>默认地址</div>
           <div class="btn-box">
             <p @click="toEdit(item)" ><i class="edit"></i>编辑</p>
             <p @click="confirmDel(item.id,index)"><i class="del"></i>删除</p>
@@ -120,6 +120,14 @@ export default {
     if (listData.data.list.length < 8) {
       this.canLoad = false;
     }
+  },
+  async onShow() {
+    this.shopNum = 0;
+    const listData = await this.getNextPage();
+    this.shopList = listData.data.list;
+    if (listData.data.list.length < 8) {
+      this.canLoad = false;
+    }
   }
 };
 </script>
@@ -137,36 +145,47 @@ export default {
   font-weight: 600
   margin-bottom: 20px
   .adr-btn
-    position: relative
-    padding-top: 20px
-    .select
-      +select(40px)
-      left: 5px
-    .active
-      +select-active
+    width: 100%
+    display: flex
+    justify-content: space-between
+    align-items: center
+    margin-top: 20px
     .text
-      text-align: left
-      padding-left: 55px
-      position: relative 
-      width: 130px
-    .btn-box
-      position: absolute
-      right: 0
-      top: 20px
       display: flex
+      align-items: center
+      text-align: left
+      width: 220px
+      +singleFile
+      .select
+        display: inline-block
+        width: 40px
+        height: 40px
+        border-radius: 50%
+        border: 1px solid #CCCCCC
+        margin-right: 20px
+      .active
+        background-image: url('~@/assets/img/storeMgr/select.png')
+        background-size: 100% 100%
+        border: none!important
+    .btn-box
+      display: flex
+      justify-content: space-between
+      align-items: center
       font-size: 27px
       color: #333
       p
-        padding-left: 24px
-      .edit
-        +bg-img('storeMgr/edit-adr.png')
-        +icon(24px)
-        margin-right: 10px
-      .del
-        +bg-img('storeMgr/del-adr.png')
-        +icon(24px)
-        margin-right: 10px
-      
+        flex: 1
+        display: flex
+        align-items: center
+        .edit
+          +bg-img('storeMgr/edit-adr.png')
+          +icon(24px)
+          margin-right: 10px
+        .del
+          +bg-img('storeMgr/del-adr.png')
+          +icon(24px)
+          margin-right: 10px
+
   .user
     display: flex
     height: 60px

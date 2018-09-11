@@ -7,8 +7,8 @@
       <p>{{userInfo.userInfo ? userInfo.userInfo.nickName : '微信登陆'}}</p>
     </div>
     <i-message id="message" />
-    <button v-if="!userInfoBool" class="user_btn wx_btn" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button> 
-    <button v-if="userInfoBool" class="wx_btn" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">授权登陆</button> 
+    <button v-if="!userInfoBool" class="user_btn wx_btn" open-type="getUserInfo" @getuserinfo="getUserInfo">获取用户信息</button>
+    <button v-if="userInfoBool" class="wx_btn" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">授权登陆</button>
   </div>
 </template>
 <script>
@@ -39,7 +39,10 @@ export default {
       } else {
         const val = await wx.getStorageSync("sessionId");
         if (val) {
-          return this.toRoute("home/home");
+          // return this.toRoute("home/home");
+          return wx.switchTab({
+            url: '/pages/home/home'
+          })
         }
         this.login(e.mp.detail);
       }
@@ -69,7 +72,10 @@ export default {
       console.log(data.data);
       await wx.setStorageSync("sessionId", data.data.sessionId);
       await wx.setStorageSync("avatar", data.data.avatar);
-      this.toRoute("home/home");
+      // this.toRoute("home/home");
+      wx.switchTab({
+        url: '/pages/home/home'
+      })
     }
   },
   async mounted() {

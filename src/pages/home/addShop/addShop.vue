@@ -22,6 +22,7 @@
           <!-- <i class="cancel_shop" @click="toCancel(index)"></i>
         </div> -->
         <div class="add" v-for="(item, index) in imageList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}"></div>
+        <!-- <div v-for="(item, index) in imageList" :key="index"><image :src="item"></image></div> -->
         <div class="addBtn" @tap="bindButtonTapImage">
           <p>+图片</p>
         </div>
@@ -268,6 +269,9 @@
       </div>
     </div>
     <i-message id="message" />
+    <view class="progress-item" v-show="showProgress">
+      <i-progress :percent="progressValue" status="active"></i-progress>
+    </view>
     <!-- <div>
       <i-modal :visible="backTips" @ok="toClose('backTips')" @cancel="toClose('backTips')">
           <div class="m_tips">您尚未完善商品信息，确认退出？</div>
@@ -292,6 +296,8 @@ export default {
   },
   data() {
     return {
+      showProgress: false, // 上传进度条
+      progressValue: 0, // 进度百分比
       videoSrc: '',
       uploadNum: 15,
       maxNum: '',
@@ -445,7 +451,7 @@ export default {
     //上传图片
     uploadImg(tempFilePath) {
       var that = this;
-      wx.uploadFile({
+      const uploadTask = wx.uploadFile({
         url: config.uploadImageUrl,
         filePath: tempFilePath,
         name: "file",
@@ -476,6 +482,13 @@ export default {
         },
         fail: function(err) {
           console.log(err);
+        }
+      })
+      uploadTask.onProgressUpdate((res) => {
+        if(res.progress === 100) {
+          wx.showToast({
+            title: '上传完成'
+          })
         }
       })
     },
@@ -537,7 +550,7 @@ export default {
         success: function(res) {
           console.log(res);
           var tempFilePath = res.tempFilePath;
-          wx.uploadFile({
+          const uploadTask = wx.uploadFile({
             url: config.uploadImageUrl,
             filePath: tempFilePath,
             name: "file",
@@ -570,6 +583,18 @@ export default {
           //   console.log(that.src)
           // },3000)
           // that.src = res.tempFilePath
+          that.toggleProgress()
+          uploadTask.onProgressUpdate((res) => {
+            console.log(res.progress);
+            that.progressValue = res.progress
+            if(that.progressValue === 100) {
+              that.toggleProgress()
+              wx.showToast({
+                title: '上传完成'
+              })
+              that.progressValue = 0
+            }
+          })
         },
         fail: (err)=>{
           this.handleError('上传失败，错误原因： '+err.errMsg)
@@ -844,7 +869,6 @@ export default {
       this.marketText = this.selectFMarket.name +'-'+this.selectSMarket.name +'-'+ this.selectTMarket.name
       this.toClose('showMarket')
     },
-
     selectTime(name){
       this.timeText = name
     },
@@ -855,6 +879,10 @@ export default {
     getImg(src){
       this.imageList.push(src)
       console.log("imageList ===> " + this.imageList);
+    },
+    // 切换显示隐藏进度条
+    toggleProgress() {
+      this.showProgress = !this.showProgress
     },
     // changeImg(imgArr){
     //   this.imageList = imgArr
@@ -896,6 +924,25 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+
+.progress-item
+  width: 100%
+  height: 100%
+  background-color: rgba(0, 0, 0, .3)
+  position: fixed
+  left: 0
+  right: 0
+  top: 0
+  margin: auto
+  z-index: 100
+  ._i-progress
+    width: 80%
+    position: absolute
+    left: 0
+    right: 0
+    top: 200px
+    margin: auto
+
 .input_p_left
   padding-left: 20%
   width: 80%!important

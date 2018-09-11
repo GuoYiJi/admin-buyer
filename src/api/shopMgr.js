@@ -33,6 +33,9 @@ export default class shopMgr {
 
   //搭配
   s_getshopMatch = params => http.post('api/goods/selectMatchGoodsPage', params)
+  // 上下架搭配
+  s_updateMatchState = params => http.post('api/goods/updateMatchState', params)
+  // 添加搭配
   s_addMatch = params => http.post('api/goods/addMatchGoods', params)
   // 店铺信息修改
   warehouse = params => http.post('api/warehouse/updateShop', params)
