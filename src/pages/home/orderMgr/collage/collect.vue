@@ -67,7 +67,7 @@
       </div> -->
       <i class="xuXian"></i>
       <div class="orderNumber" v-if="parent != null"> 父订单编号：{{parent.id}}</div>
-      <div class="orderNumber">订单编号：{{L_selectDetail.accountId}}</div>
+      <div class="orderNumber">订单编号：{{L_selectDetail.orderNo}}</div>
       <div class="orderNumber">下单时间：{{L_selectDetail.createTime}}</div>
       <div class="orderNumber" v-if="L_selectDetail.state == 6">支付时间：{{L_selectDetail.payTime}}</div>
       <div class="orderNumber" v-if="L_selectDetail.state == 6">发货时间：{{L_selectDetail.deliverTime}}</div>

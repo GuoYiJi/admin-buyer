@@ -25,18 +25,18 @@
           <!-- <p class="name">收货人:{{item.accountAddress.name}} {{item.accountAddress.mobile}}</p> -->
         </div>
         <!-- 判断未操作 -->
-        <div class="btn"  v-if="item.state == 0 || (item.state != 2 && item.state == 4)">
+        <div class="btn"  v-if="item.state == 0 ">
           <span class="details"  @click="details(item.orderId)">查看详情</span>
           <span class="confirm"  @click="confirm(item,index)">同意</span>
           <span class="close"    @click="passBut(item,idnex)">拒绝</span></div>
         <!-- 判断是否在发货 -->
-        <div class="btn" v-else-if="(item.state == 4) || (item.state != 2 && item.state == 0) ">
-          <span class="details" @click="details(item.orderId)">查看详情</span>
+        <div class="btn" v-else-if="(item.state == 4)">
+          <span class="details" @click="detailsSH(item.orderId)">查看详情</span>
           <span class="close"    @click="passBut(item,idnex)">确认收货</span>
         </div>
         <!-- 判断是否已经取消或者同意 -->
-        <div class="btn" v-else=" item.state == 1 || item.state == 2 ">
-          <span class="details" @click="details(item.orderId)">查看详情</span>
+        <div class="btn" v-else="(item.state == 1) || (item.state == 2) || (item.state == 3) || (item.state == 5)">
+          <span class="details" @click="detailsAll(item.orderId)">查看详情</span>
         </div>
 
       </div>
@@ -127,6 +127,12 @@ export default {
         },
         details(id){
           this.$router.push({path:'obligations/collectPerson',query:{orderId: id}})
+        },
+        detailsSH(id){
+          this.$router.push({path:'obligations/obligations',query:{orderId: id}})
+        },
+        detailsAll(id){
+          this.$router.push({path:'obligations/obligationsPerson',query:{orderId: id}})
         },
         passBut(item ,index){
           console.log(item)

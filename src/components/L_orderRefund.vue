@@ -20,14 +20,12 @@
           </li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
-          <div class="box">
-            <p >
-              <!-- 未通过 -->
-              <afterSales :shopListRefund="shopListRefund" />
-            </p>
-          </div>
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
+        <div class="box">
+          <p >
+            <!-- 未通过 -->
+            <afterSales :shopListRefund="shopListRefund" />
+          </p>
         </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
@@ -103,7 +101,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
         // state: this.tag
       };
@@ -111,30 +109,55 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderRefund(obj);
     },
-    async lower(e) {
-      // console.log(e);
-      if (!this.canLoad) return;
+    
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+      
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listDatazz = await this.getNextPage();
-      this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
-      setTimeout(() => {
-        if ( this.shopListRefund.length < 20) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.shopListRefund =  vm.shopListRefund.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.showLoad = false;
-      }, 2000);
-    }
-
+        if(vm.shopListRefund.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+        
+        wx.hideLoading()
+      })
+    } 
   },
   async mounted() {
     this.shopNum = 0;
     const listDatazz = await this.getNextPage();
     this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
     console.log(this.shopListRefund)
-    if (this.shopListRefund.length < 20) {
+    if (this.shopListRefund.length < 10) {
       this.canLoad = false;
     }
+  },
+  async onShow(){
+    this.orderId = this.$route.query.orderId
+    console.log(this.orderId)
+    const L_selectOrderData = await this.$API.L_selectOrderRefundDetail({
+      orderId: this.$route.query.orderId
+    });
+    // console.log(L_selectOrderData)
+    this.navData = L_selectOrderData.data
+    console.log(navData)
+    
   }
 };
 </script>
@@ -145,7 +168,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0

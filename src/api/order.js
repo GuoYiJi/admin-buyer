@@ -30,9 +30,10 @@ export default class order {
     L_selectGoodsDetail = params => http.post('api/goods/selectGoodsDetail', params)
         //api/goods/add
     L_addOrder = params => http.post('api/goods/add', params)
-        //selectPingChildrenOrder
         //查看子订单拼团
     L_selectPingChildrenOrder = params => http.post('api/order/selectPingChildrenOrder', params)
+        //售后详情
+    L_selectOrderRefundDetail = params => http.post('/api/order/refund/selectOrderRefundDetail', params)
 
 
 

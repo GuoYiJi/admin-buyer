@@ -20,8 +20,7 @@
           </li>
         </ul>
       </div>
-      <scroll-view :scroll-y="true" lower-threshold='80' style="height: 80%;" @scroll="lower" >
-        <div class="scroll-box">
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
           <div class="box">
             <p>
               <!-- 发货组件 -->
@@ -32,10 +31,6 @@
               <Collage :noSigleList="noSigleList"/>
             </p>
           </div>
-        </div>
-        <div class="loading" v-if="canLoad">
-          <div v-if="showLoad"><loading  /></div>
-        </div>
       </scroll-view>
     </div>
   </div>
@@ -101,7 +96,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
         // state: this.tag
       };
@@ -110,25 +105,56 @@ export default {
       return this.$API.L_selectOrderPage(obj);
     },
     //滚动下拉事件
-      async lower(e) {
-      console.log(e);
-      console.log(111111);
-      if (!this.canLoad) return;
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+      
       if (this.showLoad) return;
-      this.showLoad = true;
-      let listData = {}
-      this.getNextPage().then(response => {
-        listData = response;
-        console.log(listData)
-      });
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+
+      const vm = this;
+
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.orderList =  vm.orderList.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.orderList = this.orderList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+        if(vm.orderList.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+            
+        for(var i=0;i<vm.orderList.length;i++){
+          if((vm.orderList[i].layer == 1 && vm.orderList[i].state == 5) || (vm.orderList[i].layer == -1  && vm.orderList[i].state == 5)){
+            vm.sigleList.push(vm.orderList[i])
+            console.log(vm.sigleList)
+          } else{
+            vm.noSigleList.push(vm.orderList[i])
+          }
+        }
+        wx.hideLoading()
+      })
+
+      // this.getNextPage().then(response => {
+      //   listData = response;
+      //   console.log(listData)
+      // });
+      // setTimeout(() => {
+      //   if (listData.data.list.length < 30) {
+      //     this.canLoad = false;
+      //   }
+      //   this.orderList = this.orderList.concat(listData.data.list);
+      //   this.showLoad = false;
+      // }, 2000);
+    } ,  
 
   },
   async mounted() {
@@ -143,7 +169,7 @@ export default {
         this.noSigleList.push(this.orderList[i])
       }
     }
-    if (listData.data.list.length < 30) {
+    if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
   }
@@ -156,7 +182,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0
