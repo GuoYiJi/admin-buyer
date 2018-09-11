@@ -11,7 +11,7 @@
             </span>
           </p> 
         </div>
-        <div class="middle" @click="sanJiaoBut(item)">
+        <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
@@ -81,8 +81,8 @@ export default {
             this.passhowYes = false
           }
         },
-        sanJiaoBut(item){
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+        sanJiaoBut(id){
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})

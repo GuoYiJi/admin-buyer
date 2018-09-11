@@ -121,7 +121,13 @@ export default {
             });
         }
     },
-    mounted() {
+    async mounted() {
+      this.orderId = this.$route.query.orderId
+      console.log(this.orderId)
+      const L_selectOrderData = await this.$API.L_selectOrderDetail({
+        orderId: this.$route.query.orderId
+      });
+      console.log(L_selectOrderData)
         // this.shuoLiang();
     }
 };

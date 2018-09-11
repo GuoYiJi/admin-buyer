@@ -1,35 +1,36 @@
 <template>
   <div class="nav">
-    <div v-for="(item,index) in closeOrder" :key="index">
+    <div v-for="(item,index) in shopListRefund" :key="index">
       <div class="kuang">
         <div class="head">
-          <p class="order">订单编号：{{item.orderNo}}</p>
+          <p class="order">订单编号：{{item.orderId}}</p>
           <p class="state">
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}}
+            <!-- 0未处理 1已通过 2不通过 3同意(退货，换货）4已经发货 5撤销 -->
+            {{item.state==0?'未处理':item.state==1?'已通过':item.state==2?'不通过':item.state==3?'同意':item.state==4?'已经发货':'撤销'}}
+            
           </p> 
         </div>
         <div class="middle" @click="sanJiaoBut(item.id)">
-          <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
+          <div class="picture" v-for="(itemzz,num) in item.goodsList" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao" ></i>
+          <i class="sanJiao"></i>
         </div>
         <div class="jieShuan">
-          <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
+          <div class="quantity">共{{item.countGoodsNum}}个款，合计{{item.countGoodsNum}}件</div>
           <div class="money">订单金额：
-            <p class="money1">{{item.count}}元</p>
+            <p class="money1">{{item.price}}元</p>
           </div>
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
+          <!-- <div class="picture_1" >
+            <img class="imgTwo" :src="shopListRefund.picture">
             <img class="imgThree" :src="item.picture">
             <img class="imgFour" :src="item.picture">
-          </div>
+          </div> -->
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
@@ -49,7 +50,7 @@ export default {
         };
     },
     props: {
-      closeOrder: {
+      shopListRefund: {
         type: Array,
         default: []
       }
@@ -78,6 +79,8 @@ export default {
         }
     },
     mounted() {
+      console.log(this.shopListRefund)
+      
     }
 };
 </script>
@@ -98,11 +101,15 @@ page
     display: flex
     .order
       display: inline-block
-      flex: 2
+      flex: 5
       margin-left: 20px
     .state
       display: inline-block
       flex: 1
+      // padding-left: 60px
+      // padding-left: 260px
+
+
   .middle
     height: 200px
     border-bottom: 1px solid #f5f5f5

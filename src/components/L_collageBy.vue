@@ -12,7 +12,7 @@
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao"  ></i> 
+          <i class="sanJiao"></i> 
         </div>
         <div class="jieShuan">
           <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
@@ -22,49 +22,97 @@
           <div class="phone">收货人:{{item.receiptName}} {{item.phone}}</div>
         </div>
         <div class="foot">
-          <div class="picture_1" v-for="(pin,idPin) in item.pingUser" :key="idPin" v-if="idPin < 3">
-            <img class="imgTwo" :src="pin.head">
+          <div class="picture_1" >
+            <img class="imgTwo" :src="item.picture">
+            <img class="imgThree" :src="item.picture">
+            <img class="imgFour" :src="item.picture">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <span v-if="(item.state == 1) " class="close" @click="close(item.id,index)">关闭订单</span>
-            <span v-if="(item.layer==-1) && (item.state == 9) " @click="seeSuborder(item.id)" class="collage">查看子拼团</span>
+            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
+            <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="closeTipAll" v-show="passhowYes">
-      <div class="closeTip">
-        <div class="closeTip_text">
-          <p class="tipText">是否确认关闭订单!</p>
+    <!-- <div v-for="(item,index) in navData" :key="index">
+      <div class="kuang">
+        <div class="head">
+          <p class="order">订单编号：{{item.title}}</p>
+          <p class="state">拼团中，还差{{item.maShuo}}人</p>
         </div>
-        <div class="confirm_but">
-          <div><button @click="passYesClose">取消</button></div>
-          <div><button @click="passYesBut">确定</button></div>
+        <div class="middle">
+          <div class="picture">
+            <img class="imgOne" :src="item.picture">
+          </div>
+          <i class="sanJiao" @click="sanJiaoBut"></i>
+        </div>
+        <div class="jieShuan">
+          <div class="quantity">共{{item.kuan}}个款，合计{{item.jian}}件</div>
+          <div class="money">订单金额：
+            <p class="money1">{{item.money}}元</p>
+          </div>
+          <div class="phone">收货人:{{item.name}} {{item.phone}}</div>
+        </div>
+        <div class="foot">
+          <div class="picture_1">
+            <img class="imgTwo" :src="item.picture">
+            <img class="imgThree" :src="item.picture">
+            <img class="imgFour" :src="item.picture">
+          </div>
+          <div class="btn">
+            <span v-if="(btn==0)" class="see" @click="seeBut">查看详情</span>
+            <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span>
+            <span v-if="(btn==1)" class="collage">查看子拼团</span>
+          </div>
         </div>
       </div>
-    </div>
- 
+    </div> -->
   </div>
 </template>
 <script>
 import wx from "wx";
-// import config from "@/config";
-
 export default {
-    components: {
-
-    },
+    components: {},
     data() {
         return {
             btn: 0,
-            navData: [],
+            navData: [
+                {
+                    picture:
+                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
+                    title: 123456,
+                    maShuo: "一",
+                    kuan: 1,
+                    jian: 3,
+                    name: "张三",
+                    phone: 13560234567,
+                    money: 154
+                },
+                {
+                    picture:
+                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
+                    title: 123456,
+                    maShuo: "一",
+                    kuan: 1,
+                    jian: 3,
+                    name: "张三",
+                    phone: 13560234567,
+                    money: 154
+                },
+                {
+                    picture:
+                        "http://img0.ph.126.net/4VrAhfq_aXGh-H8xHoY7Xw==/6597977963263462287.png",
+                    title: 123456,
+                    maShuo: "一",
+                    kuan: 1,
+                    jian: 3,
+                    name: "张三",
+                    phone: 13560234567,
+                    money: 154
+                }
+            ],
             groupOrderzz: [],
-            sessionIdzz: '',
-            url: '',
-            passhowYes: false,
-            orderID: '',
-            currentSelectedIndex: 0
             // arr: []
         };
     },
@@ -77,54 +125,31 @@ export default {
       }
     },
     methods: {
-        close(id,index) {
-          this.passhowYes = true
-          this.orderID = id
-          this.currentSelectedIndex = index
-
+        close() {
+            wx.showModal({
+                // title: "提示",
+                content: "确定关闭订单！",
+                success: function(res) {
+                    console.log(res);
+                    if (res.confirm) {
+                        console.log("用户点击确定");
+                    } else if (res.cancel) {
+                        console.log("用户点击取消");
+                    }
+                }
+            });
         },
-        passYesClose(){
-          this.passhowYes = false
-        },
-        async passYesBut(){
-          const L_shopCloseData = await this.$API.L_shopClose({
-            orderId: this.orderID,
-          });
-          console.log(L_shopCloseData)
-          if(L_shopCloseData.code == 1){
-            wx.showToast({               
-              title: '成功',               
-              icon: 'success',  
-              duration: 2000  
-            }) 
-            this.passhowYes = false
-            this.onPlayList.splice(this.currentSelectedIndex, 1)
-          }else{
-            this.passhowYes = false
-
-          }
-
-        },
-        //查看商品详情
         sanJiaoBut(id){
-          console.log(123)
            this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
-        //关闭订单
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
-        },
-        //跳转到子订单
-        seeSuborder(id){
-          this.$router.push({path:'suborders/suborders',query:{id}})
-        },
+
+        }
     },
     created() {
     },
-    async mounted() {
-      this.url = config.url+'/api/order/shopClose'
-      console.log(this.url)
-     
+    mounted() {
     }
 };
 </script>
@@ -236,70 +261,5 @@ page
         color: #fff
         margin: 30px 20px 0 0
         line-height: 60px
-.closeTipAll 
-  background: rgba(0,0,0,0.4)
-  // background-color: #000
-  width: 100%
-  height: 100%
-  position: fixed
-  top: 0
-  z-index: 9999
-  .closeTip
-    opacity: 1 
-    width: 550px
-    height: 260px
-    margin: 0 auto
-    background: #fff
-    margin-top: 300rpx
-    .closeTip_text
-      padding: 10px
-      text-align: center
-      textarea
-        text-align: left
-        width: 530px
-        height: 200px
-      p
-      .tipText
-        margin: 40px
-        // margin-top: 40px
-    .confirm_but
-      margin-top: 40px
-      display: flex
-      div
-        width: 100%
-      div:nth-child(1) button
-        background: #CCCCCC
-        color: #000000
-        width: 100%
-        // height: 70px
-        border-radius: 0px
-        padding: 20px 0 20px 0
-      div:nth-child(2) button
-        background: #F67C2F
-        color: #ffffff
-        width: 100%
-        // height: 70px
-        border-radius: 0px
-        padding: 20px 0 20px 0
-
-    .closeTip_but
-      display: flex
-      margin-top: 20px
-      div
-        width: 100%
-      div:nth-child(1) button
-        background: #CCCCCC
-        color: #000000
-        width: 100%
-        // height: 70px
-        border-radius: 0px
-        padding: 20px 0 20px 0
-      div:nth-child(2) button
-        background: #F67C2F
-        color: #ffffff
-        width: 100%
-        // height: 70px
-        border-radius: 0px
-        padding: 20px 0 20px 0
 
 </style>

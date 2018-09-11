@@ -1,18 +1,16 @@
 <template>
   <div class="nav">
-    <div v-for="(item,index) in closeOrder" :key="index">
+    <div v-for="(item,index) in yesGod" :key="index">
       <div class="kuang">
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
-          <p class="state">
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}}
-          </p> 
+          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
         </div>
         <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
-          <i class="sanJiao" ></i>
+          <i class="sanJiao"></i>
         </div>
         <div class="jieShuan">
           <div class="quantity">共{{item.num}}个款，合计{{item.num}}件</div>
@@ -23,13 +21,13 @@
         </div>
         <div class="foot">
           <div class="picture_1" >
-            <img class="imgTwo" :src="item.picture">
+            <img class="imgTwo" :src="item.picture"> 
             <img class="imgThree" :src="item.picture">
             <img class="imgFour" :src="item.picture">
           </div>
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
-            <!-- <span v-if="(btn==0)" class="close" @click="close()">关闭订单</span> -->
+            <!-- <span v-if="(btn==0)" class="close" @click="close(item.id,index)">关闭订单</span> -->
             <span v-if="(btn==1)" class="collage">查看子拼团</span>
           </div>
         </div>
@@ -45,11 +43,12 @@ export default {
         return {
             btn: 0,
             navData: [],
-            groupOrderzz: []
+            groupOrderzz: [],
+            currentSelectedIndex: 0
         };
     },
     props: {
-      closeOrder: {
+      yesGod: {
         type: Array,
         default: []
       }

@@ -1,24 +1,23 @@
 <template>
     <div class="nav" >
-        <div v-for="(item,idx) in navData" :key="idx">
+        <div v-for="(item,idx) in navData.orderGoods" :key="idx">
             <div class="list" >
-                <div class="kuang" v-for="(itemzz,idzz)  in item.orderGoods" :key="idzz">
-                    <img class="sPimg" :src="itemzz.image" />
-                    <div class="textThad" v-for="(itemss,idss)  in itemzz.skuList" :key="idss">
-                        <div class="title">{{itemss.name}}</div>
+                <div class="kuang" v-for="(itemz,idz) in item.orderGoods" :key="idz">
+                    <img class="sPimg" :src="itemz.image" />
+                    <div class="textThad" >
+                        <div class="title">{{itemz.name}}</div>
                         <div class="huo">
-                            <text class="name">{{itemss.stallInfo3}}</text>
-                            <div class="type">货期:{{itemss.delivery}}</div>
-                            <span class="number">X{{itemss.num}}</span>
+                            <text class="name">{{itemz.stallInfo3}}</text>
+                            <div class="type">货期:{{itemz.delivery}}</div>
+                            <span class="number">X{{itemz.num}}</span>
                         </div>
-                        <div class="maShuo">{{itemss.skuCode}}/{{itemss.num}}件</div>
-                        <!-- <div class="maShuo">{{item.maShuo}}/{{item.jianShuo1}}件</div> -->
+                        <div class="maShuo">{{itemz.skuCode}}/{{itemz.num}}件</div>
                     </div>
                 </div>
-                <div class="jiaGe">合计: ￥ {{item.count}}</div>
+                <div class="jiaGe">合计: ￥ {{item.countPrice}}</div>
             </div>
             <div class="foot">
-                <span class="btn">共{{item.shopId}}件</span>
+                <span class="btn">共{{item.countNum}}件</span>
             </div>
         </div>
     </div>
@@ -49,9 +48,15 @@ export default {
     onReachBottom() {
 
     },
-    mounted() {
-        this.navData.push(JSON.parse(this.$route.query.item))
-        console.log(this.navData)
+    async mounted() {
+        // this.navData.push(JSON.parse(this.$route.query.item))
+
+      this.orderId = this.$route.query.orderId
+      const L_selectOrderData = await this.$API.L_selectOrderDetail({
+        orderId: this.$route.query.orderId
+      });
+      this.navData = L_selectOrderData.data
+      console.log(this.navData)
     },
 
 };
