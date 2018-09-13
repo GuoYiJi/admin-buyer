@@ -5,8 +5,8 @@
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':item.state==9?'拼单':'审核中'}}
-          </p> 
+            {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}} 
+           </p> 
         </div>
         <div class="middle">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
@@ -98,7 +98,7 @@ page
     display: flex
     .order
       display: inline-block
-      flex: 2
+      flex: 5
       margin-left: 20px
     .state
       display: inline-block

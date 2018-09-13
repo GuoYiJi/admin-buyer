@@ -13,8 +13,8 @@
           <div class="title_1">
             <text class="name">订单编号：{{item.orderNo}}</text>
             <text class="fuKuan">
-              {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
-            </text>
+              {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}} 
+           </text>
           </div>
           <!-- <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz"> -->
             <div class="topHug">
@@ -22,28 +22,21 @@
                 <img class="sPimg" :src="item.image"/>
               </div>
             <div class="textThad" >
-              <!-- <div v-for="(itemss,idss) in itemzz.skuList" :key="idss">           -->
-                <div class="title">{{item.name}}</div>
-                <div class="huo">
-                  <text class="name">{{item.stallInfo3}}</text>
-                  <div class="type">货期:{{item.delivery}}</div>
-                  <span class="number">X{{item.countNum}}</span>
-                  <div >
-                    <div class="maShuo">
-                      <div style="width:80%;float:left;">
-                          <div class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
-                      </div>
-                      <!-- <scroll-view scroll-x="true" style=" width:80%  display: flex" >
-
-                      </scroll-view> -->
-                      <span v-if="editClick" class="edit" @click="edit(item,item.orderId,idx)">编辑</span>
-                      <span v-if="!editClick" class="edit">编辑</span>
-                      <!-- <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
-                      <span class="edit" @click="edit(item)">编辑</span> -->
+              <div class="title">{{item.name}}</div>
+              <div class="huo">
+                <text class="name">{{item.stallInfo3}}</text>
+                <div class="type">货期:{{item.delivery}}</div>
+                <span class="number">X{{item.countNum}}</span>
+                <div >
+                  <div class="maShuo">
+                    <div style="width:80%;float:left;">
+                        <div class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
                     </div>
+                    <span v-if="editClick" class="edit" @click="edit(item,item.orderId,idx)">编辑</span>
+                    <span v-if="!editClick" class="edit">编辑</span>
                   </div>
-              <!-- </div> -->
-            </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -74,23 +67,18 @@
             </div>
           <!-- </div> -->
         </div>
-        <div class="number_1">
+        <!-- <div class="number_1">
           <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
             <div class="completed_1">子订单编号
               {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
             ：{{childrenzz.orderNo}}</div>
             <i class="sanjiao"></i>
           </div>
-        </div>
-        <div class="btn">
-          <div class="collage_1">
-            <img class="collage_img" :src="item.picture">
-            <img class="collage_img" :src="item.picture">
-            <img class="collage_img" :src="item.picture">
+        </div> -->
+        <div class="btn" v-if="item.isPing == 1">
+          <div class="collage_1" v-for="(itempin,idpin) in item.pingUser" :key="idpin" v-if="idpin < 3  ">
+            <img class="collage_img" :src="itempin.head">
           </div>
-          <!-- <span class="details" @click="details()">查看详情</span>
-          <span class="Deliver" @click="Deliver()">发货</span>
-          <span v-if="(btn==1)" class="collage">查看子拼团</span> -->
         </div>
       </div>
     </div>
@@ -277,9 +265,15 @@ export default {
             }
           }
         }else{
-          that.$Toast({
-            content: '请选择商品',
-            type: 'warning'
+          // that.$Toast({
+          //   content: '请选择商品',
+          //   type: 'warning'
+          // })
+          
+          wx.showToast({
+            title: '请选择商品',
+            icon: 'loading',
+            duration: 2000
           })
         }
 
@@ -343,9 +337,14 @@ export default {
         if(type == 1){
           if(that.radioId != ''){
             if(that.radioId != id){
-                that.$Toast({
-                  content: '同款商品才可以批量编辑',
-                  type: 'warning'
+                // that.$Toast({
+                //   content: '同款商品才可以批量编辑',
+                //   type: 'warning'
+                // })
+                wx.showToast({
+                  title: '同款商品才可以批量编辑',
+                  icon: 'loading',
+                  duration: 2000
                 })
             }else{
               that.Arrays[i] = true;
@@ -1125,7 +1124,7 @@ export default {
   position: fixed
   bottom: 0
   left: 0
-  z-index: 90
+  // z-index: 90
   background-color: #fff
   .bottomHugBtn
     background-color: #F67C2F

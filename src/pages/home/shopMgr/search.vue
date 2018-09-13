@@ -19,8 +19,11 @@
 </template>
 <script>
 import wx from "wx";
+import Collage from "@/components/o_collage";
 export default {
-  components: {},
+  components: {
+    Collage,
+  },
   data() {
     return {
       keyword: '',

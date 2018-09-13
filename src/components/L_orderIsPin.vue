@@ -20,14 +20,12 @@
           </li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
           <div class="box">
             <p >
               <CollageIsPin :isPin="isPin"/>
             </p>
           </div>
-        </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
         </div>
@@ -105,20 +103,34 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    async lower(e) {
-      console.log(e);
-      if (!this.canLoad) return;
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listData = await this.getNextPage();
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.isPin =  vm.isPin.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.isPin = this.isPin.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+        if(vm.isPin.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+        // this.isPin = this.isPin.concat(listData.data.list);
+        
+        wx.hideLoading()
+      })
+    } ,
 
   },
   async mounted() {
@@ -143,7 +155,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0

@@ -23,8 +23,8 @@
         {{L_selectDetail.state==1?'未支付':L_selectDetail.state==2?'取消':L_selectDetail.state==3?'已支付':L_selectDetail.state==4?'支付失败':L_selectDetail.state==5?'未发货':L_selectDetail.state==6?'已发货':L_selectDetail.state==7?'交易成功':L_selectDetail.state==8?'交易关闭':'拼单中'}} 
       </text>
     </div>
-    <div class="list" v-for="(item,idx) in orderGoodsList" :key="idx">
-      <div class="kuang" >
+    <div class="list" v-for="(item,idx) in orderGoodsSku" :key="idx">
+      <div class="kuang">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -38,11 +38,11 @@
             <scroll-view scroll-x="true" style=" width:180px  " >
               <span class="text">{{item.skuCode}}/{{item.num}}件</span>  
             </scroll-view>
-            <span class="edit" @click="edit(item,item.id)">编辑</span>
+            <span class="edit" @click="edit(item,item.goodsId)" v-if="L_selectDetail.state != 6">编辑</span>
           </div>
         </div>
       </div>
-      <div class="type_1" v-if="(select == 0)">
+      <div class="type_1" v-if="L_selectDetail.state != 6">
         <div class="title_1">
           <span class="colour">颜色</span>
           <span class="size">码数</span>
@@ -59,19 +59,45 @@
         </div>
       </div>
       <div class="jiaGe">
-        <!-- <div class="collage" v-if="(select == 2)">
-          <img class="collage_img" :src="item.picture">
-          <img class="collage_img" :src="item.picture">
-          <img class="collage_img" :src="item.picture">
-        </div> -->
         <text class="text">共{{item.num}}件商品,合计: </text>
-        <text class="jiaGet">{{item.price}}元</text>
+        <text class="jiaGet">{{item.paidPrice}}元</text>
       </div>
     </div>
+    <!-- 子订单 -->
+    <div class="number_1" v-if="(L_selectDetail.children != '')">
+      <div class="completed" v-for="(childrenzz,idRen) in L_selectDetail.children" :key="idRen"  @click="childrenBut(childrenzz.id)">
+        <div class="completed_1">子订单编号
+          {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
+        ：{{childrenzz.orderNo}}</div>
+        <i class="sanjiao"></i>
+      </div>
+    </div>
+    <div class="jieShuan" v-if="L_selectDetail">
+      <div class="price">
+        <text>商品总价：</text>
+        <text class="price1">￥{{L_selectDetail.count}}</text>
+      </div>
+      <div class="coupon">
+        <text>优惠券抵扣：</text>
+        <text class="coupon1">{{L_selectDetail.couponMoney}}</text>
+      </div>
+      <div class="coupon" >
+        <text>运费：</text>
+        <text class="coupon1">-￥{{L_selectDetail.expressWay}}</text>
+      </div>
+      <i class="xuXian"></i>
+      <div class="orderNumber" v-if="parent"> <span>父订单编号：{{parent.orderNo}}</span></div>
+      <div class="orderNumber">订单编号：{{L_selectDetail.orderNo}}</div>
+      <div class="orderNumber">下单时间：{{L_selectDetail.createTime}}</div>
+      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">支付时间：{{L_selectDetail.payTime}}</div>
+      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">发货时间：{{L_selectDetail.deliverTime}}</div> 
+      <div class="orderNumber" v-if=" L_selectDetail.state == 7">收货时间：{{L_selectDetail.receiptTime}}</div>
+    </div>
+
     <!-- 撑开下面按钮 -->
     <div style="height: 50px; width: 100%;"></div>
     <div class="foot">
-      <span class="btn" @click="Deliver()">发货</span>
+      <span class="btn" v-if="L_selectDetail.state != 6" @click="Deliver()">发货</span>
     </div>
     <!-- 编辑弹窗 -->
     <div v-show="isShow">
@@ -86,7 +112,6 @@
           </ul>
         </div>
         <div class="title_t" >
-              
           <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
@@ -219,6 +244,7 @@ export default {
             orderGoodsId: '',
             orderGoodsSku: [],
             deliverListSku: [],
+            parent: [],
             dpName: '',
             
 
@@ -346,6 +372,9 @@ export default {
         cancel() {
             this.edit();
         },
+        sanJiaoBut(id){
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
+        },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum) {
           this.isShow = !this.isShow;
@@ -439,6 +468,9 @@ export default {
           this.$router.push( {path:'/pages/home/orderMgr/mail/delivery', query:{orderId: id}})
           console.log(111)
         },
+        childrenBut(id){
+          this.$router.push({path:'mail/delivery',query:{orderId: id}})
+        },
         btnzz(){
           this.isShows = !this.isShows;
 
@@ -453,6 +485,9 @@ export default {
       this.idzz = this.L_selectDetail.id
       this.warehouseData =this. L_selectDetail.orderAddress
       this.orderGoodsList =  this.L_selectDetail.orderGoods
+      this.parent = this.L_selectDetail.parent
+
+      console.log(this.parent)
       for(var i = 0; i<this.orderGoodsList.length; i++){
         this.orderGoodsSku = this.orderGoodsList[i].orderGoods
         this.deliverListSku = this.orderGoodsList[i].deliverList
@@ -566,7 +601,7 @@ page
     height: 159px
     text-align: center
     background: #fff
-    border-bottom: 1px dashed #666
+    border-bottom: 1px dashed #eee
     line-height: 52px
     .title_1
       display: flex
@@ -641,12 +676,15 @@ page
       color: #FF0000
 .number_1
   margin-top: 10px
-  height: 184px
+  // height: 184px
   background: #fff
   line-height: 90px
   font-size: 26px
+  .completed:last-child
+    border-bottom: none
+
   .completed
-    border-bottom: 1px dashed #666
+    border-bottom: 1px dashed #eee
     display: flex
     padding-left: 25px
     .completed_1
@@ -670,7 +708,7 @@ page
 .jieShuan
   background: #fff
   font-size: 26px
-  // margin-bottom: 200px
+  margin-top: 20px
   .price
     display: flex
     padding: 22px 25px 0
@@ -700,7 +738,7 @@ page
       flex: 1
       color: #999
   .xuXian
-    border-bottom: 1px dashed #666
+    border-bottom: 1px dashed #eee
   .orderNumber
     font-size: 26px
     color: #666

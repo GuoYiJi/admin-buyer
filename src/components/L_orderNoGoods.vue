@@ -20,17 +20,21 @@
           </li>
         </ul>
       </div>
-      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
+      <!-- <div v-for="item in shopList">
+        <div>{{item.deliverTime}}</div>
+      </div> -->
+      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
+        <div class="scroll-box">
           <div class="box">
-            <p>
-              <!-- 发货组件 -->
-              <delivery :sigleList="sigleList"/>
-            </p>
             <p >
               <!-- 拼团组件 -->
-              <Collage :noSigleList="noSigleList"/>
+              <CollageOnPaly :onPlayList="onPlayList"/>
             </p>
           </div>
+        </div>
+        <div class="loading" v-if="canLoad">
+          <div v-if="showLoad"><loading  /></div>
+        </div>
       </scroll-view>
     </div>
   </div>
@@ -38,13 +42,13 @@
 <script>
 import wx from "wx";
 import payment from "@/components/o_payment";
-import Collage from "@/components/o_collage";
 import delivery from "@/components/o_delivery";
+import CollageOnPaly from "@/components/L_collageOnPaly";
 import loading from "@/commond/loading";
 export default {
   components: {
     payment,
-    Collage,
+    CollageOnPaly,
     delivery,
     loading,
 
@@ -59,118 +63,66 @@ export default {
       tag: 1,
       shopNum: 0,
       items: this.default,
-      orderList: [],
-      sigleList: [],//可拆单的数组
-      noSigleList: [],//不可拆单的数组
-      type: '1'
+      onPlayList: [],
 
     };
   },
  
   methods: {
-    async handleTag(tag) {
+    handleTag(tag) {
       this.tag = tag;
-      var type = 0 ;
+      var type;
       this.shopNum = 0;
-      if (tag === 1) {
-        //对销量sort
-        this.asceSale = !this.asceSale;
-        type = 1;
-      }
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
-        type = this.asceSale ? 3 : 4;
+        type = this.asceSale ? 2 : 3;
       }
       if (tag === 5) {
         this.ascePrice = !this.ascePrice;
-        type = this.ascePrice ? 5 : 6;
+        type = this.ascePrice ? 4 : 5;
       }
-      console.log(type)
-      this.type = type
-      const listData = await this.getNextPage({
-        orderType: this.type,
-        // state: 1
-      })
-      // this.orderList = listData.data.list
-      this.orderList = this.orderList.concat(listData.data.list); 
-      for(var i=0;i<this.orderList.length;i++){
-        if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
-          this.sigleList.push(this.orderList[i])
-          // console.log(this.sigleList)
-        } else{
-          this.noSigleList.push(this.orderList[i])
-          console.log(this.noSigleList)
-        }
-      }
-      if(listData.data.list.length < this.pageSize) {
-        this.canLoad = false
-      }
+      this.type = type;
     },
     getNextPage() {
       var obj = {
-        pageSize: 10,
-        orderType: this.type,
+        pageSize: 30,
+        orderType: 1,
+        state: 1
         // state: this.tag
       };
       this.shopNum++;
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    //滚动下拉事件
-    lower(e) {
-      if (!this.canLoad) {
-        wx.showToast({
-          title: '没有更多数据了',
-          icon: 'none',
-          duration: 1500
-        })
-        return
-      }
+    async lower(e) {
+      console.log(e);
+      if (!this.canLoad) return;
       if (this.showLoad) return;
-      this.showLoad = true
-      wx.showLoading({
-        title: '加载中',
-      })
-      const vm = this;
-
-      this.getNextPage({ob: this.type,state: this.state}).then(response => {
-        vm.orderList =  vm.orderList.concat(response.data.list);
-        if(response) {
-          vm.showLoad = false
+      this.showLoad = true;
+      const listData = await this.getNextPage();
+      setTimeout(() => {
+        if (listData.data.list.length < 30) {
+          this.canLoad = false;
         }
-        if(vm.orderList.length === response.data.totalRow) {
-          vm.canLoad = false
-        }
-            
-        for(var i=0;i<vm.orderList.length;i++){
-          if((vm.orderList[i].layer == 1 && vm.orderList[i].state == 5) || (vm.orderList[i].layer == -1  && vm.orderList[i].state == 5)){
-            vm.sigleList.push(vm.orderList[i])
-            console.log(vm.sigleList)
-          } else{
-            vm.noSigleList.push(vm.orderList[i])
-          }
-        }
-        wx.hideLoading()
-      })
-    } ,  
+        this.onPlayList = this.onPlayList.concat(listData.data.list);
+        this.showLoad = false;
+      }, 2000);
+    }
 
   },
   async mounted() {
+    console.log(11)
     this.shopNum = 0;
     const listData = await this.getNextPage();
-    this.orderList = this.orderList.concat(listData.data.list); 
-    for(var i=0;i<this.orderList.length;i++){
-      if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
-        this.sigleList.push(this.orderList[i])
-        console.log(this.sigleList)
-      } else{
-        this.noSigleList.push(this.orderList[i])
-      }
-    }
-    if (listData.data.list.length < 10) {
+    console.log(listData);
+    this.onPlayList = this.onPlayList.concat(listData.data.list); 
+    // console.log(this.orderList)
+    console.log(this.onPlayList);
+    if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
+  
   }
 };
 </script>
@@ -181,7 +133,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 100%
+  height: 900px
   overflow: auto
   p
     margin: 5px 0

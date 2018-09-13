@@ -4,7 +4,10 @@
       <div class="kuang">
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
-          <p class="state">{{item.state==1?'未支付':item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} <!--， 还差{{item.remark==null?'0':'0'}}人--></p> 
+          <p class="state">
+            {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}} 
+           
+          </p> 
         </div>
         <div class="middle"  @click="sanJiaoBut(item)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
@@ -21,7 +24,7 @@
         </div>
         <div class="number_1" v-if="(item.layer!=-1 )">
           <scroll-view scroll-y lower-threshold='80' style="height: 80%;  overflow-y: hidden;">
-            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen" @click="childrenBut(childrenzz.id)">
               <div class="completed_1">子订单编号
                 {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
               ：{{childrenzz.orderNo}}</div>
@@ -36,7 +39,7 @@
           <div class="btn">
             <span v-if="(item.layer != -1 )" class="see" @click="seeBut(item.id)">查看详情</span>
             <span v-if="(item.layer != -1 )" class="close" @click="seeLogistics(item.id)">查看物流</span>
-            <span v-if="(item.layer == -1 )" class="collage">查看子拼团</span>
+            <span v-if="(item.layer == -1 )" class="collage" @click="seeSuborder(item.id)">查看子拼团</span>
           </div>
         </div>
       </div>
@@ -84,7 +87,15 @@ export default {
         },
         seeLogistics(id){
           this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: id}})
-        }
+        },
+        //查看子订单详情
+        childrenBut(id){
+          this.$router.push({path:'collage/collect',query:{orderId: id}})
+        },
+        //跳转到子订单
+        seeSuborder(id){
+          this.$router.push({path:'suborders/suborders',query:{id}})
+        },
     },
     mounted() {
     }
@@ -107,7 +118,7 @@ page
     display: flex
     .order
       display: inline-block
-      flex: 2
+      flex: 4.5
       margin-left: 20px
     .state
       display: inline-block

@@ -76,8 +76,10 @@ page
 .list
     margin: 20px 24px
     width: 702px
-    height: 270px
+    // height: 270px
     background-color: #fff
+    .kuang:last-child
+        border-bottom: none
     .kuang
         display: flex
         border-bottom: 1px solid #cccccc
