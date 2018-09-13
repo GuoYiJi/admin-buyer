@@ -16,7 +16,6 @@ export default {
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     this.myArticleList = myArticle.data;
-    console.log( this.myArticleList)
     for (var i = 0; i < myArticle.data.length; i++) {
       if (myArticle.data[i].articleList[i].id == this.$mp.query.id) {
         console.log(myArticle.data[i].articleList[i].id);
