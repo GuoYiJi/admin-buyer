@@ -9,6 +9,7 @@ const home = [{
     {
         path: '/pages/home/allData',
         config: {
+            navigationBarTitleText: '数据统计',
             navigationBarBackgroundColor: '#FA8134'
         }
     },

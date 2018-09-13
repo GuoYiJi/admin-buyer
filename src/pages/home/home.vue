@@ -92,39 +92,16 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.footer
-  position: absolute
-  left: 0
-  right: 0
-  bottom: 0
-  display: flex
-  font-size: 22px
-  text-align: center
-  +border(1px,top,#ccc)
-  height: 100px
-  background: #fff
-  .f_item
-    flex: 1
-    .f_icon
-      +icon(44px)
-      margin-bottom: 2px
-      margin-top: 13px
-    .f_store
-      +bg-img('home/store1.png')
-    .f_my
-      +bg-img('home/my1.png')
-  .active
-    background: #F3792C
-    color: #fff
-    .f_store
-      +bg-img('home/store11.png')
-    .f_my
-      +bg-img('home/my11.png')
+.home
+  width: 100%
+  height: 100%
+  overflow: hidden
+  background-color: #ffffff
 .nav_box
   display: flex
   flex-wrap: wrap
   text-align: center
-  padding-top: 60px
+  margin-top: 60px
   .n_item
     width: 33.3%
     font-size: 28px

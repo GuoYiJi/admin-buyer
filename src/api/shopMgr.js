@@ -54,4 +54,7 @@ export default class shopMgr {
   addDisGoods = params => http.post('api/goods/addDisGoods', params)
   //修改折扣价格
   updateDisGoods = params => http.post('api/goods/updateDisGoods', params)
+
+  // 切换物流到付状态
+  changeExpressType = params => http.post('api/warehouse/changeExpressType', params)
 }

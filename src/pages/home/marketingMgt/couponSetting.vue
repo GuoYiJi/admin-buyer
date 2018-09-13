@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
     <form class="form">
-      <div class="head">
+        <div class="head">
         <span class="head_text">优惠券名称：</span>
         <input class="head_input" v-model="head_input" type="text" placeholder="请输入（8个字以内，不可特殊字符）">
       </div>
@@ -9,15 +9,15 @@
         <span class="value_text">面值：</span>
         <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值">
       </div>
-      <div class="grant">
+        <div class="grant">
         <span class="grant_text">发放总量：</span>
         <input class="grant_input" v-model="grant_input" type="text" placeholder="请输入发放数量">
       </div>
       <div class="effect">
         <span class="text">生效时间：</span>
         <span class="settings" v-if="(date == '')">
-          <span class="settings_text">未设置</span>
-          <i class="img"></i>
+          未设置
+          <!-- <i class="img"></i> -->
         </span>
         <picker class="picker_1" v-model="date" mode="date" :value="date" @change="bindDateChange">
           <view class="picker">
@@ -28,8 +28,8 @@
       <div class="effect">
         <span class="text">过期时间：</span>
         <span class="settings" v-if="(date1 == '')">
-          <span class="settings_text">未设置</span>
-          <i class="img"></i>
+          未设置
+          <!-- <i class="img"></i> -->
         </span>
         <picker class="picker_1" mode="date" :value="date1" @change="bindDateChange1">
           <view class="picker">
@@ -42,7 +42,7 @@
         <span class="settings">
           <span class="settings_text" v-if="(ling == '' )">未设置</span>
           <span class="settings_text" v-if="(ling != '' )">已设置</span>
-          <i class="img"></i>
+          <!-- <i class="img"></i> -->
         </span>
       </div>
       <div class="effect" @click="Use">
@@ -50,13 +50,13 @@
         <span class="settings">
           <span class="settings_text" v-if="(isOriginalPrice =='')">未设置</span>
           <span class="settings_text" v-if="(isOriginalPrice !='')">已设置</span>
-          <i class="img"></i>
+          <!-- <i class="img"></i> -->
         </span>
       </div>
-      <div class="btn" @click="btn_1">
-        <span class="btn_1">保存</span>
-      </div>
     </form>
+    <div class="btn" @click="btn_1">
+      <span class="btn_1">保存</span>
+    </div>
   </div>
 </template>
 <script>
@@ -173,75 +173,73 @@ export default {
 .head
   height: 89px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .head_text
-    display: inline-block
-    margin-top: 25px
+    width: 200px
+    +singleFile
   .head_input
-    display: inline-block
-    margin-top: 22px
+    flex: 1
+    overflow: hidden
     padding-left: 10px
-    width: 500px
 .value
   height: 118px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .value_text
-    display: inline-block
-    margin-top: 35px
+    width: 200px
+    +singleFile
   .value_input
-    display: inline-block
-    margin-top: 30px
-    margin-left: 90px
+    flex: 1
+    overflow: hidden
     padding-left: 10px
     border: 1px solid #cecece
     border-radius: 4px
-    width: 460px
 .grant
   height: 118px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .grant_text
-    display: inline-block
-    margin-top: 35px
+    width: 200px
+    +singleFile
   .grant_input
     display: inline-block
-    margin-top: 30px
-    margin-left: 33px
     padding-left: 10px
     border: 1px solid #cecece
     border-radius: 4px
     width: 460px
+.form
+  padding: 0 25px
+  background-color: #fff
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
 .effect
+  width: 100%
+  display: flex
+  justify-content: space-between
   height: 110px
-  background: #fff
+  // background: #fff
+  background: url("~@/assets/img/home/shanJiao.png") no-repeat right
+  background-size: 16px 29px
   display: flex
   line-height: 110px
   border-bottom: 1px solid #cecece
   position: relative
+  &:last-of-type
+    border: none
   .text
-    display: inline-block
-    flex: 5
-    padding-left: 20px
-    margin-right: -140px
+    width: 150px
+    +singleFile
   .settings
-    display: inline-block
     flex: 1
-    .settings_text
-      display: inline-block
-      margin-right: 18px
-      margin-left: -20px
-    .img
-      display: inline-block
-      +bg-img('home/shanJiao.png')
-      width: 16px
-      height: 29px
+    text-align: right
+    padding-right: 30px
   .picker_1
     position: absolute
     top: 0
@@ -257,7 +255,8 @@ export default {
   text-align: center
   line-height: 98px
   position: fixed
-  bottom: 0px
+  left: 0
+  bottom: 0
   width: 100%
   .btn_1
     font-size: 32px

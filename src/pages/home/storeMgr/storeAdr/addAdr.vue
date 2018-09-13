@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="line">
-          <div class="box">
+          <div class="picker-box">
             <p>退货地址</p>
             <picker mode="region" @change="bindRegionChange" :value="region">
               <view class="picker">
@@ -52,7 +52,7 @@
 import wx from "wx";
 import btn from "@/components/btn.vue";
 import { $getUrl } from "@/utils";
-import { mapState } from "vuex";
+// import { mapState } from "vuex";
 export default {
   components: {
     btn
@@ -69,10 +69,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["editAdr"])
+    // ...mapState(["editAdr"])
   },
   methods: {
-    async save() {
+    save() {
       const arr = [
         {
           name: this.name,
@@ -103,17 +103,12 @@ export default {
         address: this.adrDetail,
         value: this.region.join(",")
       };
-      if (!this.addressId) {
-        await this.$API.addAdr(params);
-      } else {
-        //edit
-        params.addressId = this.addressId
-        await this.$API.editAdr(params);
-      }
-
-      // this.handleError('添加成功','success')
-      // this.$router.push("/" + $getUrl());
-      this.$router.back(-1)
+      this.$API.addAdr(params).then(response => {
+        wx.showToast({
+          title: '添加成功'
+        })
+        this.$router.back(-1)
+      })
     },
     bindRegionChange(e) {
       this.region = e.mp.detail.value;
@@ -129,24 +124,12 @@ export default {
     }
   },
   mounted() {
-    console.log(this.editAdr);
-    if (this.editAdr) {
-      const data = this.editAdr;
-      this.addressId = data.id;
-      this.name = data.name;
-      this.switch1 = data.isChoice;
-      this.phone = data.mobile;
-      this.adrDetail = data.address;
-      this.region = data.value.split(",");
-      this.$store.commit("EDITADR", "");
-    } else {
       this.addressId = "";
       this.name = "";
       this.switch1 = 0;
       this.phone = "";
       this.adrDetail = "";
       this.region = ["广东省", "广州市", "海珠区"];
-    }
   },
 };
 </script>
@@ -154,10 +137,6 @@ export default {
 @import '~@/assets/css/mixin'
 .set_default
   width: 100%
-.goback
-  +goback(2px)
-  +center
-  right: 24px
 .footer
   position: absolute
   bottom: 80px
@@ -180,6 +159,27 @@ export default {
       color: #000
     input
       width: 75%
+    .goback
+      +goback(2px)
+      +center
+      right: 24px
+  .picker-box
+    width: 100%
+    padding: 33px 0
+    display: flex
+    text-align: left
+    position: relative
+    p
+      width: 25%
+      color: #000
+    .goback
+      +goback(2px)
+      +center
+      right: 24px
+    .picker
+      flex: 1
+      text-align: center
+      overflow: hidden
 .border
   +border(1px,bottom, #f5f5f5)
 

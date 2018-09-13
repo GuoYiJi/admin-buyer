@@ -88,7 +88,14 @@ const storeMgr = [
     config: {
       navigationBarTitleText: '添加退货地址',
       'usingComponents': {
-        'i-message': '/iview/message/index',
+        'i-switch': '/iview/switch/index',
+      }
+    }
+  },{
+    path: '/pages/home/storeMgr/storeAdr/editAdr',
+    config: {
+      navigationBarTitleText: '编辑退货地址',
+      'usingComponents': {
         'i-switch': '/iview/switch/index',
       }
     }

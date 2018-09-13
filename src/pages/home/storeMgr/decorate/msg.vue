@@ -4,7 +4,6 @@
     <!-- <i class="i_store"></i> -->
     <p class="name">店铺头像</p>
     <img class="upload" :src="img" />
-
     </div>
   <div class="line-box">
     <div class="line b_line">
@@ -80,7 +79,8 @@ export default {
       FMimg: "",
       remark: "",
       region: ["广东省", "广州市", "海珠区"],
-      Warehouse: []
+      Warehouse: [],
+      templateId: '1'
     };
   },
   methods: {
@@ -95,10 +95,11 @@ export default {
         this.address = response.data.address
         this.region = [response.data.sheng, response.data.shi, response.data.qu]
         this.FMimg = response.data.wall
+        this.templateId = response.data.templateId
       })
     },
-    toRoute(file) {
-      this.$router.push("/pages/home/storeMgr/" + file);
+    toRoute(url) {
+      this.$router.push("/pages/home/storeMgr/" + url);
     },
     pageTo(url) {
       this.$router.push({path: url, query: {remark: this.remark}})
@@ -111,7 +112,6 @@ export default {
           console.log(file);
           self.img = file.tempFilePaths[0]
           uploadImg(file.tempFilePaths[0], function(url) {
-            console.log('chooseImage成功回调的url==>' + url);
             self.img = url;
           });
           // let tempFilePaths = file.tempFilePaths
@@ -130,60 +130,32 @@ export default {
         console.log(this.region);
     },
     async btn() {
-      console.log(this);
-      const warehouse = await this.$API.warehouse({
-        name: this.name,
-        companyName: this.companyName,
-        address: this.address,
-        head: this.img,
-        wall: this.FMimg,
-        remark: this.remark,
-        sheng: this.region[0],
-        shi: this.region[1],
-        qu: this.region[2]
-      });
-      if (warehouse.code == 1) {
+      if(this.name.length > 10) {
         wx.showToast({
-          title: "成功",
-          icon: "success",
-          duration: 2000
+          title: '店铺名称最多10个字符!',
+          icon: 'none'
+        })
+      }else {
+        const warehouse = await this.$API.warehouse({
+          name: this.name,
+          companyName: this.companyName,
+          address: this.address,
+          head: this.img,
+          wall: this.FMimg,
+          remark: this.remark,
+          sheng: this.region[0],
+          shi: this.region[1],
+          qu: this.region[2]
         });
-        this.$router.back(-1)
+        if (warehouse.code == 1) {
+          wx.showToast({
+            title: "成功",
+            icon: "success",
+            duration: 2000
+          });
+          this.$router.back(-1)
+        }
       }
-      console.log(warehouse);
-    },
-    uploadImg(tempFilePath, callback) {
-      var that = this;
-      wx.uploadFile({
-        url: config.uploadImageUrl,
-        filePath: tempFilePath,
-        name: "file",
-        formData: {
-          name: tempFilePath.substring(10),
-          key: "img/${filename}",
-          policy: config.imgPolicy,
-          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
-          success_action_status: "200",
-          signature: config.imgSignature
-        },
-        success: function(res) {
-          console.log('uploadImg成功的回调===>' + res);
-          if (parseInt(res.statusCode) == 400) {
-            that.handleError("上传的图片大小不能超过2m!");
-          } else if (parseInt(res.statusCode) == 200) {
-            if (that.maxNum && that.imgList.length >= that.maxNum) {
-              that.handleError("不能超过15张图片噢！");
-              return;
-            }
-            callback(
-              config.uploadImageUrl + "/img" + tempFilePath.substring(10)
-            );
-          }
-        },
-        fail: function(err) {
-          console.log(err);
-        },
-      });
     }
   },
   onShow() {

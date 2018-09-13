@@ -2,12 +2,12 @@
   <div class="home">
     <scroll-view scroll-y="true" style="height: 80% " >
       <div class="content">
-        <div class="adr-card" @click="selectAct(item.id, item)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
+        <div class="adr-card" @click="selectAct(item.id)"  v-for="(item,idxx) in areaIdAll" :key="idxx">
             <div class="user">
               <p class="name">{{item.name}}</p>
             </div>
             <div class="adr">
-              <i class="select" :class="[select == item.id && 'active'] " ></i>
+              <i class="select" :class="[templateId == item.id && 'active'] " ></i>
               <p class="adr-text" v-for="(itemzz,indexzz) in item.area" :key="indexzz">运送到{{itemzz.areaName}}；售件{{itemzz.firstPirce}}kg，运费{{itemzz.secondPrice}}元</p>
             </div>
         </div>
@@ -24,27 +24,26 @@ export default {
   components: {},
   data() {
     return {
-      select: '',
       areaIdAll: [],
       templateId: '',
       areazz: [],
       value1: 1,
+      clickToggle: false
     };
   },
   methods: {
-    selectAct(id,item){
-      this.select = id
-      console.log(item.area)
-      console.log(id)
-      for(var i=0;i<item.area.length;i++){
-        console.log(item.area[i].templateId)
-        this.templateId = item.area[i].templateId
-        wx.setStorageSync('templateId',this.templateId)
+    selectAct(id){
+      this.clickToggle = !this.clickToggle
+      if(this.clickToggle) {
+        this.templateId = id
+      }else {
+        this.templateId = ''
       }
+
     },
     saveBut(){
       // this.$router.push( {path:'/pages/home/storeMgr/sendWay/sendWay', query:{templateId: this.templateId}})
-      if(!this.select) {
+      if(!this.templateId) {
         this.$Toast({
           content: '您还未选择',
           type: 'warning'
@@ -53,18 +52,20 @@ export default {
         this.$API.L_changeExpress({
           templateId: this.templateId
         }).then(response => {
-          console.log(response);
+          wx.setStorageSync('templateId', this.templateId)
           this.$router.back(-1)
         })
       }
     }
   },
   async mounted() {
+    if(wx.getStorageSync('templateId')) {
+      this.templateId = wx.getStorageSync('templateId')
+    }
     //L_findFreight
-      const L_findFreightData = await this.$API.L_findFreight({
-      });
-      console.log(L_findFreightData)
-      this.areaIdAll = L_findFreightData.data
+    const L_findFreightData = await this.$API.L_findFreight({
+    });
+    this.areaIdAll = L_findFreightData.data
   }
 };
 </script>

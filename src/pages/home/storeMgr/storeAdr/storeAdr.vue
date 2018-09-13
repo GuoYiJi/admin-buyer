@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper manage-adr">
-    <scroll-view scroll-y lower-threshold='80' style="height: 90%;" @scrolltolower="lower"  >
+    <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower" >
     <div class="content">
       <div class="adr-card" v-for="(item,index) in shopList" :key="index">
         <div class="user">
@@ -72,8 +72,8 @@ export default {
       });
     },
     toEdit(item){
-      this.$store.commit('EDITADR',item)
-      this.toRoute('home/storeMgr/storeAdr/addAdr')
+      // this.$store.commit('EDITADR',item)
+      this.$router.push({path: '/pages/home/storeMgr/storeAdr/editAdr', query: {addressInfo: JSON.stringify(item)}})
     },
     confirmDel(id,index) {
       this.selectAdr = id;

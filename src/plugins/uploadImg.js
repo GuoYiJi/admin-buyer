@@ -10,13 +10,13 @@ import config from '@/config'
 function uploadImg (tempFilePath, callback) {
   var that = this
   console.log(tempFilePath)
-  console.log(config)
+  let location = tempFilePath.lastIndexOf('/') + 1
   wx.uploadFile({
     url: config.uploadImageUrl,
     filePath: tempFilePath,
     name: "file",
     formData: {
-      name: tempFilePath.substring(10),
+      name: tempFilePath.slice(location).toString(),
       key: "img/${filename}",
       policy: config.imgPolicy,
       OSSAccessKeyId: "6MKOqxGiGU4AUk44",
@@ -28,7 +28,7 @@ function uploadImg (tempFilePath, callback) {
       if (res.statusCode == 400) {
         that.handleError("上传的图片大小不能超过2m!");
       } else if (res.statusCode == 200) {
-        callback(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
+        callback(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
       }
     },
     fail: function(err) {

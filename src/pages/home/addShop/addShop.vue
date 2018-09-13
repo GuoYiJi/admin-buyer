@@ -21,7 +21,9 @@
           <!-- <img :src="item" /> -->
           <!-- <i class="cancel_shop" @click="toCancel(index)"></i>
         </div> -->
-        <div class="add" v-for="(item, index) in imageList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}"></div>
+        <div class="add" v-for="(item, index) in imageList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}">
+          <i class="cancel_shop" @click="toCancel(index)"></i>
+        </div>
         <!-- <div v-for="(item, index) in imageList" :key="index"><image :src="item"></image></div> -->
         <div class="addBtn" @tap="bindButtonTapImage">
           <p>+图片</p>
@@ -140,7 +142,7 @@
         <!-- 一级分类 -->
         <ul class="content" v-if="clickNum == 0">
           <li class="item"
-            v-for="(item,idx) in otherData"
+            v-for="(item,idx) in type1Data"
             @click="confirmType('showType1', item)"
             :class="[type1Text.id == item.id && 'active']"
             :key="idx">{{item.name}}
@@ -270,7 +272,7 @@
     </div>
     <i-message id="message" />
     <view class="progress-item" v-show="showProgress">
-      <i-progress :percent="progressValue" status="active"></i-progress>
+      <i-progress :percent="progressValue" hide-info></i-progress>
     </view>
     <!-- <div>
       <i-modal :visible="backTips" @ok="toClose('backTips')" @cancel="toClose('backTips')">
@@ -318,6 +320,7 @@ export default {
       showType1: false,
       showType2: false,
       showType3: false,
+      type1Data: [],
       type2Data: [],
       type3Data: [],
       type4Data: [],
@@ -427,7 +430,11 @@ export default {
     const {data} = await this.$API.searchType({
       types: '2,3,4'
     })
+    console.log("品类数据==================>",data);
     this.otherData = data
+    this.type1Data = data.filter(item => {
+      return parseInt(item.typeId) === 2
+    })
     //过滤tagData
     let tagArr  = []
     this.tagText = ''
@@ -450,13 +457,15 @@ export default {
   methods: {
     //上传图片
     uploadImg(tempFilePath) {
+      console.log('lastIndexOf ============', tempFilePath.slice(tempFilePath.lastIndexOf('/') + 1).toString());
+      var location = tempFilePath.lastIndexOf('/') + 1;
       var that = this;
       const uploadTask = wx.uploadFile({
         url: config.uploadImageUrl,
         filePath: tempFilePath,
         name: "file",
         formData: {
-          name: tempFilePath.substring(10),
+          name: tempFilePath.slice(location).toString(),
           key: "img/${filename}",
           policy: config.imgPolicy,
           OSSAccessKeyId: "6MKOqxGiGU4AUk44",
@@ -465,6 +474,7 @@ export default {
         },
         success: function(res) {
           console.log(res);
+          console.log("tempFilePath  ========", tempFilePath);
           if (parseInt(res.statusCode) == 400) {
             that.handleError("上传的图片大小不能超过2m!");
           } else if (parseInt(res.statusCode) == 200) {
@@ -473,11 +483,11 @@ export default {
               return
             }
             that.imgList.push(
-              config.uploadImageUrl + "/img" + tempFilePath.substring(10)
+              config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString()
             );
             console.log('图片列表===>' + that.imgList);
             // that.$emit('getImg', config.uploadImageUrl + "/img" + tempFilePath.substring(10))
-            that.getImg(config.uploadImageUrl + "/img" + tempFilePath.substring(10))
+            that.getImg(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
           }
         },
         fail: function(err) {
@@ -535,7 +545,8 @@ export default {
     },
     //删除图片
     toCancel(start) {
-      this.imgList.splice(start, 1);
+      // this.imgList.splice(start, 1);
+      this.imageList.splice(start, 1);
       // this.$emit('changeImg',this.images)
     },
     //添加视频
@@ -550,12 +561,13 @@ export default {
         success: function(res) {
           console.log(res);
           var tempFilePath = res.tempFilePath;
+          var location = tempFilePath.lastIndexOf('/') + 1;
           const uploadTask = wx.uploadFile({
             url: config.uploadImageUrl,
             filePath: tempFilePath,
             name: "file",
             formData: {
-              name: tempFilePath,
+              name: tempFilePath.slice(location).toString(),
               key: "video/${filename}",
               policy: config.videoPolicy,
               OSSAccessKeyId: "6MKOqxGiGU4AUk44",
@@ -567,7 +579,7 @@ export default {
               if (res.statusCode == 400) {
                 that.handleError("上传的视频大小不能超过20m!");
               } else if (res.statusCode == 200) {
-                that.videoSrc = config.uploadImageUrl + "/video" + tempFilePath.substring(10);
+                that.videoSrc = config.uploadImageUrl + "/video/" + tempFilePath.slice(location).toString();
                 // that.emitSub();
                 that.getVideo(that.videoSrc);
               }
@@ -666,6 +678,7 @@ export default {
       }
 
       this.goods.state = state
+      this.goods.groupIds = this.shopGroup.groupIds
       //add buyExplan
       this.goods.buyExplan = this.shopExplan.value
       //

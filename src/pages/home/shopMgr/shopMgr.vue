@@ -132,7 +132,7 @@ export default {
   position: fixed
   top: 0
   left: 0
-  z-index: 10
+  // z-index: 10
   padding: 30px 0
   background: #fff
   .input

@@ -79,6 +79,10 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+.home
+  width: 100%
+  height: 100%
+  background-color: #ffffff
 .top
   background: #FA8134
   height: 180px

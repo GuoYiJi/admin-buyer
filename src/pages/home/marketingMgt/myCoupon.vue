@@ -1,38 +1,43 @@
 <template>
-  <div class="home">
-    <div class="nav">
-      <div class="list">
-        <span v-for="(item,idx) in navData" :key="idx" class="item" :class="[tag === item.id && 'active']" @click="handleNav(item.id)">{{item.text}}</span>
-        <div class="line" :style="{left: (tag-1)*33 + '%'}"></div>
-      </div>
-    </div>
-    <div class="content">
-      <div v-if="tag == 1">
-        <p>
-          <myCoupon @click="toMyCoupon" />
-        </p>
-      </div>
-      <div v-else-if="tag == 2">
-        <p>
-          <myCoupon @click="toMyCoupon" />
-        </p>
-      </div>
-      <div v-else-if="tag == 3">
-        <p>
-          <myCoupon @click="toMyCoupon" />
-        </p>
-      </div>
-    </div>
-    <div class="foot" @click="btn">
-      <span class="btn">创建</span>
+<div class="home">
+  <div class="nav">
+    <div class="list">
+      <span v-for="(item,idx) in navData" :key="idx" class="item" :class="[tag === item.id && 'active']" @click="handleNav(item.id)">{{item.text}}</span>
+      <div class="line" :style="{left: tag*33 + '%'}"></div>
     </div>
   </div>
+  <div class="content">
+    <div v-if="tag == 0">
+      <div v-for="(item, index) in couponInfo" :key="index">
+        <myCoupon :couponInfo="item" @click.native="toMyCoupon(item)" />
+      </div>
+    </div>
+
+    <div v-else-if="tag == 1">
+      <div v-for="(item, index) in couponInfo" :key="index" @click="toMyCoupon(item)">
+        <myCoupon :couponInfo="item" />
+        <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
+      </div>
+    </div>
+
+    <div v-else-if="tag == 2">
+      <div v-for="(item, index) in couponInfo" :key="index">
+        <myCoupon :couponInfo="item" :state="2"/>
+        <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
+      </div>
+    </div>
+
+  </div>
+  <div style="height: 60px"></div>
+  <div class="foot" @click="btn">
+    <span class="btn">创建</span>
+  </div>
+</div>
 </template>
 <script>
 import wx from "wx";
 import myCoupon from "@/components/m_myCoupon";
-// import myCouponT from "@/components/m_myCouponT";
-// import myCouponTT from "@/components/m_myCouponTT";
+
 export default {
   components: {
     myCoupon,
@@ -42,34 +47,43 @@ export default {
   data() {
     return {
       tag: 1,
-      navData: [
-        {
-          id: 1,
+      couponInfo: [],
+      navData: [{
+          id: 0,
           text: "未开始"
         },
         {
-          id: 2,
+          id: 1,
           text: "进行中"
         },
         {
-          id: 3,
+          id: 2,
           text: "已失效"
         }
       ]
     };
   },
   methods: {
-    handleNav(tag) {
-      this.tag = tag;
+    handleNav(state) {
+      this.tag = state;
+      this.$API.myCoupon({
+        state
+      }).then(response => {
+        this.couponInfo = response.data.list
+        console.log(this.couponInfo)
+      })
     },
-    toMyCoupon() {
-      this.$router.push("/pages/home/marketingMgt/details");
+    toMyCoupon(item) {
+      console.log(item);
+      this.$router.push({path: "/pages/home/marketingMgt/details", query: {item: JSON.stringify(item)}});
     },
     btn() {
       this.$router.push("/pages/home/marketingMgt/couponSetting");
     }
   },
-  mounted() {}
+  onShow() {
+    this.handleNav(this.tag)
+  },
 };
 </script>
 <style lang="sass" scoped>
@@ -79,6 +93,11 @@ export default {
   .active
     color: #F67C2F
   .nav
+    width: 100%
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 1000
     overflow: hidden
     text-align: center
     background: #f5f5f5
@@ -112,8 +131,11 @@ export default {
         // margin: 0 6%
         transition: left .3s ease-in
   .content
-    .text
-      margin: 0 auto
+    margin-top: 100px
+    p.info
+      padding: 15px 20px
+      font-size: 32px
+      color: #000
   .foot
     position: fixed
     bottom: 0px
@@ -124,4 +146,5 @@ export default {
     color: #fff
     font-size: 32px
     text-align: center
+    z-index: 100
 </style>

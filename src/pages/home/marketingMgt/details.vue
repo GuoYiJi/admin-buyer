@@ -1,53 +1,73 @@
 <template>
   <div class="nav">
     <form class="form">
-      <div class="head">
+        <div class="head">
         <span class="head_text">优惠券名称：</span>
-        <input class="head_input" type="text" value="优惠券名称" disabled="true">
+        <input class="head_input" v-model="head_input" type="text" placeholder="请输入（8个字以内，不可特殊字符）" disabled="true">
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" type="text" value="12" disabled="true">
+        <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值" disabled="true">
       </div>
-      <div class="grant">
+        <div class="grant">
         <span class="grant_text">发放总量：</span>
-        <input class="grant_input" type="text" placeholder="请输入发放数量" value="45">
+        <input class="grant_input" v-model="grant_input" type="text" placeholder="请输入发放数量" disabled="true">
       </div>
       <div class="effect">
         <span class="text">生效时间：</span>
-        <span class="picker_1">2018-12-02</span>
+        <span class="settings" v-if="(date == '')">
+          未设置
+          <!-- <i class="img"></i> -->
+        </span>
+        <!-- <picker class="picker_1" v-model="date" mode="date" :value="date" @change="bindDateChange">
+          <view class="picker">
+            {{date}}
+          </view>
+        </picker> -->
       </div>
       <div class="effect">
         <span class="text">过期时间：</span>
-        <span class="picker_1">2018-12-02</span>
+        <span class="settings" v-if="(date1 == '')">
+          未设置
+          <!-- <i class="img"></i> -->
+        </span>
+        <picker class="picker_1" mode="date" :value="date1" @change="bindDateChange1">
+          <view class="picker">
+            {{date1}}
+          </view>
+        </picker>
       </div>
-      <div class="effect">
+      <div class="effect" @click="Receive">
         <span class="text">领取设置：</span>
         <span class="settings">
-          <span class="settings_text">已设置</span>
-          <i class="img"></i>
+          <span class="settings_text" v-if="(ling == '' )">未设置</span>
+          <span class="settings_text" v-if="(ling != '' )">已设置</span>
+          <!-- <i class="img"></i> -->
         </span>
       </div>
-      <div class="effect">
+      <div class="effect" @click="Use">
         <span class="text">使用设置：</span>
         <span class="settings">
-          <span class="settings_text">已设置</span>
-          <i class="img"></i>
+          <span class="settings_text" v-if="(isOriginalPrice =='')">未设置</span>
+          <span class="settings_text" v-if="(isOriginalPrice !='')">已设置</span>
+          <!-- <i class="img"></i> -->
         </span>
       </div>
-      <div class="btn">
-        <span class="btn_1" @click="btn_1()">保存</span>
-        <span class="btn_2">使失效</span>
-      </div>
     </form>
+    <div class="btn" @click="btn_1">
+      <span class="btn_1">保存</span>
+    </div>
   </div>
 </template>
 <script>
 import wx from "wx";
 export default {
-    components: {},
     data() {
-        return {};
+        return {
+          couponInfo: {},
+          startTime: '',
+          endTime: ''
+        };
     },
     methods: {
         btn_1() {
@@ -56,7 +76,13 @@ export default {
             });
         }
     },
-    mounted() {}
+    mounted() {
+      if(this.$route.query.item) {
+        this.couponInfo = JSON.parse(this.$route.query.item)
+        this.startTime = this.couponInfo.startTime.split(' ')[0].toString()
+        this.endTime = this.couponInfo.endTime.split(' ')[0].toString()
+      }
+    }
 };
 </script>
 <style lang="sass" scoped>
@@ -64,112 +90,92 @@ export default {
 .head
   height: 89px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .head_text
-    display: inline-block
-    margin-top: 25px
+    width: 200px
+    +singleFile
   .head_input
-    display: inline-block
-    margin-top: 20px
+    flex: 1
+    overflow: hidden
     padding-left: 10px
-    width: 460px
 .value
   height: 118px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .value_text
-    display: inline-block
-    margin-top: 35px
+    width: 200px
+    +singleFile
   .value_input
-    display: inline-block
-    margin-top: 30px
-    margin-left: 90px
+    flex: 1
+    overflow: hidden
     padding-left: 10px
+    border: 1px solid #cecece
     border-radius: 4px
-    width: 460px
 .grant
   height: 118px
   background: #fff
-  padding: 0 23px
   display: flex
+  align-items: center
   border-bottom: 1px solid #cecece
   .grant_text
-    display: inline-block
-    margin-top: 35px
+    width: 200px
+    +singleFile
   .grant_input
     display: inline-block
-    margin-top: 30px
-    margin-left: 33px
     padding-left: 10px
     border: 1px solid #cecece
     border-radius: 4px
     width: 460px
+.form
+  padding: 0 25px
+  background-color: #fff
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
 .effect
+  width: 100%
+  display: flex
+  justify-content: space-between
   height: 110px
-  background: #fff
+  // background: #fff
+  background: url("~@/assets/img/home/shanJiao.png") no-repeat right
+  background-size: 16px 29px
   display: flex
   line-height: 110px
   border-bottom: 1px solid #cecece
   position: relative
+  &:last-of-type
+    border: none
   .text
-    display: inline-block
-    flex: 5
-    padding-left: 20px
-    margin-right: -140px
+    width: 150px
+    +singleFile
   .settings
-    display: inline-block
     flex: 1
-    .settings_text
-      display: inline-block
-      margin-right: 18px
-      margin-left: -20px
-    .img
-      display: inline-block
-      +bg-img('home/shanJiao.png')
-      width: 16px
-      height: 29px
-  .picker_1
-    position: absolute
-    top: 0px
-    right: 0px
-    width: 210px
-    height: 110px
+    text-align: right
+    padding-right: 30px
+  // .picker_1
+  //   position: absolute
+  //   top: 0
+  //   right: 0
+  //   left: 0
+  //   bottom: 0
+  //   .picker
+  //     height: 110px
+  //     padding-left: 70%
 .btn
-  height: 404px
+  height: 98px
+  background: #F67C2F
   text-align: center
+  line-height: 98px
   position: fixed
-  bottom: 0px
+  left: 0
+  bottom: 0
   width: 100%
-  background: #fff
   .btn_1
     font-size: 32px
     color: #fff
-    background: #F67C2F
-    display: inline-block
-    width: 300px;
-    height: 90px;
-    line-height: 90px
-    text-align: center
-    border-radius: 10px;
-    position: absolute
-    top: 215px;
-    left: 65px;
-
-  .btn_2
-    font-size: 32px
-    display: inline-block
-    color: #fff
-    background: #CCCCCC
-    width: 300px;
-    height: 90px;
-    border-radius: 10px;  
-    position: absolute 
-    top: 215px;
-    left: 379px;
-    line-height: 90px
-    text-align: center
 </style>

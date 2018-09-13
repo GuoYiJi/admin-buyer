@@ -4,13 +4,14 @@
       <p class="name">不限制金额</p>
       <i-switch :value="switch1" @change="onChange" slot="footer"></i-switch>
     </div>
-    <div class="please">
-      <span class="please_text">订单金额：</span>
-      <input class="please_input" v-model="please_input" :disabled="disa" @change="bindKeyInput" type="text" placeholder="请输入订单金额">
+    <div v-show="!switch1">
+      <div class="please">
+        <span class="please_text">订单金额：</span>
+        <input class="please_input" v-model="please_input" :disabled="disa" @change="bindKeyInput" type="text" placeholder="请输入订单金额">
+      </div>
+      <div class="text" v-if="(text == 0)">任何金额都可以使用</div>
+      <div class="text" v-if="(text == 1)">当前优惠券面值为：{{please_input}}元；订单金额必须大于优惠券金额</div>
     </div>
-    <div class="text" v-if="(text == 0)">任何金额都可以使用</div>
-    <div class="text" v-if="(text == 1)">当前优惠券面值为：{{please_input}}元；订单金额必须大于优惠券金额</div>
-    <!-- <div class="text" v-else>订单金额必须大于优惠券金额</div> -->
   </div>
 </template>
 <script>

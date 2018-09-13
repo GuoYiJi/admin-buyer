@@ -14,7 +14,10 @@ import wx from "wx";
 export default {
   components: {},
   data() {
-    return { isLimitCount: "", please_input: "" };
+    return {
+      isLimitCount: "",
+      please_input: ""
+    };
   },
   methods: {
     toSettings() {
