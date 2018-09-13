@@ -48,6 +48,7 @@ export default {
     onReachBottom() {
 
     },
+<<<<<<< HEAD
     async mounted() {
         // this.navData.push(JSON.parse(this.$route.query.item))
         
@@ -57,6 +58,11 @@ export default {
       });
       this.navData = L_selectOrderData.data
       console.log(this.navData)
+=======
+    mounted() {
+        this.navData.push(JSON.parse(this.$route.query.item))
+        console.log(this.navData)
+>>>>>>> remotes/origin/Jchan
     },
 
 };

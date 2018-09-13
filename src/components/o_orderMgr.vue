@@ -159,7 +159,13 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
+<<<<<<< HEAD
     this.orderList = this.orderList.concat(listData.data.list); 
+=======
+    // console.log(listData);
+    this.orderList = this.orderList.concat(listData.data.list);
+    this.orderList = this.orderList.concat(listData.data.list);
+>>>>>>> remotes/origin/Jchan
     for(var i=0;i<this.orderList.length;i++){
       if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
         this.sigleList.push(this.orderList[i])
@@ -171,6 +177,10 @@ export default {
     if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
+<<<<<<< HEAD
+=======
+    // console.log(this.noSigleList)
+>>>>>>> remotes/origin/Jchan
   }
 };
 </script>

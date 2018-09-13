@@ -500,8 +500,9 @@ export default {
       }
 
       obj.name = this.name
-      obj.labelInfo = this.goods.labelInfo,
-      obj.labelInfo2 = this.goods.labelInfo2 + ',' + this.versionName.concat(this.postLabelInfo2).toString(),
+      obj.labelInfo = this.goods.labelInfo
+      obj.labelInfo2 = this.goods.labelInfo2 + ',' + this.versionName.concat(this.postLabelInfo2).toString()
+      obj.labelInfo3 = this.versionName.toString()
       console.log('obj=>' + obj)
       if(obj.skuList.length > 0){
         let str = ''

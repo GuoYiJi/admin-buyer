@@ -21,11 +21,26 @@
                 <span class="number">X{{item.countNum}}</span>
                 <div >
                   <div class="maShuo">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+                    <scroll-view scroll-x="true" style=" width:80%  display: flex" >
+                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
+                    </scroll-view>
+                    <span class="edit" @click="edit(item,item.orderId)">编辑</span>
+                    <!-- <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
+                    <span class="edit" @click="edit(item)">编辑</span> -->
+=======
+>>>>>>> remotes/origin/Jchan
                     
                     <scroll-view scroll-x="true" style=" width:180px  " >
                       <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
                     </scroll-view>
                     <span class="edit" @click="edit(item,item.orderId)">编辑</span>
+<<<<<<< HEAD
+=======
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
                   </div>
                 </div> 
             <!-- </div> -->
@@ -91,7 +106,16 @@
           </ul>
         </div>
         <div class="title_t" >
+<<<<<<< HEAD
               
+=======
+<<<<<<< HEAD
+
+          <scroll-view scroll-y lower-threshold='80' style="height: 83%;" >
+=======
+              
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
             <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
@@ -224,7 +248,15 @@ export default {
             } else if (this.select == 1) {
                 this.select = 0;
             }
+<<<<<<< HEAD
         }, 
+=======
+<<<<<<< HEAD
+        },
+=======
+        }, 
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
         add(index,itemss){
           console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
@@ -256,7 +288,15 @@ export default {
             sessionId: this.azzSessionId,
             shopId: this.appId,
             orderIds: this.orderIds,
+<<<<<<< HEAD
             orderDeliver:  
+=======
+<<<<<<< HEAD
+            orderDeliver:
+=======
+            orderDeliver:  
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
             [{
               num: this.value1,
               // canDeliverNumber: ,
@@ -289,7 +329,15 @@ export default {
                               })
                             }else{
                             }
+<<<<<<< HEAD
                             
+=======
+<<<<<<< HEAD
+
+=======
+                            
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
                             // this.isShows = false
                           }
                         })
@@ -418,7 +466,14 @@ export default {
       
     },
     async mounted() {
+<<<<<<< HEAD
       
+=======
+<<<<<<< HEAD
+=======
+      
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
     },
 };
 </script>
@@ -491,8 +546,17 @@ page
         border: 1px solid #F67C2F
         color: #F67C2F
         border-radius: 8px
+<<<<<<< HEAD
         margin-left: 10px
   .jiaGe 
+=======
+<<<<<<< HEAD
+  .jiaGe
+=======
+        margin-left: 10px
+  .jiaGe 
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
     // height: 70px
     width: 100%
     background: #fff
@@ -743,7 +807,19 @@ page
               width: 80px
               height: 40px
 
+<<<<<<< HEAD
   .foot 
+=======
+<<<<<<< HEAD
+
+
+
+
+  .foot
+=======
+  .foot 
+>>>>>>> remotes/origin/Lqi
+>>>>>>> remotes/origin/Jchan
     width: 100%
     position: fixed
     bottom: 0px
