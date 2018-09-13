@@ -15,7 +15,7 @@
       </text>
     </div>
     <div class="list" v-for="(item,idx) in navData.goodsList" :key="idx">
-      <div class="kuang">
+      <div class="kuang" @click="orderListArr(item.goodsId)">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -192,6 +192,11 @@ export default {
         },
         passClose(){
           this.passhow = false
+        },
+        //跳转商品详情
+        orderListArr(goodsId){
+          console.log(goodsId)
+          this.$router.push( {path:'/pages/home/orderMgr/orderList', query:{goodsId: goodsId}})
         },
     },
     async mounted() {

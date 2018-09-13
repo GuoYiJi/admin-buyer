@@ -208,82 +208,82 @@ export default {
           console.log(this.orderList)
            this.isShows = !this.isShows;
         },
-      getNextPage() {
-        var obj = {
-          pageSize: 10,
-          orderType: this.type,
-          state: 5,
-          receiptName: this.but
-          // state: this.tag
-        };
-        this.shopNum++;
-        obj.pageNumber = this.shopNum;
-        return this.$API.L_selectOrderPage(obj);
-      },
-      async action(){
-          console.log(11)
-        this.shopNum = 0;
-        const listData = await this.getNextPage({orderType: 0});
-        this.orderList = [];
-        this.orderList = this.orderList.concat(listData.data.list);
-        let skuList = []
-        for(var i=0;i<this.orderList.length;i++){
-          let orderGoods = this.orderList[i].orderGoods
-          for(var k=0;k<orderGoods.length;k++){
-            skuList = orderGoods[i].skuList
-            
+        getNextPage() {
+          var obj = {
+            pageSize: 10,
+            orderType: this.type,
+            state: 5,
+            receiptName: this.but
+            // state: this.tag
+          };
+          this.shopNum++;
+          obj.pageNumber = this.shopNum;
+          return this.$API.L_selectOrderPage(obj);
+        },
+        async action(){
+            console.log(11)
+          this.shopNum = 0;
+          const listData = await this.getNextPage({orderType: 0});
+          this.orderList = [];
+          this.orderList = this.orderList.concat(listData.data.list);
+          let skuList = []
+          for(var i=0;i<this.orderList.length;i++){
+            let orderGoods = this.orderList[i].orderGoods
+            for(var k=0;k<orderGoods.length;k++){
+              skuList = orderGoods[i].skuList
+              
+            }
+            for(var j=0;j<skuList.length;j++){
+              console.log(111)
+              let stallInfos = {
+                stallInfodx: skuList[j].stallInfo2
+              }
+              console.log(stallInfos)
+              let stallInfozzsxx = {
+                stallInfodk: skuList[j].stallInfo3,
+              }
+              let deliverys = {
+                deliveryxh: skuList[j].delivery,
+              }
+              this.stallInfo = stallInfos
+              this.stallInfozzs = stallInfozzsxx
+              this.delivery = deliverys
+              console.log(this.stallInfozz)
+              console.log(this.delivery)
+            }
           }
-          for(var j=0;j<skuList.length;j++){
-            console.log(111)
-            let stallInfos = {
-              stallInfodx: skuList[j].stallInfo2
-            }
-            console.log(stallInfos)
-            let stallInfozzsxx = {
-              stallInfodk: skuList[j].stallInfo3,
-            }
-            let deliverys = {
-              deliveryxh: skuList[j].delivery,
-            }
-            this.stallInfo = stallInfos
-            this.stallInfozzs = stallInfozzsxx
-            this.delivery = deliverys
-            console.log(this.stallInfozz)
-            console.log(this.delivery)
-          }
-        }
-        console.log(this.$refs.chufa,202)
-        this.$refs.chufa.childMethod();
-        return
-      },
-      lower(e) {
-        if (!this.canLoad) {
-          wx.showToast({
-            title: '没有更多数据了',
-            icon: 'none',
-            duration: 1500
-          })
+          console.log(this.$refs.chufa,202)
+          this.$refs.chufa.childMethod();
           return
-        }
-        
-        if (this.showLoad) return;
-        this.showLoad = true
-        wx.showLoading({
-          title: '加载中',
-        })
-        const vm = this;
-        this.getNextPage({ob: this.type,state: this.state}).then(response => {
-          vm.onPlayList =  vm.onPlayList.concat(response.data.list);
-          if(response) {
-            vm.showLoad = false
+        },
+        lower(e) {
+          if (!this.canLoad) {
+            wx.showToast({
+              title: '没有更多数据了',
+              icon: 'none',
+              duration: 1500
+            })
+            return
           }
-          if(vm.orderList.length === response.data.totalRow) {
-            vm.canLoad = false
-          }
-          this.orderList = this.orderList.concat(listData.data.list); 
-          wx.hideLoading()
-        })
-      } ,
+          
+          if (this.showLoad) return;
+          this.showLoad = true
+          wx.showLoading({
+            title: '加载中',
+          })
+          const vm = this;
+          this.getNextPage({ob: this.type,state: this.state}).then(response => {
+            vm.onPlayList =  vm.onPlayList.concat(response.data.list);
+            if(response) {
+              vm.showLoad = false
+            }
+            if(vm.orderList.length === response.data.totalRow) {
+              vm.canLoad = false
+            }
+            this.orderList = this.orderList.concat(listData.data.list); 
+            wx.hideLoading()
+          })
+        } ,
 
     },
     async mounted() {

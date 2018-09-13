@@ -6,10 +6,9 @@
           <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state" v-if="item.ping"> 
             {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
-
               ，
-            <span v-for="(itemss,idss) in item.orderGoods" :key="idss">
-              还差{{item.ping.num-itemss.skuList.length}}人
+            <span>
+              还差{{item.ping.num-item.pingUser.length}}人
             </span>
           </p>
         </div>

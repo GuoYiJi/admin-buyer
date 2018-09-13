@@ -100,7 +100,7 @@ export default {
       var obj = {
         pageSize: 30,
         orderType: this.type,
-        state: 8
+        state: 7
       };
       this.shopNum++;
       obj.pageNumber = this.shopNum;

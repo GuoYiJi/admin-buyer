@@ -12,7 +12,7 @@
       </text>
     </div>
     <div class="list" v-for="(item,idx) in navData.goodsList" :key="idx">
-      <div class="kuang">
+      <div class="kuang" @click="orderListArr(item.goodsId)">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -141,12 +141,11 @@ export default {
           this.passhowYes = false
         },
         async passYesBut(){
-          const L_dealWithOrderData = await this.$API.L_dealWithOrder({
+          const L_sureReund = await this.$API.L_sureReund({
             orderRefundId: this.idzz,
-            state: 1,
           });
-          console.log(L_dealWithOrderData)
-          if(L_dealWithOrderData.code == 1){
+          console.log(L_sureReund)
+          if(L_sureReund.code == 1){
             wx.showToast({               
               title: '退款成功',               
               icon: 'success',  
@@ -190,12 +189,17 @@ export default {
         passClose(){
           this.passhow = false
         },
+        //跳转商品详情
+        orderListArr(goodsId){
+          console.log(goodsId)
+          this.$router.push( {path:'/pages/home/orderMgr/orderList', query:{goodsId: goodsId}})
+        },
     },
     async mounted() {
       this.orderId = this.$route.query.orderId
       console.log(this.orderId)
       const L_selectOrderData = await this.$API.L_selectOrderRefundDetail({
-        orderId: this.$route.query.orderId
+        orderRefundId: this.$route.query.orderId
       });
       // console.log(L_selectOrderData)
       this.navData = L_selectOrderData.data

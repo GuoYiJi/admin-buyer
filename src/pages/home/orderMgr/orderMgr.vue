@@ -3,7 +3,7 @@
     <div class="search-box" >
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
-        <p class="input-box" @click="toRoute('shopMgr/search')">请搜索订单号、收货人姓名、手机号</p>
+        <p class="input-box" @click="toRoute('shopMgr/searchOrder')">请搜索订单号、收货人姓名、手机号</p>
       </div>
     </div>
     <div class="nav">
@@ -137,7 +137,7 @@ export default {
         },
         {
           id: 9,
-          text: "取消"
+          text: "已取消"
         },
       ],
       shopNum: 0,

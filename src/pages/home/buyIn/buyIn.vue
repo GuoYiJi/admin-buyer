@@ -157,21 +157,21 @@ export default {
       if (tag === 2) {
         //对销量sort
         this.asceSaleDK = !this.asceSaleDK;
-        type = this.asceSaleDK ? 1 : 2;
+        type = this.asceSaleDK ? 0 : 1;
       }
       if (tag === 3) {
         //对销量sort
         this.asceSaleName = !this.asceSaleName;
-        type = this.asceSaleName ? 3 : 4;
+        type = this.asceSaleName ? 2 : 3;
       }
       if (tag === 4) {
         this.ascePriceOd = !this.ascePriceOd;
-        type = this.ascePriceOd ? 5 : 6;
+        type = this.ascePriceOd ? 4 : 5;
       }
       if (tag === 5) {
         //对销量sort
         this.ascePrice = !this.ascePrice;
-        type = this.ascePrice ? 7 : 8;
+        type = this.ascePrice ? 6 : 7;
       }
       this.type = type;
       console.log(type)

@@ -72,6 +72,11 @@ export default {
       this.tag = tag;
       var type = 0 ;
       this.shopNum = 0;
+      if (tag === 1) {
+        //对销量sort
+        this.asceSale = !this.asceSale;
+        type = 1;
+      }
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
@@ -87,9 +92,17 @@ export default {
         orderType: this.type,
         // state: 1
       })
-
-      this.orderList = listData.data.list
-      console.log(this.orderList)
+      // this.orderList = listData.data.list
+      this.orderList = this.orderList.concat(listData.data.list); 
+      for(var i=0;i<this.orderList.length;i++){
+        if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
+          this.sigleList.push(this.orderList[i])
+          // console.log(this.sigleList)
+        } else{
+          this.noSigleList.push(this.orderList[i])
+          console.log(this.noSigleList)
+        }
+      }
       if(listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
@@ -114,13 +127,11 @@ export default {
         })
         return
       }
-      
       if (this.showLoad) return;
       this.showLoad = true
       wx.showLoading({
         title: '加载中',
       })
-
       const vm = this;
 
       this.getNextPage({ob: this.type,state: this.state}).then(response => {
@@ -142,18 +153,6 @@ export default {
         }
         wx.hideLoading()
       })
-
-      // this.getNextPage().then(response => {
-      //   listData = response;
-      //   console.log(listData)
-      // });
-      // setTimeout(() => {
-      //   if (listData.data.list.length < 30) {
-      //     this.canLoad = false;
-      //   }
-      //   this.orderList = this.orderList.concat(listData.data.list);
-      //   this.showLoad = false;
-      // }, 2000);
     } ,  
 
   },

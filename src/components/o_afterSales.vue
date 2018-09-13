@@ -3,13 +3,13 @@
     <div class="list" v-for="(item,idx) in shopListRefund" :key="idx" >
       <div class="kuang clearfix">
         <div class="title">
-          <text class="name">订单编号：{{item.orderId}}</text>
+          <text class="name">订单编号：{{item.orderRefundNo}}</text>
           <text class="fuKuan">
-            {{item.state==0?'未处理':item.state==1?'已通过':item.state==2?'不通过':item.state==3?'同意':item.state==4?'已经发货':'撤销'}}
+            {{navData.state==0?'待处理':navData.state==1?'等待卖家发货':navData.state==2?'被拒绝':navData.state==3?'同意':navData.state==4?'等待卖家发货':'关闭'}}
           </text>
         </div>
-        <div class="img"  >
-          <div >
+        <div class="img"  @click="sanJiaoBut(item.id)">
+          <div  >
             <img v-for="(itemzz,num) in item.goodsList" :key="num" class="sPimg" :src="itemzz.image" v-if="num < 3"/>
           </div>
           <div>
@@ -26,25 +26,25 @@
         </div>
         <!-- 判断未操作 -->
         <div class="btn"  v-if="item.state == 0 ">
-          <span class="details"  @click="details(item.orderId)">查看详情</span>
+          <span class="details"  @click="details(item.id)">查看详情</span>
           <span class="confirm"  @click="confirm(item,index)">同意</span>
           <span class="close"    @click="passBut(item,idnex)">拒绝</span></div>
         <!-- 判断是否在发货 -->
         <div class="btn" v-else-if="(item.state == 4)">
-          <span class="details" @click="detailsSH(item.orderId)">查看详情</span>
-          <span class="close"    @click="passBut(item,idnex)">确认收货</span>
+          <span class="details" @click="detailsSH(item.id)">查看详情</span>
+          <span class="close"    @click="confirmzz(item,index)">确认收货</span>
         </div>
         <!-- 判断是否已经取消或者同意 -->
         <div class="btn" v-else="(item.state == 1) || (item.state == 2) || (item.state == 3) || (item.state == 5)">
-          <span class="details" @click="detailsAll(item.orderId)">查看详情</span>
+          <span class="details" @click="detailsAll(item.id)">查看详情</span>
         </div>
 
       </div>
-      <!-- 售后同意弹窗 -->
+      <!-- 售后仅退款同意弹窗 -->
       <div class="closeTipAll" v-show="passhowYes">
         <div class="closeTip">
           <div class="closeTip_text">
-            <p class="tipText">是否确认收货？将自动退还 金额￥{{item.price}}</p>
+            <p class="tipText">是否确认收货？将自动退还 金额￥{{item.price}}给{{navData.addressName}}</p>
           </div>
           <div class="confirm_but">
             <div><button @click="passYesClose">取消</button></div>
@@ -62,6 +62,18 @@
           <div class="closeTip_but">
             <div><button @click="passClose">取消</button></div>
             <div><button @click="passYes">确定</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- 售后退货退款同意弹窗 -->
+      <div class="closeTipAll" v-show="passhowYeszz">
+        <div class="closeTip">
+          <div class="closeTip_text">
+            <p class="tipText">是否确认收货？将自动退还 金额￥{{item.price}}给{{navData.addressName}}</p>
+          </div>
+          <div class="confirm_but">
+            <div><button @click="passYesClosezz">取消</button></div>
+            <div><button @click="passYesButzz">确定</button></div>
           </div>
         </div>
       </div>
@@ -83,6 +95,7 @@ export default {
             textword: '',
             idzz: '',
             passhowYes: false,
+            passhowYeszz: false,
             moneyzz: '',
             currentSelectedIndex: 0
 
@@ -106,6 +119,7 @@ export default {
         passYesClose(){
           this.passhowYes = false
         },
+        //仅退款
         async passYesBut(){
           const L_dealWithOrderData = await this.$API.L_dealWithOrder({
             orderRefundId: this.idzz,
@@ -125,14 +139,50 @@ export default {
           }
 
         },
+
+        confirmzz(item,index) {
+          console.log(item)
+          this.idzz = item.id
+          // this.idzz = item.orderId
+          this.passhowYeszz = true
+          this.currentSelectedIndex = index
+          this.moneyzz = item.price
+        },
+        passYesClosezz(){
+          this.passhowYeszz = false
+        },
+        //仅退款
+        async passYesButzz(){
+          const L_sureReund = await this.$API.L_sureReund({
+            orderRefundId: this.idzz,
+          });
+          console.log(L_sureReund)
+          if(L_sureReund.code == 1){
+            wx.showToast({               
+              title: '退款成功',               
+              icon: 'success',  
+              duration: 2000  
+            }) 
+            this.passhowYeszz = false
+          }else{
+            this.passhowYeszz = false
+
+          }
+
+        },
         details(id){
+          console.log(id)
           this.$router.push({path:'obligations/collectPerson',query:{orderId: id}})
         },
         detailsSH(id){
+
           this.$router.push({path:'obligations/obligations',query:{orderId: id}})
         },
         detailsAll(id){
           this.$router.push({path:'obligations/obligationsPerson',query:{orderId: id}})
+        },
+        sanJiaoBut(id){
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         passBut(item ,index){
           console.log(item)
@@ -168,7 +218,8 @@ export default {
     },
     mounted() {
         // this.shuoLiang();
-    }
+    },
+
 };
 </script>
 <style lang="sass" scoped>
@@ -195,6 +246,7 @@ page
     .name
      flex: 9
      padding-left: 20px
+    //  font-size: 20px
     .fuKuan
      flex: 2
     //  padding-left: 60px

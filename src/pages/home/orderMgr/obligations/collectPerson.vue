@@ -7,7 +7,7 @@
       </text>
     </div>
     <div class="list" v-for="(item,idx) in navData.goodsList" :key="idx">
-      <div class="kuang">
+      <div class="kuang" @click="orderListArr(item.goodsId)">
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
           <div class="title">{{item.name}}</div>
@@ -40,7 +40,7 @@
     <div class="orderImg">
       <div class="imgAll">
         <p>凭证：</p>
-        <div v-if="navData">
+        <div>
           <scroll-view scroll-y lower-threshold='80' width="100%">
             <img :src="navData.img1">
             <img :src="navData.img2">
@@ -61,7 +61,7 @@
     <div class="closeTipAll" v-show="passhowYes">
       <div class="closeTip">
         <div class="closeTip_text">
-          <p class="tipText">是否确认收货？将自动退还 金额￥{{navData.price}}</p>
+          <p class="tipText">是否确认收货？将自动退还 金额￥{{navData.price}}给{{navData.addressName}}</p>
         </div>
         <div class="confirm_but">
           <div><button @click="passYesClose">取消</button></div>
@@ -186,12 +186,17 @@ export default {
         passClose(){
           this.passhow = false
         },
+        //跳转商品详情
+        orderListArr(goodsId){
+          console.log(goodsId)
+          this.$router.push( {path:'/pages/home/orderMgr/orderList', query:{goodsId: goodsId}})
+        },
     },
     async mounted() {
       this.orderId = this.$route.query.orderId
       console.log(this.orderId)
       const L_selectOrderData = await this.$API.L_selectOrderRefundDetail({
-        orderId: this.$route.query.orderId
+        orderRefundId: this.$route.query.orderId
       });
       // console.log(L_selectOrderData)
       this.navData = L_selectOrderData.data

@@ -149,14 +149,12 @@ export default {
     }
   },
   async onShow(){
-    this.orderId = this.$route.query.orderId
-    console.log(this.orderId)
-    const L_selectOrderData = await this.$API.L_selectOrderRefundDetail({
-      orderId: this.$route.query.orderId
-    });
-    // console.log(L_selectOrderData)
-    this.navData = L_selectOrderData.data
-    console.log(navData)
+    const listDatazz = await this.getNextPage();
+    this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
+    if (this.shopListRefund.length < 10) {
+      this.canLoad = false;
+    }
+    // this.shopListRefund = L_selectOrderData.data
     
   }
 };

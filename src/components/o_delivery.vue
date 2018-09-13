@@ -28,8 +28,8 @@
                     <div style="width:80%;float:left;">
                         <div class="text" v-for="(itemList,ids) in itemzz.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</div>
                     </div>
-                    <span v-if="editClick" class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
-                    <span v-if="!editClick" class="edit">编辑</span>
+                    <span v-if=" item.remainNum != 0 "  class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
+                    <!-- <span v-if="!editClick" class="edit">编辑</span> -->
                   </div>
                 </div>  
                 <!-- </div> -->
@@ -80,7 +80,7 @@
             <!-- </div> -->
           </div>
           <div class="number_1" v-if="(item.layer!=-1)">
-            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
+            <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen" @click="childrenBut(childrenzz.id)">
               <div class="completed_1">子订单编号
                 {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
               ：{{childrenzz.orderNo}}</div>
@@ -121,7 +121,7 @@
                   <div class="numCut"> <button @click="subtract(idss)">-</button></div>
                   <div class="numInput">
                     <!-- {{inputValueArr[idss]}} -->
-                    <input type="text" value="0" v-model="inputValueArr[idss]">
+                    <input type="text"  v-model="inputValueArr[idss]">
                     </div>
                   <div class=" "><button @click="add(idss,itemss)" :disabled="inputValueArr[idss] >= itemss.waitNum">+</button></div>
                 </div>
@@ -289,7 +289,6 @@ export default {
           console.log(this.value1)
           // console.log(this.inputValueArr)
           if( this.inputValueArr[index] > 0 ){
-            console.log(111111111111111111111111111)
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
@@ -365,79 +364,77 @@ export default {
         },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum,Indexs) {
-          // this.orderIds = itemss.orderIds
-          
+          // console.log(itemss)
           this.orderIds = idNum
           this.isShow = !this.isShow;
-          this.orderDeliver = [];
-          // this.goodsId = itemss.goodsId
-          // this.skuCode = []
-          // let vueNum =  this.value1
+          // this.orderDeliver = [];
           let orderLisetArr = itemss.skuList
           let deliverList = itemss.deliverList
           let array = [];
           for(var i=0; i<orderLisetArr.length;i++){
             let obj = {};
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-            
             this.orderIds = orderLisetArr[i].orderId
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
-            obj.canNumer = orderLisetArr[i].canNumer
+            // obj.canNumer = deliverList[i].canDeliverNumber
             obj.num = orderLisetArr[i].num
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
-            array.push(obj)
+            array.push(obj) 
           }
-          // this.orderDeliverArray[Indexs] = array;
           this.orderDeliver = array;
           console.log(this.orderDeliver)
           this.orderDeliver.forEach((item, index) => {
+            // this.inputValueArr[index] = item.canNumer;
             this.inputValueArr[index] = 0;
+
           })
         },
-      //   父组件触发函数
-      childMethod(){
-         var that = this;
-        setTimeout( res => {
-          console.log(this.orderList,'hhhhhhhhh')
-          var List = this.orderList;
-          var arr = [];
-          var len = List.length;
-           var arrTwo = [];
-          for(var i=0;i<len;i++){
-              arr[i] = false;
-              //    找到deliverList
-              var array = [];
-              var orderLisetArr = List[i].orderGoods;
-              for(var j=0;j<orderLisetArr.length;j++){
-                let deliverListArr = orderLisetArr[j].deliverList
-                for(var k=0; k<deliverListArr.length; k++){
-                  var obj = {};
-                  var skuCodeList  = deliverListArr[k].skuCode.split(',')
-                  obj.color = skuCodeList[0];
-                  obj.size = skuCodeList[1];
-                  obj.canNumer = deliverListArr[k].canDeliverNumber
-                  obj.num = deliverListArr[k].num
-                  obj.waitNum = deliverListArr[k].remainNum
-                  array.push(obj)
-                }     
-                arrTwo[i] = array;
-              }
-              this.Arrays = arr;
-              this.orderDeliverArray = arrTwo;
-          }
-        },500)
-      },
+        //   父组件触发函数
+        childMethod(){
+          var that = this;
+          console.log(that)
+          setTimeout( res => {
+            console.log(that.orderList,'hhhhhhhhh')
+            var List = that.orderList;
+            var arr = [];
+            var len = List.length;
+            var arrTwo = [];
+            for(var i=0;i<len;i++){
+                arr[i] = false;
+                //    找到deliverList
+                var array = [];
+                var orderLisetArr = List[i].orderGoods;
+                for(var j=0;j<orderLisetArr.length;j++){
+                  let deliverListArr = orderLisetArr[j].deliverList
+                  for(var k=0; k<deliverListArr.length; k++){
+                    var obj = {};
+                    var skuCodeList  = deliverListArr[k].skuCode.split(',')
+                    obj.color = skuCodeList[0];
+                    obj.size = skuCodeList[1];
+                    obj.canNumer = deliverListArr[k].canDeliverNumber
+                    obj.num = deliverListArr[k].num
+                    obj.waitNum = deliverListArr[k].remainNum
+                    array.push(obj)
+                  }     
+                  arrTwo[i] = array;
+                }
+                this.Arrays = arr;
+                this.orderDeliverArray = arrTwo;
+            }
+          },500)
+        },
         // 发布
         Deliver(id) {
             console.log(123123);
             this.idzz = id
             this.isShows = !this.isShows;
         },
-        details(){
-          this.$router.push('mail/delivery')
+        // 查看详情
+        details(id){
+          this.$router.push({path:'mail/delivery',query:{orderId: id}})
         },
         //跳转到子订单
         seeSuborder(id){
@@ -487,7 +484,10 @@ export default {
         },
         btnzz(){
           this.isShows = !this.isShows;
-
+        },
+        //查看子订单详情
+        childrenBut(id){
+          this.$router.push({path:'mail/delivery',query:{orderId: id}})
         }
     },
     async mounted() {
@@ -542,10 +542,10 @@ page
       border-bottom: 1px solid #f4f4f4
       font-size: 26px
       .name
-        flex: 5
+        flex: 4
         padding-left: 20px
       .fuKuan
-        flex: 1
+        flex: 
     .topHug
       display: flex
       .sPimgHug

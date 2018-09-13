@@ -12,7 +12,7 @@
           收货地址:{{warehouseData.sheng}}{{warehouseData.shi}}{{warehouseData.qu}}{{warehouseData.address}}
         </div>
         <div class="remark">
-          备注:包装好点
+          备注:{{L_selectDetail.remark}}
         </div>
       </div>
     </div>
@@ -21,10 +21,9 @@
       <text class="name" >{{dpName}}</text>
       <text class="fuKuan" v-if="L_selectDetail">
         {{L_selectDetail.state==1?'未支付':L_selectDetail.state==2?'取消':L_selectDetail.state==3?'已支付':L_selectDetail.state==4?'支付失败':L_selectDetail.state==5?'未发货':L_selectDetail.state==6?'已发货':L_selectDetail.state==7?'交易成功':L_selectDetail.state==8?'交易关闭':'拼单中'}} 
-         
       </text>
     </div>
-    <div class="list" v-for="(item,idx) in orderGoodsList" :key="idx" >
+    <div class="list" v-for="(item,idx) in orderGoodsDN" :key="idx" >
       <div class="kuang" @click="orderListArr(item.goodsId)" >
         <img class="sPimg" :src="item.image" />
         <div class="textThad">
@@ -34,18 +33,27 @@
             <div class="type">货期:{{item.delivery}}</div>
             <!-- <span class="number">X{{item.pingOrderId}}</span> -->
           </div>
-          <div class="maShuo" v-for="(itemxx,idxx) in item.orderGoods" :key="idxx">{{itemxx.skuCode}}/{{item.countNum}}件</div>
+          <div class="maShuo" >{{item.skuCode}}/{{item.countNum}}件</div>
           <!-- <div class="maShuo">黑色:{{item.maShuo}}/{{item.pingId}}件</div> -->
         </div>
       </div>
-      <div class="collage" v-if=" L_selectDetail.state == 9">
-        <div class="picture" v-for="(itemPin,idPin) in pingUserData" :key="idPin">
+      <div class="collage" >
+        <div class="picture" v-for="(itemPin,idPin) in pingUserData" :key="idPin" v-if=" L_selectDetail.state == 9">
           <img class="imgOne" :src="itemPin.head">
         </div>
-        <div class="jiaGe" v-if="item.orderGoods" >
-          <text class="text">共{{item.orderGoods.num}}件商品,合计: </text>
-          <text class="jiaGet">{{item.orderGoods.price}}元</text>
+        <div class="jiaGe" >
+          <text class="text">共{{item.num}}件商品,合计: </text>
+          <text class="jiaGet">{{item.price}}元</text>
         </div>
+      </div>
+    </div>
+    <!-- 子订单 -->
+    <div class="number_1" v-if="(L_selectDetail.children != '')">
+      <div class="completed" v-for="(childrenzz,idRen) in L_selectDetail.children" :key="idRen"  @click="childrenBut(childrenzz.id)">
+        <div class="completed_1">子订单编号
+          {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
+        ：{{childrenzz.orderNo}}</div>
+        <i class="sanjiao"></i>
       </div>
     </div>
     <div class="jieShuan" v-if="L_selectDetail">
@@ -55,7 +63,7 @@
       </div>
       <div class="coupon">
         <text>优惠券抵扣</text>
-        <text class="coupon1">-￥6.99</text>
+        <text class="coupon1">{{L_selectDetail.couponMoney}}</text>
       </div>
       <div class="coupon" >
         <text>运费</text>
@@ -69,13 +77,15 @@
       <div class="orderNumber" v-if="parent != null"> 父订单编号：{{parent.id}}</div>
       <div class="orderNumber">订单编号：{{L_selectDetail.orderNo}}</div>
       <div class="orderNumber">下单时间：{{L_selectDetail.createTime}}</div>
-      <div class="orderNumber" v-if="L_selectDetail.state == 6">支付时间：{{L_selectDetail.payTime}}</div>
-      <div class="orderNumber" v-if="L_selectDetail.state == 6">发货时间：{{L_selectDetail.deliverTime}}</div>
+      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">支付时间：{{L_selectDetail.payTime}}</div>
+      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">发货时间：{{L_selectDetail.deliverTime}}</div> 
+      <div class="orderNumber" v-if=" L_selectDetail.state == 7">收货时间：{{L_selectDetail.receiptTime}}</div>
+      
     </div>
     <div class="foot">
       <span class="btn" v-if="L_selectDetail.state == 6 "   @click="seeLogistics()">查看物流</span>
       <span v-if="L_selectDetail.state == 1 " class="btn" @click="seePlay()">确认已支付</span>
-      <span class="btn" v-if="L_selectDetail.state != 6 " @click="close()">关闭订单</span>
+      <span class="btn" v-if="L_selectDetail.state == 1" @click="close()">关闭订单</span>
     </div>
     <!-- 关闭订单 -->
     <div class="closeTipAll" v-show="passhowYes">
@@ -209,6 +219,10 @@ export default {
         seeLogistics(){
           this.$router.push( {path:'/pages/home/orderMgr/mail/logistics', query:{orderId: this.goodsId}})
         },
+        //查看子订单详情
+        childrenBut(id){
+          this.$router.push({path:'/pages/home/orderMgr/collage/collect',query:{orderId: id}})
+        },
         //取消的支付
         pasSeeClose(){
           this.pasSeePlay = false
@@ -298,10 +312,11 @@ page
   line-height: 74px
   .name
     color: #999
-    flex: 1
+    flex: 0.97
   .fuKuan
     color: #F67C2F
-    margin-right: 25px
+    margin-right: 0 auto
+    
   .maiJiaico
     +bg-img('storeMgr/s1.png')
     width: 32px
@@ -419,6 +434,36 @@ page
     text-align: center
     margin: 20px 20px 0 0
     border-radius: 4px
+.number_1
+  margin-top: 10px
+  // height: 184px
+  background: #fff
+  line-height: 90px
+  font-size: 26px
+  .completed:last-child
+    border-bottom: none
+
+  .completed
+    border-bottom: 1px dashed #eee
+    display: flex
+    padding-left: 25px
+    .completed_1
+      flex: 10
+    .sanjiao
+      +bg-img('home/shanJiao.png')
+      margin: 30px
+      width: 16px
+      height: 29px
+  .incomplete
+    display: flex
+    padding-left: 25px
+    .incomplete_1
+      flex: 10
+    .sanjiao
+      +bg-img('home/shanJiao.png')
+      margin: 30px
+      width: 16px
+      height: 29px
 .closeTipAll 
   background: rgba(0,0,0,0.4)
   // background-color: #000

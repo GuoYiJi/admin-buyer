@@ -34,6 +34,9 @@ export default class order {
     L_selectPingChildrenOrder = params => http.post('api/order/selectPingChildrenOrder', params)
         //售后详情
     L_selectOrderRefundDetail = params => http.post('/api/order/refund/selectOrderRefundDetail', params)
+        //退货退款sureReundapi/order /refund/sureReund
+    L_sureReund = params => http.post('/api/order/refund/sureReund', params)
+
 
 
 
