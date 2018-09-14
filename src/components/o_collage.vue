@@ -8,7 +8,7 @@
             {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}} 
             </p> 
         </div>
-        <div class="middle" @click="sanJiaoBut(item)">
+        <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
@@ -106,9 +106,9 @@ export default {
 
         },
         //查看商品详情
-        sanJiaoBut(item){
+        sanJiaoBut(id){
           console.log(123)
-           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         //关闭订单
         seeBut(id){

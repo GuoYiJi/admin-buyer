@@ -2,7 +2,7 @@
   <div class="home">
     <!-- 做到店铺模板预览，无从下手，跳过 -->
     <p class="title">{{myArticleList.title}}</p>
-    <p class="content">{{myArticleList.content}}</p>
+    <div class="content">{{myArticleList.content}}</div>
   </div>
 </template>
 <script>
@@ -31,4 +31,8 @@ export default {
   display: inline-block
   text-align: center
   width: 100%
+.content
+  width: 100%
+  margin: 10px
+
 </style>

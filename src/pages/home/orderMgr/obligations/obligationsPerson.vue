@@ -1,12 +1,9 @@
 <template>
   <div class="nav" v-if="navData">
     <div class="maiJiazz">
-      <!-- <i class="maiJiaico"></i> -->
       <text class="name">
         {{navData.refundType==0?'仅退款：':navData.refundType==1?'退货退款：':'换货：'}}
-
         {{navData.state==0?'未处理':navData.state==1?'等待卖家发货':navData.state==2?'被拒绝':navData.state==3?'同意':navData.state==4?'等待卖家发货':'关闭'}}
-      
       </text>
     </div>
     <div class="maiJia">
@@ -61,7 +58,6 @@
       </div>
     </div>
     <div class="foot">
-      <!-- <span class="btn" @click="confirm(navData,index)">确认收货</span> -->
     </div>
     
     <!-- 售后同意弹窗 -->
@@ -106,14 +102,10 @@ export default {
     methods: {
         pay() {
             wx.showModal({
-                // title: "提示",
                 content: "是否确认支付！",
                 success: function(res) {
-                    console.log(res);
                     if (res.confirm) {
-                        console.log("用户点击确定");
                     } else if (res.cancel) {
-                        console.log("用户点击取消");
                     }
                 }
             });
@@ -123,19 +115,14 @@ export default {
                 // title: "提示",
                 content: "确定关闭订单！",
                 success: function(res) {
-                    console.log(res);
                     if (res.confirm) {
-                        console.log("用户点击确定");
                     } else if (res.cancel) {
-                        console.log("用户点击取消");
                     }
                 }
             });
         },
         confirm(item,index) {
-          console.log(item)
           this.idzz = item.id
-          // this.idzz = item.orderId
           this.passhowYes = true
           this.currentSelectedIndex = index
           this.moneyzz = item.price
@@ -148,7 +135,6 @@ export default {
             orderRefundId: this.idzz,
             state: 1,
           });
-          console.log(L_dealWithOrderData)
           if(L_dealWithOrderData.code == 1){
             wx.showToast({               
               title: '退款成功',               
@@ -163,7 +149,6 @@ export default {
 
         },
         passBut(item ,index){
-          console.log(item)
           this.idzz = item.id
           // this.tag = item.
           this.passhow = true
@@ -195,19 +180,15 @@ export default {
         },
         //跳转商品详情
         orderListArr(goodsId){
-          console.log(goodsId)
           this.$router.push( {path:'/pages/home/orderMgr/orderList', query:{goodsId: goodsId}})
         },
     },
     async mounted() {
       this.orderId = this.$route.query.orderId
-      console.log(this.orderId)
       const L_selectOrderData = await this.$API.L_selectOrderRefundDetail({
         orderId: this.$route.query.orderId
       });
-      // console.log(L_selectOrderData)
       this.navData = L_selectOrderData.data
-      console.log(navData)
     },
 
 };

@@ -369,12 +369,18 @@ export default {
           this.isShow = !this.isShow;
           // this.orderDeliver = [];
           let orderLisetArr = itemss.skuList
-          let deliverList = itemss.deliverList
           let array = [];
           for(var i=0; i<orderLisetArr.length;i++){
             let obj = {};
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
             this.orderIds = orderLisetArr[i].orderId
+            if(itemss.deliverList == '' || itemss.deliverList == null ){
+              obj.canNumer = 0
+            }else{
+              for(var j = 0; j<itemss.deliverList.length;j++){
+                obj.canNumer = itemss.deliverList[j].canDeliverNumber
+              }
+            }
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
             // obj.canNumer = deliverList[i].canDeliverNumber
@@ -387,8 +393,8 @@ export default {
           this.orderDeliver = array;
           console.log(this.orderDeliver)
           this.orderDeliver.forEach((item, index) => {
-            // this.inputValueArr[index] = item.canNumer;
-            this.inputValueArr[index] = 0;
+            this.inputValueArr[index] = item.canNumer;
+            // this.inputValueArr[index] = 0;
 
           })
         },

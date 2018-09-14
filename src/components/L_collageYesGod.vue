@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
     <div v-for="(item,index) in yesGod" :key="index">
-      <div class="kuang">
+      <div class="kuang" >
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state">
@@ -9,7 +9,7 @@
            </p> 
         </div>
         <div class="middle" @click="sanJiaoBut(item.id)">
-          <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
+          <div class="picture" v-for="(itemzz,nums) in item.orderGoods" :key="nums">
             <img class="imgOne" :src="itemzz.image">
           </div>
           <i class="sanJiao"></i>
@@ -30,7 +30,7 @@
           <div class="btn">
             <span v-if="(btn==0)" class="see" @click="seeBut(item.id)">查看详情</span>
             <!-- <span v-if="(btn==0)" class="close" @click="close(item.id,index)">关闭订单</span> -->
-            <span v-if="(btn==1)" class="collage">查看子拼团</span>
+            <span v-if="(item.layer == -1 )" class="collage" @click="seeSuborder(item.id)">查看子拼团</span>
           </div>
         </div>
       </div>
@@ -71,12 +71,17 @@ export default {
             });
         },
         sanJiaoBut(id){
-           this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
+          console.log(id)
+          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
 
-        }
+        },
+        //跳转到子订单
+        seeSuborder(id){
+          this.$router.push({path:'suborders/suborders',query:{id}})
+        },
     },
     mounted() {
     }

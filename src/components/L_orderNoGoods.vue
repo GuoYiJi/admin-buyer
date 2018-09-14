@@ -133,7 +133,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0

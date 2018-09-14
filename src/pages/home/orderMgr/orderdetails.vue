@@ -1,10 +1,10 @@
 <template>
     <div class="nav" >
-        <div v-for="(item,idx) in navData" :key="idx">
+        <div v-for="(item,idx) in navDataAll" :key="idx">
             <div class="list" >
-                <div class="kuang" v-for="(itemzz,idzz)  in item.orderGoods" :key="idzz">
-                    <img class="sPimg" :src="itemzz.image" />
-                    <div class="textThad" v-for="(itemss,idss)  in itemzz.skuList" :key="idss">
+                <div class="kuang"  v-for="(itemss,idzz) in item.orderGoods" :key="idzz">
+                    <img class="sPimg" :src="item.image" />
+                    <div class="textThad">
                         <div class="title">{{itemss.name}}</div>
                         <div class="huo">
                             <text class="name">{{itemss.stallInfo3}}</text>
@@ -12,13 +12,12 @@
                             <span class="number">X{{itemss.num}}</span>
                         </div>
                         <div class="maShuo">{{itemss.skuCode}}/{{itemss.num}}件</div>
-                        <!-- <div class="maShuo">{{item.maShuo}}/{{item.jianShuo1}}件</div> -->
                     </div>
                 </div>
-                <div class="jiaGe">合计: ￥ {{item.count}}</div>
+                <div class="jiaGe">合计: ￥ {{item.countPrice}}</div>
             </div>
             <div class="foot">
-                <span class="btn">共{{item.shopId}}件</span>
+                <span class="btn">共{{item.countNum}}件</span>
             </div>
         </div>
     </div>
@@ -30,8 +29,8 @@ export default {
     data() {
         return {
             shuoo: 0,
-            navData: []
-            // navData: ''
+            navData: [],
+            navDataAll: []
         };
     },
     methods: {
@@ -49,23 +48,15 @@ export default {
     onReachBottom() {
 
     },
-<<<<<<< HEAD
     async mounted() {
-        // this.navData.push(JSON.parse(this.$route.query.item))
-
       this.orderId = this.$route.query.orderId
       const L_selectOrderData = await this.$API.L_selectOrderDetail({
         orderId: this.$route.query.orderId
       });
       this.navData = L_selectOrderData.data
-      console.log(this.navData)
-=======
-    mounted() {
-        this.navData.push(JSON.parse(this.$route.query.item))
-        console.log(this.navData)
->>>>>>> fa4f0910018294f2b16b42ec32a46553e4fc9dd0
+    //   console.log(this.navData.goodsList)
+      this.navDataAll = this.navData.goodsList
     },
-
 };
 </script>
 <style lang="sass" scoped>

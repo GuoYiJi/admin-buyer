@@ -12,11 +12,9 @@
       </div>
       <div class="line b_line" >
         <p class="input">市场档口：<span>{{goodsDetailData.stallInfo1}}</span></p>
-        <!-- <p class="blur"></p> -->
       </div>
       <div class="line b_line">
         <p class="input">采购说明：<span>{{goodsDetailData.buyExplan}}</span></p>
-        <!-- <p class="blur input_p_left"> </p> -->
       </div>
       <div class="line b_line" >
         <p class="input"> 成本价：</span>{{goodsDetailData.costPrice}}元</span></p>
@@ -30,7 +28,6 @@
     <div class="line-box">
       <div class="line b_line" >
         <p class="input">货期排单：<span>{{goodsDetailData.delivery}}</span></p>
-        <!-- <p class="blur"></p> -->
       </div>
       <div class="line b_line"  >
         <p class="input">品类：<span> {{goodsDetailData.labelInfo}}</span></p>
@@ -58,7 +55,6 @@
       </div>
       <div class="line b_line"  v-for="(itemTag,idTag) in tagsList" :key="idTag">
         <p class="input">商品分类：<span>{{itemTag.name}}</span></p>
-        <!-- <p class="blur input_p_left"></p> -->
       </div>
       <div class="line b_line" >
         <p class="input">转售：</p>
@@ -112,7 +108,6 @@ export default {
     this.goodsDetailData = L_selectGoodsDetailData.data
     console.log(this.goodsDetailData)
     this.L_selectDetail = L_selectGoodsDetailData.data
-    // console.log(this.L_selectDetail.warehouse)
     this.warehouseData = this.L_selectDetail.warehouse
     this.pingUserData = this.L_selectDetail.pingUser
     this.orderGoodsList =  this.L_selectDetail.orderGoods

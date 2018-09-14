@@ -1,7 +1,6 @@
 <template>
   <div class="nav" v-if="navData">
     <div class="maiJiazz">
-      <!-- <i class="maiJiaico"></i> -->
       <text class="name">
         {{navData.state==0?'未处理':navData.state==1?'已通过':navData.state==2?'不通过':navData.state==3?'同意':navData.state==4?'等待卖家发货':'撤销'}}
       </text>
@@ -60,7 +59,6 @@
     <div class="foot">
       <span class="btn" @click="confirm(navData,index)">确认收货</span>
     </div>
-    
     <!-- 售后同意弹窗 -->
     <div class="closeTipAll" v-show="passhowYes">
       <div class="closeTip">
@@ -130,9 +128,7 @@ export default {
             });
         },
         confirm(item,index) {
-          console.log(item)
           this.idzz = item.id
-          // this.idzz = item.orderId
           this.passhowYes = true
           this.currentSelectedIndex = index
           this.moneyzz = item.price
@@ -154,9 +150,7 @@ export default {
             this.passhowYes = false
           }else{
             this.passhowYes = false
-
           }
-
         },
         passBut(item ,index){
           console.log(item)

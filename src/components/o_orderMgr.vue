@@ -92,12 +92,10 @@ export default {
         orderType: this.type,
         // state: 1
       })
-      // this.orderList = listData.data.list
       this.orderList = this.orderList.concat(listData.data.list); 
       for(var i=0;i<this.orderList.length;i++){
         if((this.orderList[i].layer == 1 && this.orderList[i].state == 5) || (this.orderList[i].layer == -1  && this.orderList[i].state == 5)){
           this.sigleList.push(this.orderList[i])
-          // console.log(this.sigleList)
         } else{
           this.noSigleList.push(this.orderList[i])
           console.log(this.noSigleList)

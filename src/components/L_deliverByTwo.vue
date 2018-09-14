@@ -504,23 +504,28 @@ export default {
           let orderLisetArr = itemss.skuList
           let deliverList = itemss.deliverList
           let array = [];
-           console.log(orderLisetArr,deliverList,463,8888888888888888888888)
+          console.log(orderLisetArr,deliverList,463,8888888888888888888888)
           for(var i=0; i<orderLisetArr.length;i++){
             let obj = {};
             let skuCodeList  = orderLisetArr[i].skuCode.split(',')
+            if(itemss.deliverList == '' || itemss.deliverList == null ){
+              obj.canNumer = 0
+            }else{
+              for(var j = 0; j<itemss.deliverList.length;j++){
+                obj.canNumer = itemss.deliverList[j].canDeliverNumber
+              }
+            }
             obj.color = skuCodeList[0];
             obj.size = skuCodeList[1];
-            obj.canNumer = orderLisetArr[i].canNumer
             obj.num = orderLisetArr[i].num
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
             array.push(obj)
           }
-          // this.orderDeliverArray[Indexs] = array;
           this.orderDeliver = array;
           this.orderDeliver.forEach((item, index) => {
-            this.inputValueArr[index] = 0;
+            this.inputValueArr[index] = item.canNumer;
           })
 
           // console.log(this.idzz)

@@ -33,7 +33,6 @@
           </div>
           <div class="btn">
             <span class="see" @click="details(item.id)">查看详情</span>
-            <!-- <span class="close" @click="close()">关闭订单</span> -->
           </div>
         </div>
       </div>
@@ -57,7 +56,6 @@ export default {
           });
           
           this.navData = L_selectOrderData.data
-          console.log(this.navData)
 
         },
         

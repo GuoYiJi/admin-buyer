@@ -72,7 +72,7 @@ export default {
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
-    this.headimg = wx.getStorage('avatar')
+    this.headimg = wx.getStorageSync('avatar')
     console.log(this.headimg)
   }
 };
