@@ -48,16 +48,6 @@
         <p>数据统计</p>
       </div>
     </div>
-    <!-- <div class="footer">
-      <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">
-        <i class="f_icon f_store"></i>
-        <p>店铺</p>
-      </div>
-      <div class="f_item" :class="[ nav == 2 && 'active' ]" @click="toRoute('my/my')">
-        <i class="f_icon f_my"></i>
-        <p>我的</p>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>

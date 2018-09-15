@@ -39,13 +39,13 @@
             <div class="btn">
               <scroll-view scroll-y="true" style="height:80%" >
                 <span v-for="(item, index) in selectReceiptName" :key="index">
-                  <span class="brn_1" :class="[btn == index && 'btn-active']" @click="selectedNav(item.receiptName)">{{item.receiptName}}</span>
+                  <span class="brn_1" :class="[btn == item.name && 'btn-active']" @click="selectedNav(item.name)">{{item.name}}</span>
                 </span> 
               </scroll-view>
             </div>
-            <p class="more">查看更多
+            <!-- <p class="more">查看更多
               <i class="goback"></i>
-            </p>
+            </p> -->
           </div>
           <div class="f_btn">
             <p class="reset">重置</p>
@@ -179,13 +179,16 @@ export default {
               }
         },
         async toggleRight1() {
-          const L_selectDeliver = await this.$API.L_selectDeliverName({
-            //1 时间j 2时间s 3pinyin s 4pinyin j 5价格s
-            // orderType: 1, 
-          });
-          this.selectReceiptName = L_selectDeliver.data.list
-          console.log(this.selectReceiptName)
-
+          console.log(this.orderList)
+          let receiptNamezz = []
+          for(var i=0;i<this.orderList.length;i++){
+            let obj = {};
+            obj.name = this.orderList[i].receiptName
+            obj.id = i++
+            receiptNamezz.push(obj) 
+          }
+          this.selectReceiptName = this.selectReceiptName.concat(receiptNamezz) 
+          console.log(this.selectReceiptName) 
           this.isShows = !this.isShows;
         },
         toEdit() {
@@ -335,7 +338,7 @@ export default {
       font-size: 26px
     .nav
       height: 366px
-      +border(1px,bottom,#ccc)
+      // +border(1px,bottom,#ccc)
       .title_1
         padding: 10px 0 0 20px
       .btn

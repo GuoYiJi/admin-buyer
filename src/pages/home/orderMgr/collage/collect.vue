@@ -9,7 +9,7 @@
           <text class="phone">{{warehouseData.mobile}}</text>
         </div>
         <div class="address">
-          收货地址:{{warehouseData.sheng}}{{warehouseData.shi}}{{warehouseData.qu}}{{warehouseData.address}}
+          收货地址:{{warehouseData.value}}{{warehouseData.address}}
         </div>
         <div class="remark">
           备注:{{L_selectDetail.remark}}
@@ -255,20 +255,18 @@ export default {
       });
       this.L_selectDetail = L_selectOrderData.data
       // console.log(this.L_selectDetail.warehouse)
-      this.warehouseData = this.L_selectDetail.warehouse
+      this.warehouseData = this.L_selectDetail.orderAddress
       this.pingUserData = this.L_selectDetail.pingUser
-      this.orderGoodsList =  this.L_selectDetail.orderGoods
+      this.orderGoodsList =  this.L_selectDetail.goodsList
       this.parent = this.L_selectDetail.parent
       console.log(this.parent)
       for(var i=0; i<this.orderGoodsList.length;i++){
         this.orderGoodsDN =this.orderGoodsList[i].orderGoods
         this.goodsId =this.orderGoodsList[i].goodsId
-      console.log(this.goodsId)
+      console.log(this.orderGoodsDN)
       }
-      console.log( this.orderGoodsList)
       this.azzSessionId =  wx.getStorageSync('sessionId')
       this.url = config.url+'/api/order/shopClose'
-      console.log(this.url)
       this.appId = config.appId
       this.orderID = this.$route.query.orderId
       this.dpName = wx.getStorageSync('dpName')
@@ -312,7 +310,7 @@ page
   line-height: 74px
   .name
     color: #999
-    flex: 0.97
+    flex: 0.95
   .fuKuan
     color: #F67C2F
     margin-right: 0 auto

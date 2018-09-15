@@ -5,13 +5,13 @@
         <div class="head">
           <p class="order">订单编号：{{item.orderNo}}</p>
           <p class="state" v-if="item.ping">
-            {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}} 
-           <span v-for="(itemss,idss) in item.orderGoods" :key="idss">
-              还差{{item.num-itemss.skuList.length}}人
+            {{item.state==1?'待支付':item.state==2?'已取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'待发货':item.state==6?'已发货':item.state==7?'已完成':item.state==8?'已关闭':item.state==9?'拼单':'售后'}}, 
+            <span>
+              还差{{item.ping.num-item.pingUser.length}}人
             </span>
           </p> 
         </div>
-        <div class="middle" @click="sanJiaoBut(item)">
+        <div class="middle" @click="sanJiaoBut(item.id)">
           <div class="picture" v-for="(itemzz,num) in item.orderGoods" :key="num">
             <img class="imgOne" :src="itemzz.image">
           </div>
@@ -96,8 +96,8 @@ export default {
             this.passhowYes = false
           }
         },
-        sanJiaoBut(item){
-          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{item: JSON.stringify(item)}})
+        sanJiaoBut(id){
+          this.$router.push({path:'/pages/home/orderMgr/orderdetails',query:{orderId: id}})
         },
         seeBut(id){
           this.$router.push( {path:'/pages/home/orderMgr/collage/collect', query:{orderId: id}})
@@ -130,7 +130,7 @@ page
     display: flex
     .order
       display: inline-block
-      flex: 4.5
+      flex: 2.5
       margin-left: 20px
     .state
       display: inline-block

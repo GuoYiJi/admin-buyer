@@ -112,7 +112,11 @@ export default {
         })
         return
       }
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
       if (this.showLoad) return;
       this.showLoad = true
       wx.showLoading({
@@ -127,7 +131,11 @@ export default {
         if(vm.closeOrder.length === response.data.totalRow) {
           vm.canLoad = false
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
         wx.hideLoading()
       })
     } ,

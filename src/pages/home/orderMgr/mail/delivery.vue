@@ -395,31 +395,6 @@ export default {
           obj.num = itemss.num
           obj.skuId = itemss.skuId
           obj.id = itemss.id
-          //   obj.waitNum = orderLisetArr[i].remainNum
-          //   obj.id = orderLisetArr[i].id
-          //   obj.skuId = orderLisetArr[i].skuId
-
-          // for(var i=0; i<orderLisetArr.length;i++){
-          //   console.log(orderLisetArr)
-          //   let obj = {};
-          //   let skuCodeList  = orderLisetArr[i].skuCode.split(',')
-          //   console.log(skuCodeList)
-          //   obj.color = skuCodeList[0];
-          //   obj.size = skuCodeList[1];
-          //   var canNumer = 0;
-          //   for(var j=0;j<deliverList.length;j++){
-          //     if(orderLisetArr[i].skuId == deliverList[j].skuId ){
-          //         canNumer = deliverList[j].canDeliverNumber
-          //     }
-          //   console.log(orderLisetArr)
-          //   }
-          //   obj.canNumer = canNumer
-          //   obj.num = orderLisetArr[i].num
-          //   obj.id = orderLisetArr[i].id
-          //   obj.skuId = orderLisetArr[i].skuId
-          //   obj.waitNum = orderLisetArr[i].remainNum
-          //   obj.orderGoodsId = deliverList[i].orderGoodsId
-          //   // console.log(obj)
             array.push(obj)
           // }
           this.orderDeliver = array
@@ -484,7 +459,7 @@ export default {
       this.L_selectDetail = L_selectOrderData.data
       this.idzz = this.L_selectDetail.id
       this.warehouseData =this. L_selectDetail.orderAddress
-      this.orderGoodsList =  this.L_selectDetail.orderGoods
+      this.orderGoodsList =  this.L_selectDetail.goodsList
       this.parent = this.L_selectDetail.parent
 
       console.log(this.parent)

@@ -129,7 +129,11 @@ export default {
         if(vm.yesGod.length === response.data.totalRow) {
           vm.canLoad = false
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
         wx.hideLoading()
       })
     } ,
@@ -143,7 +147,11 @@ export default {
     if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
   }
 };
 </script>
