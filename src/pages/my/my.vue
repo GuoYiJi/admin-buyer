@@ -45,10 +45,6 @@ export default {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
     this.headimg = wx.getStorageSync('avatar')
-<<<<<<< HEAD
-=======
-    console.log(this.headimg)
->>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
   }
 };
 </script>

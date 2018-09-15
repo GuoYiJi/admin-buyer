@@ -168,7 +168,7 @@ export default {
     toRoute(path) {
       this.$router.push("/pages/home/" + path);
      },
- 
+
   },
   async mounted() {
     const selectWarehouseData = await this.$API.selectWarehouse({
@@ -178,7 +178,6 @@ export default {
     this.dpName = this.WarehouseData.companyName
     console.log(this.dpName)
     wx.setStorageSync('dpName', this.dpName)
-
   }
 };
 </script>
