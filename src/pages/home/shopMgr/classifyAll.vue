@@ -7,7 +7,6 @@
         </div>
       </div>
     </div>
-    
     <div class="create">
       <p @click="goback"><btn :title="'保存'" /></p>
     </div>
@@ -23,21 +22,7 @@ export default {
   mixins: [mixin],
   components: {
     btn
-    // line
   },
-  // computed: {
-  //   hasSelectId (id){
-  //     if(this.selectId){
-  //       const arr = this.selectId.split(',')
-  //       if(arr.indexOf(id) > 0 ){
-  //         console.log('ture')
-  //         return 'active'
-  //       }
-  //     }
-  //     return false
-
-  //   }
-  // },
   data() {
     return {
       singleSelect: [],
@@ -50,8 +35,8 @@ export default {
         goodsIds: this.$route.query.ids,
         groupId: this.selId,
       })
-      this.$router.push({path: "/" + $getUrl(),query: {groups: this.selectId}});
-      // this.$router.go(-1)
+      // this.$router.push({path: "/" + $getUrl(),query: {groups: this.selectId}});
+      this.$router.go(-1)
     },
     selectOne(id){
       this.selId = id
@@ -59,7 +44,7 @@ export default {
   },
   async mounted() {
     const { data } = await this.$API.searchType({
-      types: "0,1"
+      types: 1
     });
     this.singleSelect = data;
   }
@@ -70,7 +55,7 @@ export default {
 .create
   position: fixed
   bottom: 0
-  left: 0 
+  left: 0
   right: 0
   padding: 80px 75px
   // background: #fff
@@ -81,7 +66,7 @@ export default {
 //   +select()
 //   left: 24px
 // .active
-//   +select-active  
+//   +select-active
 .line
   height: 109px
   line-height: 109px
@@ -92,5 +77,5 @@ export default {
   +select()
   left: 24px
 .active
-  +select-active 
+  +select-active
 </style>

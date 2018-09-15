@@ -1,61 +1,46 @@
 <template>
-  <div class="nav">
+  <div class="home">
     <form class="form">
         <div class="head">
         <span class="head_text">优惠券名称：</span>
-        <input class="head_input" v-model="head_input" type="text" placeholder="请输入（8个字以内，不可特殊字符）" disabled="true">
+        <input class="head_input" v-model="couponInfo.name" type="text" placeholder="请输入（8个字以内，不可特殊字符）" disabled="true">
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值" disabled="true">
+        <input class="value_input" v-model="couponInfo.price" type="text" placeholder="请输入面值" disabled="true">
       </div>
         <div class="grant">
         <span class="grant_text">发放总量：</span>
-        <input class="grant_input" v-model="grant_input" type="text" placeholder="请输入发放数量" disabled="true">
+        <input class="grant_input" v-model="count" type="text" placeholder="请输入发放数量">
       </div>
       <div class="effect">
         <span class="text">生效时间：</span>
-        <span class="settings" v-if="(date == '')">
-          未设置
-          <!-- <i class="img"></i> -->
+        <span class="settings">
+          {{startTime}}
         </span>
-        <!-- <picker class="picker_1" v-model="date" mode="date" :value="date" @change="bindDateChange">
-          <view class="picker">
-            {{date}}
-          </view>
-        </picker> -->
       </div>
       <div class="effect">
         <span class="text">过期时间：</span>
-        <span class="settings" v-if="(date1 == '')">
-          未设置
-          <!-- <i class="img"></i> -->
+        <span class="settings">
+          {{endTime}}
         </span>
-        <picker class="picker_1" mode="date" :value="date1" @change="bindDateChange1">
-          <view class="picker">
-            {{date1}}
-          </view>
-        </picker>
       </div>
       <div class="effect" @click="Receive">
         <span class="text">领取设置：</span>
         <span class="settings">
-          <span class="settings_text" v-if="(ling == '' )">未设置</span>
-          <span class="settings_text" v-if="(ling != '' )">已设置</span>
-          <!-- <i class="img"></i> -->
+          <span class="settings_text">{{couponInfo.isLimitCount == 1 ? '不限金额' : '满' + couponInfo.limitCount+ '元可用' }}</span>
         </span>
       </div>
       <div class="effect" @click="Use">
         <span class="text">使用设置：</span>
         <span class="settings">
-          <span class="settings_text" v-if="(isOriginalPrice =='')">未设置</span>
-          <span class="settings_text" v-if="(isOriginalPrice !='')">已设置</span>
-          <!-- <i class="img"></i> -->
+          <span class="settings_text">{{couponInfo.isOriginalPrice == 1 ? '仅原价购买可用' : '可用于打折商品' }}|{{couponInfo.isAll == 1 ? '适用于' + couponInfo.originalGoodsCount + '件商品' : '适用于全部商品'}}</span>
         </span>
       </div>
     </form>
-    <div class="btn" @click="btn_1">
-      <span class="btn_1">保存</span>
+    <div class="btn">
+      <button class="btn_1" @click="updateCoupon()">保存</button>
+      <button class="btn_2" v-if="state == 0" @click="changeState()">使失效</button>
     </div>
   </div>
 </template>
@@ -66,19 +51,55 @@ export default {
         return {
           couponInfo: {},
           startTime: '',
-          endTime: ''
+          endTime: '',
+          count: 0, // 优惠券发放量
+          state: 0
         };
     },
     methods: {
-        btn_1() {
-            wx.navigateBack({
-                data: 1
-            });
+      // 修改优惠券
+        updateCoupon() {
+          if(!this.count) {
+            wx.showToast({
+              title: '发放数量不能为空',
+              icon: 'none'
+            })
+          }else {
+            this.$API.updateCoupon({
+              couponId: this.couponInfo.id,
+              count: this.count
+            }).then(response => {
+              wx.showToast({
+                title: '修改成功',
+                icon: 'success'
+              })
+              setTimeout(() => {
+                this.$router.back(-1)
+              }, 1500)
+            })
+          }
+        },
+        // 使失效
+        changeState() {
+          this.$API.changeState({
+            couponId: this.couponInfo.id,
+          }).then(response => {
+            wx.showToast({
+              title: '已失效',
+              icon: 'success'
+            })
+            setTimeout(() => {
+              this.$router.back(-1)
+            }, 1500)
+          })
         }
     },
     mounted() {
       if(this.$route.query.item) {
+        this.state = JSON.parse(this.$route.query.state)
+        console.log(this.state);
         this.couponInfo = JSON.parse(this.$route.query.item)
+        this.count = this.couponInfo.count
         this.startTime = this.couponInfo.startTime.split(' ')[0].toString()
         this.endTime = this.couponInfo.endTime.split(' ')[0].toString()
       }
@@ -115,6 +136,9 @@ export default {
     padding-left: 10px
     border: 1px solid #cecece
     border-radius: 4px
+    width: 460px
+    &[disabled]
+      background-color: #DCDCDC
 .grant
   height: 118px
   background: #fff
@@ -129,7 +153,6 @@ export default {
     padding-left: 10px
     border: 1px solid #cecece
     border-radius: 4px
-    width: 460px
 .form
   padding: 0 25px
   background-color: #fff
@@ -142,8 +165,8 @@ export default {
   justify-content: space-between
   height: 110px
   // background: #fff
-  background: url("~@/assets/img/home/shanJiao.png") no-repeat right
-  background-size: 16px 29px
+  // background: url("~@/assets/img/home/shanJiao.png") no-repeat right
+  // background-size: 16px 29px
   display: flex
   line-height: 110px
   border-bottom: 1px solid #cecece
@@ -156,7 +179,7 @@ export default {
   .settings
     flex: 1
     text-align: right
-    padding-right: 30px
+    // padding-right: 30px
   // .picker_1
   //   position: absolute
   //   top: 0
@@ -168,14 +191,29 @@ export default {
   //     padding-left: 70%
 .btn
   height: 98px
-  background: #F67C2F
   text-align: center
   line-height: 98px
   position: fixed
   left: 0
-  bottom: 0
-  width: 100%
-  .btn_1
+  right: 0
+  bottom: 50px
+  width: 80%
+  margin: auto
+  display: flex
+  justify-content: space-between
+  align-items: center
+  button
+    flex: 1
+    height: 90px
+    line-height: 90px
+    text-align: center
+    margin-right: 10px
     font-size: 32px
     color: #fff
+    &:last-of-type
+      margin-right: 0
+  .btn_1
+    background-color: #F67C2F
+  .btn_2
+    background-color: #CCCCCC
 </style>

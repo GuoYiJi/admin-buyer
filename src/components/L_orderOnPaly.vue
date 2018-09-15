@@ -23,15 +23,13 @@
       <!-- <div v-for="item in shopList">
         <div>{{item.deliverTime}}</div>
       </div> -->
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
           <div class="box">
             <p >
               <!-- 拼团组件 -->
               <CollageOnPaly :onPlayList="onPlayList" ref="child" @getNextPage="getNextPage"/>
             </p>
           </div>
-        </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
         </div>
@@ -93,15 +91,15 @@ export default {
         // state: 1
       })
 
-      this.orderList = listData.data.list
-      console.log(this.orderList)
+      this.onPlayList = listData.data.list
+      console.log(this.onPlayList)
       if(listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
         state: 1
         // state: this.tag
@@ -110,20 +108,34 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    async lower(e) {
-      console.log(e);
-      if (!this.canLoad) return;
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+      
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listData = await this.getNextPage();
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.onPlayList =  vm.onPlayList.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.onPlayList = this.onPlayList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+        if(vm.onPlayList.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+        
+        wx.hideLoading()
+      })
+    } , 
 
   },
   async mounted() {
@@ -134,7 +146,7 @@ export default {
     this.onPlayList = this.onPlayList.concat(listData.data.list); 
     // console.log(this.orderList)
     console.log(this.onPlayList);
-    if (listData.data.list.length < 30) {
+    if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
   
@@ -148,7 +160,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0

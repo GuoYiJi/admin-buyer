@@ -25,35 +25,7 @@
           </p>
         </div>
       </div>
-      <!-- <div class="line" @click="toRoute('my/connect')">
-        <div class="content">
-          <p class="title">
-            <i class="icon my3"></i>汇提客服</p>
-          <p class="toin">
-            <i class="goin"></i>
-          </p>
-        </div>
-      </div> -->
-      <!-- <div class="line" @click="toRoute('my/setting/setting')">
-        <div class="content">
-          <p class="title">
-            <i class="icon my4"></i>设置</p>
-          <p class="toin">
-            <i class="goin"></i>
-          </p>
-        </div>
-      </div> -->
     </div>
-    <!-- <div class="footer">
-      <div class="f_item" :class="[ nav == 1 && 'active' ]" @click="toRoute('home/home')">
-        <i class="f_icon f_store"></i>
-        <p>店铺</p>
-      </div>
-      <div class="f_item" :class="[ nav == 2 && 'active' ]" @click="toRoute('my/my')">
-        <i class="f_icon f_my"></i>
-        <p>我的</p>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -72,8 +44,7 @@ export default {
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 0 });
     console.log(myArticle);
-    this.headimg = wx.getStorage('avatar')
-    console.log(this.headimg)
+    this.headimg = wx.getStorageSync('avatar')
   }
 };
 </script>

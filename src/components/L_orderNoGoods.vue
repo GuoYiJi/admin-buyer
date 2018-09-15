@@ -67,7 +67,7 @@ export default {
 
     };
   },
- 
+
   methods: {
     handleTag(tag) {
       this.tag = tag;
@@ -86,7 +86,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: 1,
         state: 1
         // state: this.tag
@@ -116,13 +116,13 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.onPlayList = this.onPlayList.concat(listData.data.list); 
+    this.onPlayList = this.onPlayList.concat(listData.data.list);
     // console.log(this.orderList)
     console.log(this.onPlayList);
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
-  
+
   }
 };
 </script>
@@ -133,7 +133,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0
@@ -150,7 +150,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -161,18 +161,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

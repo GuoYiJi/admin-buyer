@@ -9,4 +9,8 @@ export default class order {
   // 推广链接
   prosave = params => http.post('api/form/save', params)
   prometaList = params => http.post('api/form/metaList', params)
+  // 修改优惠券
+  updateCoupon = params => http.post('api/coupon/updateCoupon', params)
+  // 使优惠券失效
+  changeState = params => http.post('api/coupon/changeState', params)
 }

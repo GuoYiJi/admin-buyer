@@ -101,7 +101,6 @@ export default {
       // this.newCoupon = newCoupon.data;
       // console.log(newCoupon);
       this.ok();
-      console.log("qweascxc");
       setTimeout(() => {
         wx.navigateBack({
           data: 1
@@ -117,7 +116,8 @@ export default {
         endTime: this.date1,
         isLimitCount: this.isLimitCount,
         limitCount: this.please_input,
-        originalGoodsIds: this.selIds,
+        isOriginalPrice: this.isOriginalPrice,
+        originalGoodsIds: this.selIds.toString(),
         isAll: this.isAll
       });
     },
@@ -134,16 +134,10 @@ export default {
     },
     huanc() {
       this.isLimitCount = wx.getStorageSync("isLimitCount");
-      console.log(this.isLimitCount, "选择");
       this.please_input = wx.getStorageSync("please_input");
-      console.log(this.please_input, "输入");
       this.isOriginalPrice = wx.getStorageSync("isOriginalPrice");
-      console.log(this.isOriginalPrice, "原价");
       this.selIds = wx.getStorageSync("selIds");
-      console.log(this.selIds, "商品");
       this.isAll = wx.getStorageSync("isAll");
-      console.log(this.isAll, "全部");
-      // ----------------------------------------------
       if (this.isLimitCount == "" && this.please_input == "") {
         this.ling = "";
         console.log(this.ling);
@@ -155,17 +149,8 @@ export default {
     }
   },
   onShow() {
-    console.log(this);
     this.huanc();
-    wx.getStorageInfo({
-      success: function(res) {
-        console.log(res.keys);
-        console.log(res.currentSize);
-        console.log(res.limitSize);
-      }
-    });
   },
-  mounted() {}
 };
 </script>
 <style lang="sass" scoped>

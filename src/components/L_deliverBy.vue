@@ -7,7 +7,7 @@
         <div class="title_1">
           <text class="name">订单编号：{{item.orderNo}}</text>
           <text class="fuKuan">
-            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}} 
+            {{item.state==1?'未支付':item.state==2?'取消':item.state==3?'已支付':item.state==4?'支付失败':item.state==5?'未发货':item.state==6?'已发货':item.state==7?'交易成功':item.state==8?'交易关闭':'拼单中'}}
           </text>
         </div>
         <!-- <div v-for="(itemzz,idzz) in item.orderGoods" :key="idzz"> -->
@@ -21,16 +21,16 @@
                 <span class="number">X{{item.countNum}}</span>
                 <div >
                   <div class="maShuo">
-                    
+
                     <scroll-view scroll-x="true" style=" width:180px  " >
-                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>  
+                      <span class="text" v-for="(itemList,ids) in item.skuList" :key="ids">{{itemList.skuCode}}/{{itemList.num}}件</span>
                     </scroll-view>
                     <span class="edit" @click="edit(item,item.orderId)">编辑</span>
                   </div>
-                </div> 
+                </div>
             <!-- </div> -->
           </div>
-         
+
         </div>
       </div>
       <div class="jiaGe">
@@ -62,7 +62,7 @@
       <div class="number_1">
         <div class="completed" v-for="(childrenzz,idRen) in item.children" :key="idRen">
           <div class="completed_1">子订单编号
-            {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}} 
+            {{childrenzz.state==1?'未支付':childrenzz.state==2?'取消':childrenzz.state==3?'已支付':childrenzz.state==4?'支付失败':childrenzz.state==5?'未发货':childrenzz.state==6?'已发货':childrenzz.state==7?'交易成功':childrenzz.state==8?'交易关闭':'拼单中'}}
           ：{{childrenzz.orderNo}}</div>
           <i class="sanjiao"></i>
         </div>
@@ -91,15 +91,15 @@
           </ul>
         </div>
         <div class="title_t" >
-              
-            <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
+
+            <ul class="s_item_box" v-for="(itemss,idsz) in orderDeliver" :key="idsz">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
               <li class="s_item">{{itemss.num}}</li>
               <li class="s_item i-input">
                 <div class="numAll">
                   <div class="numCut"> <button @click="subtract(idss)">-</button></div>
-                  <div class="numInput"> 
+                  <div class="numInput">
                     <!-- {{inputValueArr[idss]}} -->
                     <input type="text" value="0"  v-model="inputValueArr[idss]">
                     </div>
@@ -109,7 +109,7 @@
               <li class="s_item">{{itemss.waitNum}}</li>
             </ul>
           <!-- </div>-->
-        </div> 
+        </div>
         <div class="foot">
           <span class="save" @click="save()">保存</span>
           <span class="cancel" @click="cancel()">取消</span>
@@ -157,7 +157,7 @@
 <script>
 import wx from "wx";
 import config from "@/config";
-// import inumber from 
+// import inumber from
 export default {
     components: {},
     data() {
@@ -224,7 +224,7 @@ export default {
             } else if (this.select == 1) {
                 this.select = 0;
             }
-        }, 
+        },
         add(index,itemss){
           console.log(itemss)
           this.$set(this.inputValueArr, index, this.inputValueArr[index] + 1)
@@ -235,7 +235,7 @@ export default {
             this.orderIdzz= itemss.skuId
             this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
-            
+
             console.log(this.idzz)
           }
         },
@@ -256,7 +256,7 @@ export default {
             sessionId: this.azzSessionId,
             shopId: this.appId,
             orderIds: this.orderIds,
-            orderDeliver:  
+            orderDeliver:
             [{
               num: this.value1,
               // canDeliverNumber: ,
@@ -268,7 +268,7 @@ export default {
                 // title: "提示",
                 content: "是否确认保存！",
                 success: function(res) {
-                    that.isShow = false 
+                    that.isShow = false
                     console.log(res);
                     if (res.confirm) {
                           console.log("用户点击确定");
@@ -289,7 +289,7 @@ export default {
                               })
                             }else{
                             }
-                            
+
                             // this.isShows = false
                           }
                         })
@@ -303,7 +303,7 @@ export default {
         },
         // 编辑弹窗取消
         cancel() {
-          this.isShow = false 
+          this.isShow = false
         },
         // 显示隐藏编辑弹窗
         async edit(itemss,idNum) {
@@ -363,13 +363,13 @@ export default {
           let object = {
               sessionId: this.azzSessionId,
               shopId: this.appId,
-              orderDeliver:  
+              orderDeliver:
               [{
                 orderGoodsId: this.orderGoodsId,
                 canDeliverNumber: this.value1,
                 id: this.idzz
               }],
-              logistics: 
+              logistics:
               {
                 image: this.tempFilePaths,
                 logisticsNo: this.logisticsNo,
@@ -407,7 +407,7 @@ export default {
     props: {
       orderList: {
         type: Array,
-        default: []  
+        default: []
       },
     },
     created(){
@@ -415,19 +415,19 @@ export default {
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
       this.appId = config.appId
-      
+
     },
     async mounted() {
-      
+
     },
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
-    
-.list 
+
+.list
   width: 702px
   background: #fff
   margin: 10px 24px
@@ -444,7 +444,7 @@ page
         padding-left: 20px
       .fuKuan
         flex: 1
-    .sPimg 
+    .sPimg
       width: 160px
       height: 160px
       display: inline-block
@@ -459,21 +459,21 @@ page
       .title
         +moreLine(2)
       .huo
-        +singleFile 
-        .name 
+        +singleFile
+        .name
           display: inline-block
           background: #ccc
           color: #fff
           padding: 4px 8px
-        .type 
+        .type
           margin: 0 0 0 20px
           display: inline-block
           color: #999
-        .number 
+        .number
           float: right
           margin-right: 12rpx
           color: #999
-    .maShuo 
+    .maShuo
       color: #999
       display: flex
       .text
@@ -492,7 +492,7 @@ page
         color: #F67C2F
         border-radius: 8px
         margin-left: 10px
-  .jiaGe 
+  .jiaGe
     // height: 70px
     width: 100%
     background: #fff
@@ -513,7 +513,7 @@ page
       position: absolute
       display: inline-block
       color: #FF0000
-      
+
   .type_1
     padding-top: 10px
     // height: 159px
@@ -600,7 +600,7 @@ page
       margin: 20px
       position: absolute
       right: 0px
-  
+
 .number_1
   margin-top: 10px
   height: 184px
@@ -680,13 +680,13 @@ page
     color: #666
     margin: 22px 0 0 25px
     padding-bottom: 30px
-.foot 
+.foot
   width: 100%
   position: fixed
   bottom: 0px
   height: 98px
   background: #fff
-  .btn 
+  .btn
     position: absolute
     right: 20px
     display: inline-block
@@ -733,7 +733,7 @@ page
       line-height: 40px
       .s_item
         flex: 1
-        margin: 0 -15px 
+        margin: 0 -15px
       .i-input
         flex: 2
         .numAll
@@ -743,13 +743,13 @@ page
               width: 80px
               height: 40px
 
-  .foot 
+  .foot
     width: 100%
     position: fixed
     bottom: 0px
     height: 98px
     background: #fff
-    .save 
+    .save
       position: absolute
       right: 20px
       display: inline-block
@@ -761,8 +761,8 @@ page
       line-height: 60px
       text-align: center
       margin-top: 20px
-      border-radius: 4px  
-    .cancel 
+      border-radius: 4px
+    .cancel
       position: absolute
       right: 180px
       display: inline-block
@@ -774,7 +774,7 @@ page
       line-height: 60px
       text-align: center
       margin-top: 20px
-      border-radius: 4px  
+      border-radius: 4px
 
 
 // 发布弹窗

@@ -20,25 +20,12 @@
           </li>
         </ul>
       </div>
-<<<<<<< HEAD
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
-          <div class="box">
-            <p >
-              <!-- 未通过 -->
-              <CollageRefund :shopListRefund="shopListRefund" />
-              <!-- <payment :passRefund="passRefund"/> -->
-              <!-- <payment :passRefund="passRefund"/> -->
-            </p>
-          </div>
-=======
       <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
         <div class="box">
           <p >
             <!-- 未通过 -->
             <afterSales :shopListRefund="shopListRefund" />
           </p>
->>>>>>> remotes/origin/Lqi
         </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
@@ -122,7 +109,7 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderRefund(obj);
     },
-    
+
     lower(e) {
       if (!this.canLoad) {
         wx.showToast({
@@ -132,7 +119,7 @@ export default {
         })
         return
       }
-      
+
       if (this.showLoad) return;
       this.showLoad = true
       wx.showLoading({
@@ -147,21 +134,17 @@ export default {
         if(vm.shopListRefund.length === response.data.totalRow) {
           vm.canLoad = false
         }
-        
+
         wx.hideLoading()
       })
-    } 
+    }
   },
   async mounted() {
     this.shopNum = 0;
     const listDatazz = await this.getNextPage();
     this.shopListRefund = this.shopListRefund.concat(listDatazz.data.list);
-<<<<<<< HEAD
-    if (this.shopListRefund.length < 20) {
-=======
     console.log(this.shopListRefund)
     if (this.shopListRefund.length < 10) {
->>>>>>> remotes/origin/Lqi
       this.canLoad = false;
     }
   },
@@ -172,7 +155,7 @@ export default {
       this.canLoad = false;
     }
     // this.shopListRefund = L_selectOrderData.data
-    
+
   }
 };
 </script>
@@ -200,7 +183,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -211,18 +194,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

@@ -13,19 +13,16 @@
         <div class="adr-btn">
           <div class="text" @click.stop="selects(item,index)"><i class="select" :class="[item.isChoice == 1 && 'active']"></i>默认地址</div>
           <div class="btn-box">
-            <p @click="toEdit(item)" ><i class="edit"></i>编辑</p>
-            <p @click="confirmDel(item.id,index)"><i class="del"></i>删除</p>
+            <div class="btn-item" @click="toEdit(item)" ><i class="edit"></i>编辑</div>
+            <div class="btn-item" @click="confirmDel(item.id,index)"><i class="del"></i>删除</div>
           </div>
         </div>
       </div>
+      <div class="white-block"></div>
     </div>
     <i-modal :visible="visible2" @ok="handleDel" @cancel="toClose('visible2')">
       <div>确认删除？</div>
     </i-modal>
-    <div class="loading" v-if="canLoad">
-      <div v-if="showLoad"><loading  /></div>
-    </div>
-    <!-- <div class="v-else"></div> -->
     </scroll-view>
     <div class="footer">
       <p class="add-adr" @click="toRoute('home/storeMgr/storeAdr/addAdr')">添加退货地址</p>
@@ -34,7 +31,6 @@
 </template>
 <script>
 import btn from "@/components/btn";
-import loading from "@/commond/loading";
 import mixin from "@/mixin";
 export default {
   mixins: [mixin],
@@ -52,7 +48,6 @@ export default {
   },
   components: {
     btn,
-    loading
   },
   methods: {
     selects(adr, index) {
@@ -113,14 +108,14 @@ export default {
       }, 2000);
     }
   },
-  async mounted() {
-    this.shopNum = 0;
-    const listData = await this.getNextPage();
-    this.shopList = listData.data.list;
-    if (listData.data.list.length < 8) {
-      this.canLoad = false;
-    }
-  },
+  // async mounted() {
+  //   this.shopNum = 0;
+  //   const listData = await this.getNextPage();
+  //   this.shopList = listData.data.list;
+  //   if (listData.data.list.length < 8) {
+  //     this.canLoad = false;
+  //   }
+  // },
   async onShow() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
@@ -133,17 +128,39 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.loading
-  height: 70px
 .content
-  padding: 20px 15px
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  padding: 30px 24px
   background: #f3f2f3
 .adr-card
+  width: 100%
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
   background: #fff
-  border-radius: 6px;/*no*/
-  padding: 20px 24px
-  font-weight: 600
-  margin-bottom: 20px
+  padding: 30px 30px 20px
+  margin-bottom: 30px
+  .user
+    width: 100%
+    display: flex
+    align-items: center
+    color: #000
+    .name
+      width: 250px
+      text-align: left
+    .iphone
+      flex: 1
+      text-align: right
+  .adr
+    width: 100%
+    font-size: 23px
+    .adr-text
+      padding-bottom: 20px
+      letter-spacing: 1px
+      text-align: left
+      +border(1px, bottom, #EAEAEA)
   .adr-btn
     width: 100%
     display: flex
@@ -168,40 +185,30 @@ export default {
         background-size: 100% 100%
         border: none!important
     .btn-box
+      flex: 1
+      overflow: hidden
       display: flex
-      justify-content: space-between
+      justify-content: flex-end
       align-items: center
       font-size: 27px
       color: #333
-      p
-        flex: 1
+      .btn-item
+        width: 150px
         display: flex
+        justify-content: center
         align-items: center
         .edit
           +bg-img('storeMgr/edit-adr.png')
-          +icon(24px)
-          margin-right: 10px
+          +icon(40px)
+          margin: 0 10px
         .del
           +bg-img('storeMgr/del-adr.png')
-          +icon(24px)
-          margin-right: 10px
+          +icon(40px)
+          margin: 0 10px
 
-  .user
-    display: flex
-    height: 60px
-    line-height: 60px
-    color: #000
-    .iphone
-      padding-left: 80px
-  .adr
-    position: relative
-    font-size: 23px
-    .adr-text
-      letter-spacing: 1px
-      text-align: left
-      padding-bottom: 20px
-      +border(1px,bottom)
-
+.white-block
+  width: 100%
+  height: 100px
 .manage-adr
   background: #f3f2f3
 .footer

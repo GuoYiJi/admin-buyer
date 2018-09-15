@@ -49,23 +49,15 @@ export default {
     onReachBottom() {
 
     },
-<<<<<<< HEAD
     async mounted() {
         // this.navData.push(JSON.parse(this.$route.query.item))
-
       this.orderId = this.$route.query.orderId
       const L_selectOrderData = await this.$API.L_selectOrderDetail({
         orderId: this.$route.query.orderId
       });
       this.navData = L_selectOrderData.data
       console.log(this.navData)
-=======
-    mounted() {
-        this.navData.push(JSON.parse(this.$route.query.item))
-        console.log(this.navData)
->>>>>>> fa4f0910018294f2b16b42ec32a46553e4fc9dd0
     },
-
 };
 </script>
 <style lang="sass" scoped>

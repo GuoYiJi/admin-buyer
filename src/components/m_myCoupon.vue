@@ -12,7 +12,7 @@
         <span class="right_1">￥<strong>{{couponInfo.price}}</strong></span>
         <span class="right_2">
           <p>全程满</p>
-          <p>{{couponInfo.limitCount}}使用</p>
+          <p>{{couponInfo.limitCount}}元使用</p>
         </span>
         <button class="btn" :class="[state === 2 ? 'btnOff' : 'btnOn']">立即领取></button>
       </div>

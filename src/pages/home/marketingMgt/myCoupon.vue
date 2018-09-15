@@ -6,29 +6,30 @@
       <div class="line" :style="{left: tag*33 + '%'}"></div>
     </div>
   </div>
-  <div class="content">
-    <div v-if="tag == 0">
-      <div v-for="(item, index) in couponInfo" :key="index">
-        <myCoupon :couponInfo="item" @click.native="toMyCoupon(item)" />
+  <scroll-view scroll-y @scrolltolower="lower" style="height: 100vh;">
+    <div class="content">
+      <div v-if="tag == 0">
+        <div v-for="(item, index) in couponInfo" :key="index" @click="toMyCoupon(item)">
+          <myCoupon :couponInfo="item" @click.native="toMyCoupon(item)" />
+        </div>
+      </div>
+
+      <div v-else-if="tag == 1">
+        <div v-for="(item, index) in couponInfo" :key="index" @click="toMyCoupon(item)">
+          <myCoupon :couponInfo="item" />
+          <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
+        </div>
+      </div>
+
+      <div v-else-if="tag == 2">
+        <div v-for="(item, index) in couponInfo" :key="index">
+          <myCoupon :couponInfo="item" :state="2" />
+          <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
+        </div>
       </div>
     </div>
-
-    <div v-else-if="tag == 1">
-      <div v-for="(item, index) in couponInfo" :key="index" @click="toMyCoupon(item)">
-        <myCoupon :couponInfo="item" />
-        <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
-      </div>
-    </div>
-
-    <div v-else-if="tag == 2">
-      <div v-for="(item, index) in couponInfo" :key="index">
-        <myCoupon :couponInfo="item" :state="2"/>
-        <p class="info">已领取:{{item.mCount}}&thinsp;&thinsp;未使用:{{item.count - item.mCount}}</p>
-      </div>
-    </div>
-
-  </div>
-  <div style="height: 60px"></div>
+    <div style="height: 60px"></div>
+  </scroll-view>
   <div class="foot" @click="btn">
     <span class="btn">创建</span>
   </div>
@@ -41,12 +42,12 @@ import myCoupon from "@/components/m_myCoupon";
 export default {
   components: {
     myCoupon,
-    // myCouponT,
-    // myCouponTT
   },
   data() {
     return {
+      canLoad: true,
       tag: 1,
+      pageNumber: 1,
       couponInfo: [],
       navData: [{
           id: 0,
@@ -64,18 +65,49 @@ export default {
     };
   },
   methods: {
+    lower(e) {
+      this.pageNumber += 1
+      if (this.canLoad) {
+        this.getResponse(this.pageNumber).then(response => {
+          this.couponInfo = this.couponInfo.concat(response.data.list)
+          if (this.couponInfo.length == response.data.totalRow) {
+            this.canLoad = false
+          }
+        })
+      } else {
+        wx.showToast({
+          title: '没有更多的数据了',
+          icon: 'none'
+        })
+      }
+    },
     handleNav(state) {
+      this.pageNumber = 1;
       this.tag = state;
-      this.$API.myCoupon({
-        state
-      }).then(response => {
+      this.canLoad = true;
+      this.getResponse(this.pageNumber).then(response => {
         this.couponInfo = response.data.list
-        console.log(this.couponInfo)
+        if (this.couponInfo.length == response.data.totalRow) {
+          this.canLoad = false
+        }
+      })
+    },
+    getResponse(pageNumber) {
+      return this.$API.myCoupon({
+        pageNumber,
+        pageSize: 10,
+        state: this.tag
       })
     },
     toMyCoupon(item) {
       console.log(item);
-      this.$router.push({path: "/pages/home/marketingMgt/details", query: {item: JSON.stringify(item)}});
+      this.$router.push({
+        path: "/pages/home/marketingMgt/details",
+        query: {
+          item: JSON.stringify(item),
+          state: JSON.stringify(this.tag)
+        }
+      });
     },
     btn() {
       this.$router.push("/pages/home/marketingMgt/couponSetting");

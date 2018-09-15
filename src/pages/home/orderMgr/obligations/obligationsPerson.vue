@@ -4,9 +4,7 @@
       <!-- <i class="maiJiaico"></i> -->
       <text class="name">
         {{navData.refundType==0?'仅退款：':navData.refundType==1?'退货退款：':'换货：'}}
-
         {{navData.state==0?'未处理':navData.state==1?'等待卖家发货':navData.state==2?'被拒绝':navData.state==3?'同意':navData.state==4?'等待卖家发货':'关闭'}}
-      
       </text>
     </div>
     <div class="maiJia">
@@ -43,7 +41,7 @@
       <div >退款原因：{{navData.result}}</div>
       <div >退款金额：{{navData.price}}</div>
       <div >申请时间：{{navData.handleTime}}</div>
-      <div >退款编号：{{navData.orderRefundNo}}</div>   
+      <div >退款编号：{{navData.orderRefundNo}}</div>
     </div>
     <div class="orderImg">
       <div class="imgAll">
@@ -63,7 +61,7 @@
     <div class="foot">
       <!-- <span class="btn" @click="confirm(navData,index)">确认收货</span> -->
     </div>
-    
+
     <!-- 售后同意弹窗 -->
     <div class="closeTipAll" v-show="passhowYes">
       <div class="closeTip">
@@ -150,17 +148,16 @@ export default {
           });
           console.log(L_dealWithOrderData)
           if(L_dealWithOrderData.code == 1){
-            wx.showToast({               
-              title: '退款成功',               
-              icon: 'success',  
-              duration: 2000  
-            }) 
+            wx.showToast({
+              title: '退款成功',
+              icon: 'success',
+              duration: 2000
+            })
             this.passhowYes = false
           }else{
             this.passhowYes = false
 
           }
-
         },
         passBut(item ,index){
           console.log(item)
@@ -177,11 +174,11 @@ export default {
           });
           console.log(L_dealWithOrderData)
           if(L_dealWithOrderData.code == 1){
-            wx.showToast({               
-              title: '拒绝成功',               
-              icon: 'success',  
-              duration: 2000  
-            }) 
+            wx.showToast({
+              title: '拒绝成功',
+              icon: 'success',
+              duration: 2000
+            })
             this.passhow = false
             this.onPlayList.splice(this.currentSelectedIndex, 1)
 
@@ -214,10 +211,10 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
-  
-.head 
+
+.head
   height: 222px
   background: #fff
   display: flex
@@ -227,7 +224,7 @@ page
     height: 58px
     margin: 82px 19px 82px 24px
   .right
-    width: 620px 
+    width: 620px
     margin-top: 26px
     font-size: 28px
     color: #666
@@ -267,11 +264,10 @@ page
     height: 30px
     margin: 22px 19px 0 24px
 
-    
-.list 
+.list
   height: 280px
-  .kuang 
-    .sPimg 
+  .kuang
+    .sPimg
       width: 160px
       height: 160px
       display: inline-block
@@ -286,28 +282,28 @@ page
       .title
         +moreLine(2)
       .huo
-        +singleFile 
-        .name 
+        +singleFile
+        .name
           display: inline-block
           background: #ccc
           color: #fff
           padding: 4px 8px
-        .type 
+        .type
           margin: 0 0 0 20px
           display: inline-block
           color: #999
-        .number 
+        .number
           float: right
           margin-right: 12rpx
           color: #999
-      .maShuo 
+      .maShuo
         color: #999
-  .jiaGe 
+  .jiaGe
     height: 70px
     width: 100%
     background: #fff
-    float: right 
-    line-height: 70px 
+    float: right
+    line-height: 70px
     font-size: 22px
     padding-top: 4rpx
     .text
@@ -329,14 +325,12 @@ page
       margin-left: 20px
       margin-top: 10px
       margin-right: 20px
-  div:nth-child(2)    
+  div:nth-child(2)
     display: flex
     // padding: 0
     padding: 22px 25px 0
     div
       padding: 0
-
-
 .orderImg
   background: #fff
   margin-top: 10px
@@ -352,8 +346,7 @@ page
         width: 200px
         height: 200px
         margin-top: 20px
-
-.foot 
+.foot
   width: 100%
   position: fixed
   bottom: 0px
@@ -371,7 +364,7 @@ page
     margin-top: 20px
     margin-right: 10px
     border-radius: 4px
-  .btn 
+  .btn
     width: 130px
     height: 60px
     float: right
@@ -382,7 +375,7 @@ page
     text-align: center
     margin-top: 20px
     border-radius: 4px
-.closeTipAll 
+.closeTipAll
   background: rgba(0,0,0,0.1)
   width: 100%
   height: 100%
@@ -390,7 +383,7 @@ page
   top: 0
   z-index: 9999
   .closeTip
-    opacity: 1 
+    opacity: 1
     width: 550px
     height: 350px
     margin: 0 auto
@@ -406,8 +399,6 @@ page
       p
       .tipText
         margin: 40px
-
-        // margin-top: 40px
     .confirm_but
       margin-top: 80px
       display: flex

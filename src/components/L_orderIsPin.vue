@@ -62,14 +62,14 @@ export default {
 
     };
   },
- 
+
   methods: {
     async handleTag(tag) {
       this.tag = tag;
       var type = 0 ;
       this.shopNum = 0;
       // console.log(this.shopList)
-      
+
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
@@ -94,7 +94,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
         state: 9
         // state: this.tag
@@ -127,7 +127,7 @@ export default {
           vm.canLoad = false
         }
         // this.isPin = this.isPin.concat(listData.data.list);
-        
+
         wx.hideLoading()
       })
     } ,
@@ -138,13 +138,13 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.isPin = this.isPin.concat(listData.data.list); 
+    this.isPin = this.isPin.concat(listData.data.list);
     // console.log(this.orderList)
     console.log(this.isPin);
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
-  
+
   }
 };
 </script>
@@ -172,7 +172,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -183,18 +183,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

@@ -2,8 +2,7 @@
   <div class="home">
     <div class="login">
       <p v-if="userInfo.userInfo"><img :src="userInfo.userInfo.avatarUrl" class="icon_wx" /></p>
-      <p v-else><i  class="icon_wx"></i></p>
-      <!-- <img :src="userInfo" class="icon_wx"></img> -->
+      <p v-else><i class="icon_wx"></i></p>
       <p>{{userInfo.userInfo ? userInfo.userInfo.nickName : '微信登陆'}}</p>
     </div>
     <i-message id="message" />
@@ -32,14 +31,11 @@ export default {
   },
   methods: {
     async getPhoneNumber(e) {
-      // console.log(e.mp.detail);
       if (!e.mp.detail.encryptedData) {
         this.handleError("需要同意授权才可以使用噢！");
-        // console.log()
       } else {
         const val = await wx.getStorageSync("sessionId");
         if (val) {
-          // return this.toRoute("home/home");
           return wx.switchTab({
             url: '/pages/home/home'
           })

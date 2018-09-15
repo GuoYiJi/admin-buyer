@@ -20,30 +20,11 @@
           </li>
         </ul>
       </div>
-      <!-- <div v-for="item in shopList">
-        <div>{{item.deliverTime}}</div>
-      </div> -->
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
-          <div class="box">
-            <p>
-              <!-- 拆单组件 -->
-              <!-- <delivery /> -->
-            </p>
-            <p >
-              <!-- 拼团组件 -->
-              <CollageYesGod :yesGod="yesGod"/>
-            </p>
-            
-            <p>
-              <!-- 交易成功 -->
-              <!-- <payment/> -->
-            </p>
-            <p>
-              <!-- 退款组件 -->
-              <!-- <afterSales /> -->
-            </p>
-          </div>
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
+        <div class="box">
+          <p >
+            <CollageYesGod :yesGod="yesGod"/>
+          </p>
         </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
@@ -117,39 +98,52 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
-        state: 8
+        state: 7
       };
       this.shopNum++;
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    async lower(e) {
-      // console.log(e);
-      if (!this.canLoad) return;
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listData = await this.getNextPage();
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.yesGod =  vm.yesGod.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.yesGod = this.yesGod.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    },
+        if(vm.yesGod.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+
+        wx.hideLoading()
+      })
+    } ,
 
   },
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage();
+    this.yesGod = listData.data.list;
 
-    if (listData.data.list.length < 30) {
+    if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
-    this.yesGod = listData.data.list;
-  
+
   }
 };
 </script>
@@ -160,7 +154,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0
@@ -177,7 +171,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -188,18 +182,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

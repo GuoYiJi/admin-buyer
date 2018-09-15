@@ -20,16 +20,11 @@
           </li>
         </ul>
       </div>
-      <!-- <div v-for="item in shopList">
-        <div>{{item.deliverTime}}</div>
-      </div> -->
-      <scroll-view scroll-y lower-threshold='80' style="height: 83%;" @scrolltolower="lower"  >
-        <div class="scroll-box">
-          <div class="box">
-            <p >
-              <CollageClose :closeOrder="closeOrder"/>
-            </p>
-          </div>
+      <scroll-view :scroll-y="true"  style="height: 100vh;" @scrolltolower="lower" >
+        <div class="box">
+          <p >
+            <CollageClose :closeOrder="closeOrder"/>
+          </p>
         </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
@@ -52,7 +47,7 @@ export default {
     loading,
 
   },
-  data() {  
+  data() {
     return {
       searchIn: false,
       asceSale: true,
@@ -67,14 +62,14 @@ export default {
 
     };
   },
- 
+
   methods: {
     async handleTag(tag) {
       this.tag = tag;
       var type = 0 ;
       this.shopNum = 0;
       // console.log(this.shopList)
-      
+
       if (tag === 2) {
         //对销量sort
         this.asceSale = !this.asceSale;
@@ -99,7 +94,7 @@ export default {
     },
     getNextPage() {
       var obj = {
-        pageSize: 30,
+        pageSize: 10,
         orderType: this.type,
         state: 8
         // state: this.tag
@@ -108,20 +103,34 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderPage(obj);
     },
-    async lower(e) {
-      console.log(e);
-      if (!this.canLoad) return;
+    lower(e) {
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
+
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listData = await this.getNextPage();
-      setTimeout(() => {
-        if (listData.data.list.length < 30) {
-          this.canLoad = false;
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({ob: this.type,state: this.state}).then(response => {
+        vm.closeOrder =  vm.closeOrder.concat(response.data.list);
+        if(response) {
+          vm.showLoad = false
         }
-        this.closeOrder = this.closeOrder.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
-    }
+        if(vm.closeOrder.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+
+        wx.hideLoading()
+      })
+    } ,
 
   },
   async mounted() {
@@ -129,13 +138,13 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.closeOrder = this.closeOrder.concat(listData.data.list); 
+    this.closeOrder = this.closeOrder.concat(listData.data.list);
     // console.log(this.orderList)
     console.log(this.closeOrder);
     if (listData.data.list.length < 30) {
       this.canLoad = false;
     }
-  
+
   }
 };
 </script>
@@ -146,7 +155,7 @@ export default {
 .home
   height: 100%
 .scroll-box
-  height: 900px
+  height: 100%
   overflow: auto
   p
     margin: 5px 0
@@ -163,7 +172,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -174,18 +183,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

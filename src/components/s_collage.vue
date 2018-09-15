@@ -1,30 +1,26 @@
 <template>
-  <div class="home">
-    <div class="sort-select">
-      <div class="top-nav">
-        <ul>
-          <li :class="[tag === 0 && 'nav-active']" @click="handleTag(0)">未开始</li>
-          <li :class="[tag === 1 && 'nav-active']" @click="handleTag(1)">进行中</li>
-          <li :class="[tag === 2 && 'nav-active']" @click="handleTag(2)">已结束</li>
-        </ul>
-      </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 70%;" @scrolltolower="lower"  >
-      <div class="scroll-box">
-        <div class="box">
-          <p v-for="(shop,index) in shopList" :key="index" v-if="!shop.del">
-            <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
-          </p>
-        </div>
-        <div class="loading" v-if="canLoad">
-          <div v-if="showLoad"><loading  /></div>
-        </div>
-      </div>
-      </scroll-view>
+<div class="home">
+  <div class="sort-select">
+    <div class="top-nav">
+      <ul>
+        <li :class="[tag === 0 && 'nav-active']" @click="handleTag(0)">未开始</li>
+        <li :class="[tag === 1 && 'nav-active']" @click="handleTag(1)">进行中</li>
+        <li :class="[tag === 2 && 'nav-active']" @click="handleTag(2)">已结束</li>
+      </ul>
     </div>
-    <div class="footer">
-      <p class="style2" @click="pageTo('collage/collageMsg')">创建拼团</p>
-    </div>
+    <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower">
+      <div class="box">
+        <p v-for="(shop,index) in shopList" :key="index">
+          <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
+        </p>
+        <div class="white-block"></div>
+      </div>
+    </scroll-view>
   </div>
+  <div class="footer">
+    <p class="style2" @click="pageTo('collage/collageMsg')">创建拼团</p>
+  </div>
+</div>
 </template>
 <script>
 import wx from "wx";
@@ -46,9 +42,9 @@ export default {
       shopList: [],
       showLoad: false,
       canLoad: true,
-      pageSize: 20,
-      type: 0,//接口'ob'字段, 排序
-      state: 1,//接口'state'字段, 0未开始, 1进行中, 2已经过期
+      pageSize: 10,
+      type: 0, //接口'ob'字段, 排序
+      state: 1, //接口'state'字段, 0未开始, 1进行中, 2已经过期
       type: 0,
     };
   },
@@ -58,7 +54,7 @@ export default {
       console.log(goodsId, bool, shop);
     },
     //搜索商品
-    searchShop(params){
+    searchShop(params) {
       params.pageSize = this.pageSize
       return this.$API.s_getShopGroup(params)
     },
@@ -79,7 +75,7 @@ export default {
       this.tag = tag;
       this.state = tag
       console.log(this.state);
-      var type = 0 ;
+      var type = 0;
       //refresh init
       this.shopNum = 0
       this.canLoad = true
@@ -90,7 +86,7 @@ export default {
         // labelId: this.groupTag
       })
       this.shopList = listData.data.list
-      if(listData.data.list.length < this.pageSize) {
+      if (listData.data.list.length < this.pageSize) {
         this.canLoad = false
       }
     },
@@ -99,25 +95,57 @@ export default {
     // },
     pageTo(url) {
       console.log(111111111);
-      this.$emit('toRoute', url, {isEdit: false})
+      this.$emit('toRoute', url, {
+        isEdit: false
+      })
     },
-    async lower(e) {
-      // console.log(e);
-      if (!this.canLoad) return;
+    // async lower(e) {
+    //   // console.log(e);
+    //   if (!this.canLoad) return;
+    //   if (this.showLoad) return;
+    //   this.showLoad = true;
+    //   const listData = await this.getNextPage({
+    //     ob: this.type,
+    //     state: this.state,
+    //     // labelId: this.groupTag
+    //   });
+    //   setTimeout(() => {
+    //     if (listData.data.list.length < this.pageSize) {
+    //       this.canLoad = false;
+    //     }
+    //     this.shopList = this.shopList.concat(listData.data.list);
+    //     this.showLoad = false;
+    //   }, 2000);
+    // },
+    lower(e) {
+      console.log(e);
+      if (!this.canLoad) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        })
+        return
+      }
       if (this.showLoad) return;
-      this.showLoad = true;
-      const listData = await this.getNextPage({
+      this.showLoad = true
+      wx.showLoading({
+        title: '加载中',
+      })
+      const vm = this;
+      this.getNextPage({
         ob: this.type,
-        state: this.state,
-        // labelId: this.groupTag
-      });
-      setTimeout(() => {
-        if (listData.data.list.length < this.pageSize) {
-          this.canLoad = false;
+        state: this.state
+      }).then(response => {
+        vm.shopList = vm.shopList.concat(response.data.list);
+        if (response) {
+          vm.showLoad = false
         }
-        this.shopList = this.shopList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
+        if (vm.shopList.length === response.data.totalRow) {
+          vm.canLoad = false
+        }
+        wx.hideLoading()
+      })
     },
   },
   async mounted() {
@@ -151,52 +179,41 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-.box
-  padding: 2% 0 110px 0%
 .home
   // position: relative
   height: 100%
+  .box
+    padding: 15% 0 0
+    .white-block
+      width: 100%
+      height: 100px
 .footer
-  position: absolute
+  width: 100%
+  position: fixed
   bottom: 0
   left: 0
-  right: 0
   height: 98px
   line-height: 98px
   display: flex
   justify-content: flex-end
   color: #fff
   background: #fff
+  z-index: 2
+  +border(1px, top, #CCCCCC)
   p
     width: 220px
+    background-color: #f67c2f
     text-align: center
-  .style1
-    background: #FFB658
-  .style2
-    background: #F67C2F
-.scroll-box
-  // padding: 10px 0
-  height: 900px
-  overflow: auto
-  p
-    margin-bottom: 8px
-.option-icon
-  +bg-img('shopMgr/option.png')
-  +icon(32px)
-.sort-active
-  &:after
-    border-color: #EE7527!important
 .nav-active
   color: #EE7527!important
   +border(1px,bottom,#EE7527 )
 .sort-select
   height: 100%
 .top-nav
-  // left: 0
-  // right: 0
-  // top: 180px
+  width: 100%
+  position: fixed
   background: #fff
-  // z-index: 9999
+  z-index: 6
   text-align: center
   ul
     display: flex

@@ -5,7 +5,6 @@
         <p class="search-icon"><i class="search"></i></p>
         <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>
       </div>
-
       <div class="nav">
         <div class="list">
           <span
@@ -91,19 +90,19 @@ export default {
           text: '仓库中'
         },{
           id: 4,
-          text: '上新'
+          text: '新品上新'
         },{
           id: 5,
-          text: '热销'
+          text: '爆款精选'
         },{
           id: 6,
-          text: '折扣'
+          text: '特价折扣'
         },{
           id: 7,
-          text: '拼团'
+          text: '拼团优惠'
         },{
           id: 8,
-          text: '搭配'
+          text: '搭配专区'
         }
       ]
     };
@@ -123,6 +122,7 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+
 .content
   padding-top: 200px
 .home
@@ -132,7 +132,7 @@ export default {
   position: fixed
   top: 0
   left: 0
-  // z-index: 10
+  z-index: 5
   padding: 30px 0
   background: #fff
   .input
@@ -192,5 +192,4 @@ export default {
   bottom: 23px
   margin: 0 6%
   transition: left .3s ease-in
-
 </style>
