@@ -1,4 +1,3 @@
-
 <template>
   <!-- 头部*********订单详情 -->
   <div class="home">
@@ -66,7 +65,7 @@ export default {
 
     };
   },
- 
+
   methods: {
     parent(){
       this.$.refs.child.childFn()
@@ -117,7 +116,7 @@ export default {
         })
         return
       }
-      
+
       if (this.showLoad) return;
       this.showLoad = true
       wx.showLoading({
@@ -132,10 +131,10 @@ export default {
         if(vm.onPlayList.length === response.data.totalRow) {
           vm.canLoad = false
         }
-        
+
         wx.hideLoading()
       })
-    } , 
+    } ,
 
   },
   async mounted() {
@@ -143,13 +142,13 @@ export default {
     this.shopNum = 0;
     const listData = await this.getNextPage();
     console.log(listData);
-    this.onPlayList = this.onPlayList.concat(listData.data.list); 
+    this.onPlayList = this.onPlayList.concat(listData.data.list);
     // console.log(this.orderList)
     console.log(this.onPlayList);
     if (listData.data.list.length < 10) {
       this.canLoad = false;
     }
-  
+
   }
 };
 </script>
@@ -177,7 +176,7 @@ export default {
 .top-nav
   background: #fff
   text-align: center
-  ul 
+  ul
     display: flex
     font-size: 26px
     height: 92px
@@ -188,18 +187,18 @@ export default {
         display: inline
         position: relative
         padding-left: 10px
-        .sort-bottom 
+        .sort-bottom
           +goback(1px)
           position: absolute
           top: -23px
           &:after
             transform: rotate(-45deg)
             border-color: #999
-        .sort-top    
+        .sort-top
           +goback(1px)
           position: absolute
           bottom: -23px
           &:after
             transform: rotate(-225deg)
-            border-color: #999   
+            border-color: #999
 </style>

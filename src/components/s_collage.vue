@@ -199,10 +199,7 @@ export default {
   color: #fff
   background: #fff
   z-index: 2
-<<<<<<< HEAD
   +border(1px, top, #CCCCCC)
-=======
->>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
   p
     width: 220px
     background-color: #f67c2f

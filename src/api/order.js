@@ -42,4 +42,6 @@ export default class order {
   L_sureReund = params => http.post('/api/order/refund/sureReund', params)
 
   s_getImg = params => http.post('api/img/getImg', params)
+  //api/warehouse/changeExpress
+  L_changeExpress = params => http.post('api/warehouse/changeExpress', params)
 }

@@ -31,7 +31,7 @@
                     <span v-if=" item.remainNum != 0 "  class="edit" @click="edit(itemzz,item.orderId,idx)">编辑</span>
                     <!-- <span v-if="!editClick" class="edit">编辑</span> -->
                   </div>
-                </div>  
+                </div>
                 <!-- </div> -->
               </div>
             </div>
@@ -388,7 +388,7 @@ export default {
             obj.id = orderLisetArr[i].id
             obj.skuId = orderLisetArr[i].skuId
             obj.waitNum = orderLisetArr[i].remainNum
-            array.push(obj) 
+            array.push(obj)
           }
           this.orderDeliver = array;
           console.log(this.orderDeliver)
@@ -424,7 +424,7 @@ export default {
                     obj.num = deliverListArr[k].num
                     obj.waitNum = deliverListArr[k].remainNum
                     array.push(obj)
-                  }     
+                  }
                   arrTwo[i] = array;
                 }
                 this.Arrays = arr;
@@ -459,7 +459,7 @@ export default {
               }
             }
           console.log(JSON.stringify(object))
-          let that = this  
+          let that = this
           wx.request({
             url: that.url, //仅为示例，并非真实的接口地址
             data: JSON.stringify(object),
@@ -551,7 +551,7 @@ page
         flex: 4
         padding-left: 20px
       .fuKuan
-        flex: 
+        flex:
     .topHug
       display: flex
       .sPimgHug

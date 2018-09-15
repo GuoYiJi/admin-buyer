@@ -92,7 +92,7 @@
         </div>
         <div class="title_t" >
 
-            <ul class="s_item_box" v-for="(itemss,idsz) in orderDeliver" :key="idsz">
+            <ul class="s_item_box" v-for="(itemss,idss) in orderDeliver" :key="idss">
               <li class="s_item">{{itemss.color}}</li>
               <li class="s_item">{{itemss.size}}</li>
               <li class="s_item">{{itemss.num}}</li>

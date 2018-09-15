@@ -49,21 +49,13 @@ export default {
 
     },
     async mounted() {
-<<<<<<< HEAD
-        // this.navData.push(JSON.parse(this.$route.query.item))
-=======
->>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
       this.orderId = this.$route.query.orderId
       const L_selectOrderData = await this.$API.L_selectOrderDetail({
         orderId: this.$route.query.orderId
       });
       this.navData = L_selectOrderData.data
-<<<<<<< HEAD
-      console.log(this.navData)
-=======
     //   console.log(this.navData.goodsList)
       this.navDataAll = this.navData.goodsList
->>>>>>> a264e0c11155e34cc520fa57a7212a4eabb2b1d0
     },
 };
 </script>
