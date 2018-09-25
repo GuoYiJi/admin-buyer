@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i>
-      <i class="img" :style="{background: 'url(' + shop.images + ')'}"></i>
+      <i class="img" :style="{backgroundImage: 'url(' + shop.images + ')'}"></i>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <span class="stall">档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span>
@@ -139,9 +139,14 @@ ul.m_box
   i.close
     background-image: url("~@/assets/img/home/select.png")
   .img
-    +icon(240px)
+    display: inline-block
+    width: 240px
+    height: 240px
     border-radius: 12px
     margin-right: 20px
+    background-repeat: no-repeat
+    background-position: center
+    background-size: 100% 100%
   .desc
     flex: 1
     overflow: hidden

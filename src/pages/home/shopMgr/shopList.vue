@@ -10,7 +10,7 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 82%;" @scrolltolower="lower"  >
+      <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower">
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
@@ -211,10 +211,12 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .footer
-  position: absolute
+  position: fixed
+  width: 100%
   bottom: 0
   left: 0
   right: 0
+  z-index: 7
   height: 98px
   line-height: 98px
   color: #fff

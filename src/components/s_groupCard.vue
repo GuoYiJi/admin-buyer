@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <!-- <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i> -->
-      <div class="img" :style="{background: 'url(' + shop.images + ')'}"></div>
+      <div class="img" :style="{backgroundImage: 'url(' + shop.images + ')'}"></div>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <p class="tips">
@@ -179,9 +179,13 @@ export default {
     i.close
       background-image: url("~@/assets/img/home/select.png")
     .img
-      +icon(240px)
+      width: 240px
+      height: 240px
       border-radius: 12px
       margin-right: 20px
+      background-position: center
+      background-repeat: no-repeat
+      background-size: 100% 100%
     .desc
       flex: 1
       display: flex

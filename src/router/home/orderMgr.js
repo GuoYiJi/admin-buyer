@@ -4,13 +4,21 @@ const orderMgr = [{
         config: {
             navigationBarTitleText: '订单管理',
             'usingComponents': {
-                'i-input-number': '/iview/input-number/index',
-                'i-panel': '/iview/panel/index',
-                'i-button': '/iview/button/index',
-                'i-radio-group': '/iview/radio-group/index',
-                'i-radio': '/iview/radio/index'
+                // 'i-input-number': '/iview/input-number/index',
+                // 'i-panel': '/iview/panel/index',
+                // 'i-button': '/iview/button/index',
+                // 'i-radio': '/iview/radio/index',
+                'i-modal': '/iview/modal/index',
+                'i-message': '/iview/message/index',
             }
         }
+    },
+    // 物流详情
+    {
+      path: '/pages/home/orderMgr/logisticsDetail',
+      config: {
+          navigationBarTitleText: '查看物流'
+      }
     },
     // 订单详情
     {
@@ -24,6 +32,25 @@ const orderMgr = [{
         path: '/pages/home/orderMgr/obligations/obligations',
         config: {
             navigationBarTitleText: '订单详情'
+        }
+    },
+    {
+        path: '/pages/home/orderMgr/orderdetail',
+        config: {
+            navigationBarTitleText: '订单详情',
+            'usingComponents': {
+                'i-modal': '/iview/modal/index',
+                'i-message': '/iview/message/index',
+            }
+        }
+    },
+    {
+        path: '/pages/home/orderMgr/orderRefundDetail',
+        config: {
+            navigationBarTitleText: '订单详情',
+            'usingComponents': {
+                'i-modal': '/iview/modal/index',
+            }
         }
     },
     {
