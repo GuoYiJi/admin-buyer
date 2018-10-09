@@ -184,12 +184,12 @@ export default {
       box-sizing: border-box
 .line
   display: block
-  height: 1px;/*no*/
+  height: 4px;/*no*/
   width: 8%
   border-radius: 8px
   background-color: #F67C2F
   position: absolute
-  bottom: 23px
+  bottom: 22px
   margin: 0 6%
   transition: left .3s ease-in
 </style>

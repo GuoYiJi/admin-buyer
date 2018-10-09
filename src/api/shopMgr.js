@@ -57,4 +57,7 @@ export default class shopMgr {
 
   // 切换物流到付状态
   changeExpressType = params => http.post('api/warehouse/changeExpressType', params)
+
+  // 查询是否已存在置顶商品
+  selectTopGoods = params => http.post('api/goods/selectTopGoods', params)
 }

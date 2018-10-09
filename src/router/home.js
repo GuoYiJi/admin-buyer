@@ -3,14 +3,16 @@ const home = [{
         name: 'home',
         config: {
             // enablePullDownRefresh: true,
-            navigationBarBackgroundColor: '#FA8134'
+            navigationBarBackgroundColor: '#FA8134',
+            navigationBarTextStyle: 'white'
         }
     },
     {
         path: '/pages/home/allData',
         config: {
             navigationBarTitleText: '数据统计',
-            navigationBarBackgroundColor: '#FA8134'
+            navigationBarBackgroundColor: '#FA8134',
+            navigationBarTextStyle: 'white'
         }
     },
 ]

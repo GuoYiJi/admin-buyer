@@ -1,5 +1,3 @@
-
-
 import config from '@/config.js'
 
 const TEST_URL = config.url
@@ -11,11 +9,11 @@ import Vue from 'vue'
 import qs from 'qs'
 import wx from 'wx'
 const vm = new Vue()
-axios.defaults.adapter = function(config){
+axios.defaults.adapter = function(config) {
   wx.showLoading({
     title: '加载中',
   })
-  return new Promise((resolve,reject) => {
+  return new Promise((resolve, reject) => {
     // console.log(config)
     try {
       wx.request({
@@ -24,28 +22,86 @@ axios.defaults.adapter = function(config){
         header: config.headers,
         method: config.method,
         dataType: config.dataType,
-        success: function(data){
+        success: function(data) {
           // return data
           // console.log(data.data.desc)
           const code = Number(data.data.code)
-          if(code === 1) {
+          if (code === 1) {
             //  data.data
             // console.log('这是请求')
             resolve(data.data)
             // return data.data
-          } 
-          else if (code === 2 ) {
+          } else if (code === 2) {
             // 重新登陆 清除登陆信息 location.reload()
             // window.location.reload()
-            wx.showToast({
-              title: '登录过期，请重新登录',
-              icon: 'none',
-              duration: 2000
-            })
-            wx.setStorageSync('sessionId', '')
-            setTimeout(()=>{ 
-              wx.redirectTo({url: '/pages/login/wxLogin'})
-            },2000) 
+            if(wx.getStorageSync('code')) {
+              wx.login({
+                success: async res => {
+                  // console.log("微信登录成功 res ==>", res);
+                  wx.setStorageSync("code", res.code)
+                  if (res.code) {
+                    wx.getUserInfo({
+                      success: res => {
+                        // console.log("获取用户信息成功 res ==>", res);
+                        wx.request({
+                          url: TEST_URL + '/api/account/authLogin',
+                          data: {
+                            code: wx.getStorageSync('code'),
+                            shopId: 'wx3a5f4001c0e1d32f',
+                            encryptedData: res.encryptedData,
+                            iv: res.iv
+                          },
+                          header: {'Content-Type': 'application/x-www-form-urlencoded'},
+                          method: 'POST',
+                          success: function(res) {
+                            wx.setStorageSync('sessionId', res.data.data.sessionId)
+                            wx.switchTab({
+                              url: '/pages/home/home'
+                            })
+                          },
+                          fail: function(err) {
+                            setTimeout(() => {
+                              wx.redirectTo({
+                                url: '/pages/login/wxLogin'
+                              })
+                            }, 2000)
+                          }
+                        })
+                      },
+                      fail: err => {
+                        // this.userInfoBool = true
+                      }
+                    });
+                  }
+                },
+                fail: () => {
+                  self.handleError("授权失败！");
+                }
+              });
+            }else {
+              wx.showToast({
+                title: '您没有授权, 请授权登录',
+                icon: 'none',
+                duration: 2000
+              })
+              wx.setStorageSync('sessionId', '')
+              setTimeout(() => {
+                wx.redirectTo({
+                  url: '/pages/login/wxLogin'
+                })
+              }, 2000)
+            }
+            // wx.showToast({
+            //   title: '登录过期，请重新登录',
+            //   icon: 'none',
+            //   duration: 2000
+            // })
+            // wx.setStorageSync('sessionId', '')
+            // setTimeout(() => {
+            //   wx.redirectTo({
+            //     url: '/pages/login/wxLogin'
+            //   })
+            // }, 2000)
           } else if (code === 0) {
             const msg = data.data.desc
             wx.showToast({
@@ -54,21 +110,15 @@ axios.defaults.adapter = function(config){
               duration: 2000
             })
           }
-          
         },
-        complete: ()=>{
+        complete: function() {
           wx.hideLoading()
         }
       })
-
-      
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
-    
-
     // })
-    
   })
 }
 
@@ -103,12 +153,12 @@ const form = axios.create({
   timeout: 60000,
   baseURL: URL,
   headers: {
-    'Content-Type' : 'multipart/form-data'
+    'Content-Type': 'multipart/form-data'
   }
 })
 
 export default {
-    // get( url ,params = {}){
+  // get( url ,params = {}){
   //   return new Promise (async (resolve, reject) => {
   //     try {
   //       const data = await http.get(url,{params})
@@ -121,9 +171,9 @@ export default {
   //     catch(err) {
   //       console.log(err)
   //     }
-  //   }) 
-  // }, 
-  post(url, params = {},back=true ) {
+  //   })
+  // },
+  post(url, params = {}, back = true) {
     return new Promise(async (resolve, reject) => {
       try {
         const data = await http.post(url, qs.stringify(params))
@@ -138,9 +188,9 @@ export default {
         //   // window.location.reload()
         //   vm.$toast(data.data.desc)
         //   setTimeout(()=>{
-        //     // vm.$router.push({path: '/Login'})  
+        //     // vm.$router.push({path: '/Login'})
         //     window.location.href = "/dist/index.html#/Login"
-        //   },2500) 
+        //   },2500)
         // } else {
         //   wx.showToast({
         //     title: data.data.desc,
@@ -149,34 +199,32 @@ export default {
         //   })
         //   // if(back){
         //   //   setTimeout(()=>{
-        //   //     history.go(-1)    
-        //   //   },2500) 
+        //   //     history.go(-1)
+        //   //   },2500)
         //   // }
-          
+
         // }
-      }
-      catch (err) {
+      } catch (err) {
         console.log(err)
       }
-      
+
     })
   },
 
-  form(url, params={}) {
+  form(url, params = {}) {
     return new Promise(async (reslove, reject) => {
-      try{
-        const data = await form.post(url,params)
+      try {
+        const data = await form.post(url, params)
         const code = Number(data.data.code)
-        if(code === 1) {
+        if (code === 1) {
           reslove(data.data)
         } else {
           vm.$toast(data.data.desc)
-        }  
-      }
-      catch (err) {
+        }
+      } catch (err) {
         console.log(err)
       }
     })
-    
+
   },
 }

@@ -47,9 +47,9 @@
               <deliveryBy :orderList="orderList" ref="chufa" />
             </p>
           </div>
-          <div class="loading" v-if="canLoad">
+          <!-- <div class="loading" v-if="canLoad">
             <div v-if="showLoad"><loading /></div>
-          </div>
+          </div> -->
         </scroll-view>
       </div>
     </div>
@@ -57,21 +57,21 @@
 </template>
 <script>
 import wx from "wx";
-import payment from "@/components/o_payment";
-import CollageBy from "@/components/L_collageBy";
+// import payment from "@/components/o_payment";
+// import CollageBy from "@/components/L_collageBy";
 import deliveryBy from "@/components/L_deliverByTwo";
 import afterSales from "@/components/o_afterSales";
-import loading from "@/commond/loading";
+// import loading from "@/commond/loading";
 import selsearch from '@/components/selectSearch'
 export default {
   components: {
-    payment,
+    // payment,
     // Collage,
     // delivery,
-    afterSales,
-    loading,
+    // afterSales,
+    // loading,
     deliveryBy,
-    CollageBy,
+    // CollageBy,
     selsearch
   },
   provide(){
@@ -212,7 +212,7 @@ export default {
       obj.pageNumber = this.shopNum;
       return this.$API.L_selectOrderGoods(obj);
     },
-    
+
     lower(e) {
       if (!this.canLoad) {
         wx.showToast({
@@ -222,7 +222,7 @@ export default {
         })
         return
       }
-      
+
       if (this.showLoad) return;
       this.showLoad = true
       wx.showLoading({
@@ -237,10 +237,10 @@ export default {
         if(vm.orderList.length === response.data.totalRow) {
           vm.canLoad = false
         }
-        
+
         wx.hideLoading()
       })
-    }, 
+    },
     async comSearch(searchParams){
       //searchParams 筛选的查询参数
       this.toggleRight1()

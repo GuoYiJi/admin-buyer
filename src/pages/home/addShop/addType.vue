@@ -206,7 +206,6 @@ export default {
         success: function(res) {
           console.log(res);
           var tempFilePath = res.tempFilePaths;
-
           console.log(tempFilePath);
           for (var i = 0, l; (l = tempFilePath[i++]); ) {
             that.uploadImg(l, index);
@@ -223,12 +222,14 @@ export default {
     },
     uploadImg(tempFilePath, index) {
       var that = this;
+      var location = tempFilePath.lastIndexOf('/') + 1;
+      console.log(tempFilePath.slice(location).toString());
       wx.uploadFile({
         url: config.uploadImageUrl,
         filePath: tempFilePath,
         name: "file",
         formData: {
-          name: tempFilePath.substring(10),
+          name: tempFilePath.slice(location).toString(),
           key: "img/${filename}",
           policy: config.imgPolicy,
           OSSAccessKeyId: "6MKOqxGiGU4AUk44",
@@ -240,8 +241,7 @@ export default {
           if (res.statusCode == 400) {
             that.handleError("上传的图片大小不能超过2m!");
           } else if (res.statusCode == 200) {
-            const img =
-              config.uploadImageUrl + "/img" + tempFilePath.substring(10);
+            const img = config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString();
             that.$set(that.imgList[index], "img", img);
           }
         },

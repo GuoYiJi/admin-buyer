@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <!-- <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i> -->
-      <div class="img" :style="{background: 'url(' + shop.images + ')'}"></div>
+      <div class="img" :style="{backgroundImage: 'url(' + shop.image || 'https://www.iwwdirect.com.au/images/404.jpg' + ')'}"></div>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <p class="tips">
@@ -10,7 +10,7 @@
           <button class="group">{{shop.ping.num}}人成团</button>
         </p>
         <p class="sellnum">货期:{{shop.delivery}}丨销量:{{shop.sellCount}}</p>
-        <p class="collage_price">拼团价: {{groupPrice ? '￥' + groupPrice : '未设置'}}</p>
+        <p class="collage_price">拼团价: {{shop.disPrice ? '￥' + shop.disPrice : '未设置'}}</p>
         <p class="price">
           <span class="countPrice">售价:￥{{shop.sellPrice}}</span>
           <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
@@ -18,6 +18,13 @@
         </p>
       </div>
     </div>
+    <i-modal :visible="visible1" @ok="comfirmGPrice('visible1', pingPrie)" @cancel="toClose('visible1')">
+      <ul class="m_box">
+        <li>售价: ￥{{shop.sellPrice}}</li>
+        <li>利润: ￥{{shop.profit}}</li>
+        <li>折扣价<input v-model="pingPrie"  type="digit"/>元</li>
+      </ul>
+    </i-modal>
     <i-modal :visible="visible2" @ok="comfirmDel('visible2')" @cancel="toClose('visible2')">
       <div class="m_tips">确定要{{actions4[1].name}}该商品？</div>
     </i-modal>
@@ -60,13 +67,15 @@ export default {
       check: false,
       visible4: false,
       visible2: false,
+      visible1: false,
       // vertical: '',
       actions4: [
         { name: "编辑" },
         { name: "下架" },
-        { name: "分组" },
+        // { name: "分组" },
         { name: "取消" }
       ],
+      pingPrie: ''
     }
   },
   computed: {
@@ -82,6 +91,36 @@ export default {
     // }
   },
   methods: {
+    comfirmGPrice(name, disPrice){
+      this.toClose(name)
+      // console.log('disPrice==>' + disPrice);
+      if(!disPrice) {
+        this.$Toast({
+          content: '折扣价格不能为空',
+          type: 'warning'
+        })
+        // 保存拼团价格
+        // 通知父组件
+        // const obj = {
+        //   id: this.shop.id,
+        //   price: this.groupPrice
+        // }
+        // this.$emit('setGroupPrice',obj)
+      }else{
+        this.$API.updateDisGoods({
+          goodsId: this.shop.id,
+          disPrice
+        }).then(respons => {
+          if(respons.code === 1) {
+            this.shop.disPrice = disPrice
+            this.$Toast({
+              content: '修改成功',
+              type: 'success'
+            })
+          }
+        })
+      }
+    },
     //点击选中按钮
     select(){
       //通知父组件 选中或取消
@@ -102,15 +141,13 @@ export default {
       this.visible4 = false
       if(index === 0) {
         //edit
-        console.log(this.shop);
-        this.toRoute('home/shopMgr/collage/collageMsg', {pingInfo: JSON.stringify(this.shop.ping), isEdit: true})
+        this.visible1 = true
+        // console.log(this.shop);
+        // this.toRoute('home/shopMgr/collage/collageMsg', {pingInfo: JSON.stringify(this.shop.ping), isEdit: true})
         // this.$emit('openEdit')
       } else if(index === 1) {
         //下架 或上架
         this.visible2 = true
-      } else if (index === 2) {
-        //group
-        this.toRoute('home/shopMgr/classify',{groupIds: this.shop.groupIds,goodsIds: this.shop.id })
       }
       else if (index === 2) {
         //group
@@ -143,6 +180,33 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+ul.m_box
+  padding: 10px 80px 0
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  background-color: #ffffff
+  font-size: 32px
+  li
+    width: 100%
+    padding: 5px 0
+    overflow: hidden
+    text-align: left
+    display: flex
+    align-items: center
+    font-size: 32px
+    +singleFile
+    &:last-of-type
+      border: none
+    input
+      display: inline-block
+      width: 167px
+      height: 45px
+      line-height: 45px
+      text-align: center
+      border: 2px solid #CCCCCC
+      margin: 0 10px
+      overflow: hidden
 // .m_tips
 //   color: #000
 //   font-size: 32px
@@ -179,9 +243,13 @@ export default {
     i.close
       background-image: url("~@/assets/img/home/select.png")
     .img
-      +icon(240px)
+      width: 240px
+      height: 240px
       border-radius: 12px
       margin-right: 20px
+      background-position: center
+      background-repeat: no-repeat
+      background-size: 100% 100%
     .desc
       flex: 1
       display: flex

@@ -1,24 +1,18 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="t_img"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg" /></p>
+      <image src="http://hd.wallpaperswide.com/thumbs/european_architecture-t2.jpg" mode="aspectFit" />
     </div>
     <div class="center">
-      <div class="title_box" v-for="(item,index) in myArticleList" :key="index">
-        <i class="icon"></i>
+      <div class="title_box" v-for="(item, index) in myArticleList" :key="index">
+        <i class="icon" :style="{backgroundColor: colorList[index]}"></i>
         <p class="t_name">{{item.name}}</p>
-        <div class="line" @click="toRoute(item.id)">
-          <div class="content">
-            <p class="title"><i class="icon my1"></i>新手指南</p>
+        <div class="line">
+          <div class="content" v-for="(title, titleIndex) in item.articleList" :key="titleIndex" @click="toRoute(title.content)">
+            <p class="title">{{title.title}}</p>
             <p class="toin"><i class="goin"></i></p>
           </div>
         </div>
-        <!-- <div class="line" @click="toRoute('my/newPoint/pointDetail')">
-          <div class="content">
-            <p class="title"><i class="icon my1"></i>新手指南</p>
-            <p class="toin"><i class="goin"></i></p>
-          </div>
-        </div> -->
       </div>
     </div>
   </div>
@@ -29,15 +23,15 @@ export default {
   components: {},
   data() {
     return {
-      myArticleList: []
+      myArticleList: [],
+      colorList: ['#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9', '#e6ebe0','#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9', '#e6ebe0', '#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9']
     };
   },
   methods: {
-    toRoute(id) {
-      console.log(id);
+    toRoute(content) {
       this.$router.push({
         path: "/pages/my/newPoint/pointDetail",
-        query: { id: id }
+        query: { content }
       });
     }
   },
@@ -56,25 +50,25 @@ export default {
   background: #fff
 .top
   padding: 30px
-  .t_img
-    height: 300px
+  image
+    width: 100%
+    background-color: #ffffff
 .center
   padding: 0 30px
   color: #333
-  position: relative
-  .t_name
-    height: 80px
-    line-height: 80px
+  .title_box
     position: relative
-    padding-left: 40px
-  .icon
-    background: #FF648A
-    display: inline-block
-    height: 44px
-    width: 20px
-    position: absolute
-    top: 20px
-    left: 30px
+    .t_name
+      height: 80px
+      line-height: 80px
+      padding-left: 40px
+    .icon
+      display: inline-block
+      height: 44px
+      width: 20px
+      position: absolute
+      top: 20px
+      left: 5px
 
 .line
   padding: 0 24px
@@ -98,5 +92,5 @@ export default {
     vertical-align: baseline
     &:after
       transform: rotate(225deg)
-      border-color: #999 
+      border-color: #999
 </style>

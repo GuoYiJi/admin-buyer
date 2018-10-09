@@ -18,7 +18,7 @@
       </div> -->
     </div>
     <p class="bottom"></p>
-    <p class="save" @click="goback">保存</p>
+    <p class="save" @click="goback" :disabled="!select">保存</p>
   </div>
 </template>
 <script>

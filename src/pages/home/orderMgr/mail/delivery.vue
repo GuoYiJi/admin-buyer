@@ -20,7 +20,7 @@
       <i class="maiJiaico"></i>
       <text class="name" >{{dpName}}</text>
       <text class="fuKuan" v-if="L_selectDetail">
-        {{L_selectDetail.state==1?'未支付':L_selectDetail.state==2?'取消':L_selectDetail.state==3?'已支付':L_selectDetail.state==4?'支付失败':L_selectDetail.state==5?'未发货':L_selectDetail.state==6?'已发货':L_selectDetail.state==7?'交易成功':L_selectDetail.state==8?'交易关闭':'拼单中'}} 
+        {{L_selectDetail.state==1?'未支付':L_selectDetail.state==2?'取消':L_selectDetail.state==3?'已支付':L_selectDetail.state==4?'支付失败':L_selectDetail.state==5?'未发货':L_selectDetail.state==6?'已发货':L_selectDetail.state==7?'交易成功':L_selectDetail.state==8?'交易关闭':'拼单中'}}
       </text>
     </div>
     <div class="list" v-for="(item,idx) in orderGoodsSku" :key="idx">
@@ -36,7 +36,7 @@
           </div>
           <div class="maShuo">
             <scroll-view scroll-x="true" style=" width:180px  " >
-              <span class="text">{{item.skuCode}}/{{item.num}}件</span>  
+              <span class="text">{{item.skuCode}}/{{item.num}}件</span>
             </scroll-view>
             <span class="edit" @click="edit(item,item.goodsId)" v-if="L_selectDetail.state != 6">编辑</span>
           </div>
@@ -49,7 +49,7 @@
           <span class="standby">待发数</span>
           <span class="shipments">发货件数</span>
           <span class="remaining">剩余件数</span>
-        </div> 
+        </div>
         <div class="title_2" v-for="(itemss,idss) in orderDeliver" :key="idss">
           <span class="colour">{{itemss.color}}</span>
           <span class="size">{{itemss.size}}</span>
@@ -90,7 +90,7 @@
       <div class="orderNumber">订单编号：{{L_selectDetail.orderNo}}</div>
       <div class="orderNumber">下单时间：{{L_selectDetail.createTime}}</div>
       <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">支付时间：{{L_selectDetail.payTime}}</div>
-      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">发货时间：{{L_selectDetail.deliverTime}}</div> 
+      <div class="orderNumber" v-if="L_selectDetail.state == 6 || L_selectDetail.state == 7">发货时间：{{L_selectDetail.deliverTime}}</div>
       <div class="orderNumber" v-if=" L_selectDetail.state == 7">收货时间：{{L_selectDetail.receiptTime}}</div>
     </div>
 
@@ -120,7 +120,7 @@
               <li class="s_item i-input">
                 <div class="numAll">
                   <div class="numCut"> <button @click="subtract(idss)">-</button></div>
-                  <div class="numInput"> 
+                  <div class="numInput">
                     <!-- {{inputValueArr[idss]}} -->
                     <input type="text" value="0"  v-model="inputValueArr[idss]">
                     </div>
@@ -131,7 +131,7 @@
             </ul>
           </scroll-view>
           <!-- </div>-->
-        </div> 
+        </div>
         <div class="foot">
           <span class="save" @click="save()">保存</span>
           <span class="cancel" @click="cancel()">取消</span>
@@ -155,7 +155,7 @@
           </div>
           <div class="courier">
             <span class="span">快递单号:</span>
-            <input class="input" type="text" v-model="logisticsNo" placeholder="请填写快递单号">
+            <input class="input" type="number" v-model="logisticsNo" placeholder="请填写快递单号">
           </div>
           <div class="title_s">上传快递信息凭证：(仅一张)</div>
           <div class="upload" @click="upload()">
@@ -246,7 +246,7 @@ export default {
             deliverListSku: [],
             parent: [],
             dpName: '',
-            
+
 
         };
     },
@@ -297,7 +297,7 @@ export default {
             this.orderIdzz= itemss.skuId
             // this.idzz= itemss.id
             this.orderGoodsId= itemss.orderGoodsId
-            
+
             console.log(this.idzz)
           }
         },
@@ -318,7 +318,7 @@ export default {
             sessionId: this.azzSessionId,
             shopId: this.appId,
             orderIds: this.orderIds,
-            orderDeliver:  
+            orderDeliver:
             [{
               num: this.value1,
               // canDeliverNumber: ,
@@ -330,7 +330,7 @@ export default {
                 // title: "提示",
                 content: "是否确认保存！",
                 success: function(res) {
-                    that.isShow = false 
+                    that.isShow = false
                     console.log(res);
                     if (res.confirm) {
                           console.log("用户点击确定");
@@ -351,7 +351,7 @@ export default {
                               })
                             }else{
                             }
-                            
+
                             // this.isShows = false
                           }
                         })
@@ -363,7 +363,7 @@ export default {
                 }
             });
         },
-        
+
         Deliver() {
             console.log(123123);
             this.isShows = !this.isShows;
@@ -389,7 +389,7 @@ export default {
           let skuCodeList  = itemss.skuCode.split(',')
           obj.color = skuCodeList[0];
           obj.size = skuCodeList[1];
-          // obj.canNume = 
+          // obj.canNume =
           obj.waitNum = itemss.remainNum
           // console.log(skuCodeList)
           obj.num = itemss.num
@@ -409,7 +409,7 @@ export default {
               sessionId: this.azzSessionId,
               shopId: this.appId,
               orderId: this.idzz,
-              logistics: 
+              logistics:
               {
                 image: this.tempFilePaths,
                 logisticsNo: this.logisticsNo,
@@ -467,7 +467,7 @@ export default {
         this.orderGoodsSku = this.orderGoodsList[i].orderGoods
         this.deliverListSku = this.orderGoodsList[i].deliverList
       }
-      
+
       this.azzSessionId =  wx.getStorageSync('sessionId')
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
@@ -478,9 +478,9 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
-page 
+page
   background: #f5f5f5
-.head 
+.head
   height: 222px
   background: #fff
   display: flex
@@ -490,7 +490,7 @@ page
     height: 58px
     margin: 82px 19px 82px 24px
   .right
-    width: 620px 
+    width: 620px
     margin-top: 26px
     font-size: 28px
     color: #666
@@ -522,12 +522,12 @@ page
     height: 30px
     margin: 22px 19px 0 24px
 
-    
-.list 
+
+.list
   .kuang
-    // height: 201px 
+    // height: 201px
     padding-bottom: 10px
-    .sPimg 
+    .sPimg
       width: 160px
       height: 160px
       display: inline-block
@@ -542,21 +542,21 @@ page
       .title
         +moreLine(2)
       .huo
-        +singleFile 
-        .name 
+        +singleFile
+        .name
           display: inline-block
           background: #ccc
           color: #fff
           padding: 4px 8px
-        .type 
+        .type
           margin: 0 0 0 20px
           display: inline-block
           color: #999
-        .number 
+        .number
           float: right
           margin-right: 12rpx
           color: #999
-      .maShuo 
+      .maShuo
         color: #999
         display: flex
         .text
@@ -621,7 +621,7 @@ page
         flex: 1
       .remaining_2
         flex: 1
-  .jiaGe 
+  .jiaGe
     height: 70px
     width: 100%
     background: #fff
@@ -731,13 +731,13 @@ page
     color: #666
     margin: 22px 0 0 25px
     padding-bottom: 30px
-.foot 
+.foot
   width: 100%
   position: fixed
   bottom: 0px
   height: 98px
   background: #fff
-  .btn 
+  .btn
     position: absolute
     right: 20px
     display: inline-block
@@ -793,13 +793,13 @@ page
             button
               width: 80px
               height: 40px
-  .foot 
+  .foot
     width: 100%
     position: fixed
     bottom: 0px
     height: 98px
     background: #fff
-    .save 
+    .save
       position: absolute
       right: 20px
       display: inline-block
@@ -811,8 +811,8 @@ page
       line-height: 60px
       text-align: center
       margin-top: 20px
-      border-radius: 4px  
-    .cancel 
+      border-radius: 4px
+    .cancel
       position: absolute
       right: 180px
       display: inline-block
@@ -824,7 +824,7 @@ page
       line-height: 60px
       text-align: center
       margin-top: 20px
-      border-radius: 4px  
+      border-radius: 4px
 
 
 

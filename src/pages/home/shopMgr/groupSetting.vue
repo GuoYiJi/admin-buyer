@@ -133,6 +133,7 @@ export default {
     border: 1px solid #CCCCCC
     margin: 0 auto
     overflow: hidden
+    background-color: #FFFFFF
     input
       width: 100%
       height: 100%
@@ -162,6 +163,7 @@ export default {
       justify-content: center
       align-items: center
       flex-wrap: wrap
+      background-color: #FFFFFF
       .img_box
         width: 100%
         height: 458px
@@ -226,6 +228,7 @@ export default {
       display: flex
       height: 464px
       flex-wrap: wrap
+      background-color: #FFFFFF
       &:nth-child(3n)
         margin-right: 0
       .img_box

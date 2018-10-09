@@ -7,11 +7,11 @@
     <div v-show="!switch1">
       <div class="please">
         <span class="please_text">订单金额：</span>
-        <input class="please_input" v-model="please_input" :disabled="disa" @change="bindKeyInput" type="text" placeholder="请输入订单金额">
+        <input class="please_input" v-model="please_input" :disabled="disa" @change="bindKeyInput" type="digit" placeholder="请输入订单金额">
       </div>
-      <div class="text" v-if="(text == 0)">任何金额都可以使用</div>
-      <div class="text" v-if="(text == 1)">当前优惠券面值为：{{please_input}}元；订单金额必须大于优惠券金额</div>
     </div>
+    <div class="text" v-if="(text == 1)">任何金额都可以使用</div>
+    <div class="text" v-if="text == 0 && please_input">当前优惠券面值为：{{please_input}}元；订单金额必须大于优惠券金额</div>
   </div>
 </template>
 <script>
@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       switch1: false,
-      text: 1,
+      text: -1,
       isLimitCount: 0,
       inp: 0,
       please_input: "",
@@ -37,12 +37,14 @@ export default {
       console.log(this.isLimitCount);
       if (this.switch1 == false) {
         this.isLimitCount = 0;
+        this.text = 0
         this.disa = false;
         wx.setStorageSync("isLimitCount", this.isLimitCount);
         this.please_input = "";
         wx.setStorageSync("please_input", this.please_input);
       } else if (this.switch1 == true) {
         this.isLimitCount = 1;
+        this.text = 1
         this.disa = true;
         wx.setStorageSync("isLimitCount", this.isLimitCount);
         this.please_input = "";

@@ -7,11 +7,11 @@
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" v-model="couponInfo.price" type="text" placeholder="请输入面值" disabled="true">
+        <input class="value_input" v-model="couponInfo.price" type="digit" placeholder="请输入面值" disabled="true">
       </div>
         <div class="grant">
         <span class="grant_text">发放总量：</span>
-        <input class="grant_input" v-model="count" type="text" placeholder="请输入发放数量">
+        <input class="grant_input" v-model="count" type="number" placeholder="请输入发放数量">
       </div>
       <div class="effect">
         <span class="text">生效时间：</span>
@@ -120,7 +120,8 @@ export default {
   .head_input
     flex: 1
     overflow: hidden
-    padding-left: 10px
+      padding: 10px
+    text-align: right
 .value
   height: 118px
   background: #fff
@@ -132,12 +133,14 @@ export default {
     +singleFile
   .value_input
     flex: 1
+    text-align: right
     overflow: hidden
-    padding-left: 10px
+    padding: 10px
     border: 1px solid #cecece
     border-radius: 4px
     width: 460px
     &[disabled]
+      padding: 10px
       background-color: #DCDCDC
 .grant
   height: 118px
@@ -149,6 +152,10 @@ export default {
     width: 200px
     +singleFile
   .grant_input
+    flex: 1
+    overflow: hidden
+    padding: 10px
+    text-align: right
     display: inline-block
     padding-left: 10px
     border: 1px solid #cecece

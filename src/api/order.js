@@ -44,4 +44,8 @@ export default class order {
   s_getImg = params => http.post('api/img/getImg', params)
   //api/warehouse/changeExpress
   L_changeExpress = params => http.post('api/warehouse/changeExpress', params)
+  // 采购入库编辑
+  s_addChildren = params => http.post('api/order/goods/addChildren', params)
+  // 查看物流信息
+  s_getOrderRefundDetail = params => http.post('api/order/refund/orderRefundDetail', params)
 }

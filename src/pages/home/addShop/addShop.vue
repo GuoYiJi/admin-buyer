@@ -32,41 +32,41 @@
     <div class="line-box">
       <div class="line b_line">
         <!-- <i class="i_s2 i-icon"></i> -->
-        <p class="input">商品标题： </p>
-        <p class="blur"><input  v-model="goods.name" placeholder="请输入商品标题"></p>
+        <p class="input">商品标题:  </p>
+        <p class="blur"><input type="text" v-model="goods.name" placeholder="请输入商品标题"></p>
         <!-- <p class="blur">未设置</p> -->
       </div>
       <div class="line b_line"  @click="toOpen('showMarket')">
         <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">市场档口：</p>
+        <p class="input">市场档口: </p>
         <p class="blur">{{goods.stallInfo1 ? goods.stallInfo1 +'-'+goods.stallInfo2 +'-'+ goods.stallInfo3  : '请选择市场档口'}}</p>
       </div>
       <div class="line b_line" @click="toRoute('home/addShop/buyDesc')" >
         <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">采购说明：</p>
+        <p class="input">采购说明: </p>
         <p class="blur input_p_left">{{shopExplan.value ? shopExplan.value : '请选择采购说明' }}</p>
       </div>
       <div class="line b_line" >
-        <p class="input">成本价：</p>
-        <input v-model="goods.costPrice" type="number" class="input_box" />
+        <p class="input">成本价: </p>
+        <input v-model="goods.costPrice" type="digit" class="input_box" />
       </div>
       <div class="line" >
-        <p class="input">利润：</p>
-        <input v-model="goods.profit" type="number" class="input_box small" />
-        <p class="input sale" >售价：<span class="red">{{sellPrice}}</span></p>
+        <p class="input">利润: </p>
+        <input type="digit" v-model="goods.profit" class="input_box small" />
+        <p class="input sale" >售价: <span class="red">{{sellPrice}}</span></p>
       </div>
     </div>
     <div class="line-box">
       <div class="line b_line" @click="toOpen('showTime')">
-        <p class="input">货期排单：</p>
+        <p class="input">货期排单: </p>
         <p class="blur">{{goods.delivery ? goods.delivery : '请选择货期排单'}}</p>
       </div>
       <div class="line b_line" @click="toOpen('showType1')" >
-        <p class="input">品类：</p>
+        <p class="input">品类: </p>
         <p class="blur">{{ goods.labelInfo2 ? goods.labelInfo + '-' + goods.labelInfo2: '点击选择品类'}} </p>
       </div>
       <div class="line b_line shopType" @click="toRoute('home/addShop/addType')">
-        <p class="input">规格与库存：</p>
+        <p class="input">规格与库存: </p>
         <div class="blur">
           <div class="hasType" v-if="addShopType.length > 0">
             <p v-for="(item,index) in addShopType" :key="index"  >
@@ -101,7 +101,7 @@
         <p class="blur input_p_left">{{goods.tag ? tagText : '点击选择标签'}}</p>
       </div>
       <div class="line b_line" >
-        <p class="input">转售：</p>
+        <p class="input">转售: </p>
         <div class="blur">
           <div class="sel_box">
             <div class="sel_item" @click="toOpen('sellType')">
@@ -113,6 +113,12 @@
               <p>不支持</p>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="line b_line" >
+        <p class="input">置顶: </p>
+        <div class="blur">
+          <i-switch :value="isTopBool" @change="onChange"></i-switch>
         </div>
       </div>
       <!-- <div class="line b_line" >
@@ -152,13 +158,13 @@
         <ul class="content" v-else>
           <li class="item"
             v-for="(item,idx) in type2Data"
-            v-if="clickNum == 1"
-            @click="select('type2Text',item)"
+            v-if="clickNum !== 0"
+            @click="toSelect('type2Text',item)"
             :class="[type2Text.id == item.id && 'active']"
             :key="idx">{{item.name}}
           </li>
         </ul>
-        <button class="ok" v-show="clickNum == 1" @click="confirmType('showType2')">确定</button>
+        <button class="ok" v-show="clickNum !== 0" @click="confirmType('showType2')">确定</button>
       </div>
     </div>
     <!-- 弹出层 modal_time -->
@@ -274,6 +280,9 @@
     <view class="progress-item" v-show="showProgress">
       <i-progress :percent="progressValue" hide-info></i-progress>
     </view>
+    <i-modal :visible="topTips" @ok="setTop('topTips')" @cancel="toClose('topTips')">
+        <div class="m_tips">已有置顶商品，是否更换置顶商品？</div>
+    </i-modal>
     <!-- <div>
       <i-modal :visible="backTips" @ok="toClose('backTips')" @cancel="toClose('backTips')">
           <div class="m_tips">您尚未完善商品信息，确认退出？</div>
@@ -298,11 +307,13 @@ export default {
   },
   data() {
     return {
+      topTips: false,
+      isTopBool: false,
       showProgress: false, // 上传进度条
       progressValue: 0, // 进度百分比
       videoSrc: '',
-      uploadNum: 15,
-      maxNum: '',
+      uploadNum: 9,
+      maxNum: 15,
       imgStr: '',
       imgList: [],
       versionId: '',//弹窗标题
@@ -352,6 +363,7 @@ export default {
       addTagText: '',
       tagData: '',
       goods: {
+        isTop: 0, // 是否置顶
         name: '',//商品名称
         stallInfo1: '',//大厦
         stallInfo2: '',//市场
@@ -455,6 +467,38 @@ export default {
     this.tagData = tagArr
   },
   methods: {
+    setTop(name) {
+      this[name] = false
+      this.setData({
+        isTopBool: true
+      });
+      this.goods.isTop = 1
+      console.log(this.goods.isTop);
+    },
+    onChange({ mp: { detail } }) {
+      if (this.isTopBool == false) {
+        this.$API.selectTopGoods().then(response => {
+          if(response.data) {
+            this.topTips = true
+          }
+        })
+      } else if (this.isTopBool == true) {
+        this.setData({
+          isTopBool: detail.value
+        });
+        this.goods.isTop = 0;
+        console.log(this.goods.isTop);
+      }
+    },
+    setData(data) {
+      Object.keys(data).forEach(key => {
+        this[key] = data[key];
+      });
+    },
+    toSelect (name, value) {
+      this[name] = value
+      this.clickNum = 2
+    },
     //上传图片
     uploadImg(tempFilePath) {
       console.log('lastIndexOf ============', tempFilePath.slice(tempFilePath.lastIndexOf('/') + 1).toString());
@@ -478,7 +522,7 @@ export default {
           if (parseInt(res.statusCode) == 400) {
             that.handleError("上传的图片大小不能超过2m!");
           } else if (parseInt(res.statusCode) == 200) {
-            if(that.maxNum && that.imgList.length >= that.maxNum){
+            if(that.maxNum && that.imageList.length >= that.maxNum){
               that.handleError('不能超过15张图片噢！')
               return
             }
@@ -509,7 +553,7 @@ export default {
         title: '加载中',
       });
       var that = this;
-      if ( maxNum && this.imgList.length >= maxNum) {
+      if ( maxNum && this.imageList.length >= maxNum) {
         this.handleError(`不能超过${maxNum}张图片噢！`);
         wx.hideLoading();
         return;
@@ -547,6 +591,7 @@ export default {
     toCancel(start) {
       // this.imgList.splice(start, 1);
       this.imageList.splice(start, 1);
+      console.log('this.imageList =========>', this.imageList);
       // this.$emit('changeImg',this.images)
     },
     //添加视频
@@ -642,7 +687,7 @@ export default {
     selectName(item, index) {
       console.log('name' + item.name);
       this.versionName[index] = item.name
-      // this.goodsLabelValueIds[index] = item.id
+      this.goodsLabelValueIds[index] = item.id
       // this.labelInfo2[index] = item.name
       console.log(this.versionName);
       this.closeVersion(item.id)
@@ -658,6 +703,9 @@ export default {
     // 请求
     async save(state){
       var value = await wx.getStorageSync('sessionId')
+      if(this.goods.name.split('').length > 18) {
+        this.handleError('标题最多不能超过18个字符')
+      }
       if( this.imageList.length > 0){
         this.goods.image = this.imageList.slice(0,1).toString()
         this.goods.images = this.imageList.slice(0,5).join(',')
@@ -714,6 +762,7 @@ export default {
       obj.labelInfo = this.goods.labelInfo
       obj.labelInfo2 = this.goods.labelInfo2 + ',' + this.versionName.concat(this.postLabelInfo2).toString()
       obj.labelInfo3 = this.versionName.toString()
+      obj.isTop = this.isTop
       console.log('obj=>' + obj)
       if(obj.skuList.length > 0){
         let str = ''
@@ -837,6 +886,10 @@ export default {
       }
       // 请求一级品类, 获取三级品类, 判断是否有"版型"和"面料"
       if(type == 'showType2') {
+        if(this.clickNum !== 2) {
+          this.handleError('未选择二级分类')
+          return
+        }
         //恢复默认
         this.postLabelInfo2 = []
         this.versionName = []
@@ -891,7 +944,7 @@ export default {
     },
     getImg(src){
       this.imageList.push(src)
-      console.log("imageList ===> " + this.imageList);
+      console.log("imageList ===> ", this.imageList);
     },
     // 切换显示隐藏进度条
     toggleProgress() {

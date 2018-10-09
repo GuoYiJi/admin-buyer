@@ -130,7 +130,9 @@ export default {
         console.log(this.region);
     },
     async btn() {
-      if(this.name.length > 10) {
+      console.log("++++++++++++++++++++++");
+      console.log(this.name.split(''));
+      if(this.name.split('').length > 10) {
         wx.showToast({
           title: '店铺名称最多10个字符!',
           icon: 'none'

@@ -10,7 +10,7 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 82%;" @scrolltolower="lower"  >
+      <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower"  >
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
@@ -36,7 +36,7 @@
 </template>
 <script>
 import wx from "wx"
-import scard from '@/components/s_listCardDiscount'
+import scard from '@/components/s_discountSelect'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
@@ -96,9 +96,7 @@ export default {
         goodsIds: goodsId.toString(),
         disPrice: disPrice.toString(),
       }).then(response => {
-        if(response.code == 0) {
-          this.$router.back(-1);
-        }
+        this.$router.back(-1);
       })
     },
     async handleTag(tag){
@@ -228,10 +226,12 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .footer
-  position: absolute
+  position: fixed
+  width: 100%
   bottom: 0
   left: 0
   right: 0
+  z-index: 7
   height: 98px
   line-height: 98px
   color: #fff

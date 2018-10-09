@@ -5,6 +5,7 @@ const route = [{
       'usingComponents': {
         'i-drawer': '/iview/drawer/index',
         'i-modal': '/iview/modal/index',
+        'i-message': '/iview/message/index',
         // 'i-message': '/iview/message/index',
       }
     }

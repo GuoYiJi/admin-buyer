@@ -6,7 +6,8 @@ const addShop = [
       'usingComponents': {
         'i-message': '/iview/message/index',
         'i-modal': '/iview/modal/index',
-        'i-progress': '/iview/progress/index'
+        'i-progress': '/iview/progress/index',
+        'i-switch': '/iview/switch/index'
       }
     }
   }, {
@@ -21,6 +22,17 @@ const addShop = [
       'usingComponents': {
         // 'i-message': '/iview/message/index',
         // 'i-modal': '/iview/modal/index',
+      }
+    }
+  }, {
+    path: '/pages/home/addShop/editShop',
+    config: {
+      navigationBarTitleText: '编辑商品',
+      'usingComponents': {
+        'i-message': '/iview/message/index',
+        'i-modal': '/iview/modal/index',
+        'i-progress': '/iview/progress/index',
+        'i-switch': '/iview/switch/index'
       }
     }
   }

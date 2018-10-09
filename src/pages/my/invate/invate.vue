@@ -1,35 +1,25 @@
 <template>
   <div class="home">
     <div class="top">
-      <p class="t_img"><img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg" /></p>
+      <image src="http://hd.wallpaperswide.com/thumbs/european_architecture-t2.jpg" mode="aspectFit" />
     </div>
-    <!-- <div class="detail">
-      Lorem ipsum dolor sit amet, consectetur adipiscing
-      elit. Aenean euismod bibendum laoreet. Proin
-      gravida dolor sit amet lacus accumsan et viverra
-      justo commodo. Proin sodales pulvinar tempor.
-      Cum sociis natoque penatibus et magnis dis
-      parturient montes, nascetur ridiculus mus. Nam
-      fermentum, nulla luctus pharetra vulputate, felis
-      tellus mollis orci, sed rhoncus sapien nunc eget.
-    </div> -->
-    {{myArticle.content}}
+    <div class="detail">
+      {{myArticle.content}}
+    </div>
     <div class="footer">
-      <p class="b_btn" @click="alertto">
-        <btn :title="'立即推广'" />
-      </p>
+        <!-- <btn :title="'立即推广'" /> -->
+        <button class="icon" open-type="share">立即推广</button>
     </div>
-    <div class="cover" v-show="showTime">
+    <!-- <div class="cover" v-show="showTime">
       <div class="alertwx">
         <div class="alert-img">
           <button class="icon" open-type="share"></button>
-          <!-- <img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg"> -->
+          <img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg">
         </div>
         <span>微信好友</span>
         <div class="cancelbtn" @click="colseBut">取消</div>
       </div>
-    </div>
-
+    </div> -->
   </div>
 </template>
 <script>
@@ -46,15 +36,15 @@ export default {
     };
   },
   methods: {
-    alertto() {
-      this.showTime = true;
-      // wx.showShareMenu({
-      //   withShareTicket: true
-      // });
-    },
-    colseBut() {
-      this.showTime = false;
-    }
+    // alertto() {
+    //   this.showTime = true;
+    //   // wx.showShareMenu({
+    //   //   withShareTicket: true
+    //   // });
+    // },
+    // colseBut() {
+    //   this.showTime = false;
+    // }
   },
   onShareAppMessage: function(res) {
     if (res.from === "button") {
@@ -64,9 +54,7 @@ export default {
     return {
       title: "申请小程序",
       path: "/pages/my/invate/invateDetail",
-      imageUrl:
-        "http://img0.ph.126.net/AE8LWDjxdZzUWfgWnuqJmQ==/141300438409203738.jpg"
-      // path: "/pages/my/invate/invateDetail/user?id=123"
+      imageUrl: "https://huiti-img.oss-cn-shanghai.aliyuncs.com/share/share.jpg"
     };
   },
   async mounted() {
@@ -80,20 +68,32 @@ export default {
 @import '~@/assets/css/mixin'
 .footer
   padding: 0 75px
-  position: absolute
+  position: fixed
+  left: 0
+  right: 0
   bottom: 80px
-  .b_btn
-    width: 600px
+  z-index: 6
+  button.icon
+    width: 100%
+    height: 90px
+    line-height: 90px
+    text-align: center
+    background-color: #F67C2F
+    color: #ffffff
+    font-weight: bold
+    font-size: 32px
 .detail
   padding: 0 30px
+  font-size: 30px
 .home
   height: 100%
   background: #fff
   color: #333
 .top
   padding: 30px
-  .t_img
-    height: 300px
+  image
+    width: 100%
+    background-color: #ffffff
 .cover
   background: rgba(255,255,255,0)
   position: absolute

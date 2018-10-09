@@ -2,7 +2,8 @@ const my = [
   {
     path: '/pages/my/my',
     config: {
-      navigationBarBackgroundColor: '#FA8134'
+      navigationBarBackgroundColor: '#FA8134',
+      navigationBarTextStyle: 'white'
       // navigationBarTitleText: '',
       // 'usingComponents': {
       //   'i-message': '/iview/message/index',

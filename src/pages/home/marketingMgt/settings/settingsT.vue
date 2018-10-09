@@ -4,7 +4,7 @@
     <span class="settings">
       <span v-if="(settings == 0)" class="settings_text">不限</span>
       <span v-if="(settings == 1)" class="settings_text">
-        <input type="text" class="rit" value="10">
+        <input type="digit" class="rit" value="10">
       </span>
     </span>
   </div>
@@ -20,10 +20,10 @@ export default {
         };
     },
     methods: {
-      
+
     },
     mounted() {
-     
+
     }
 };
 </script>

@@ -43,9 +43,8 @@ export default {
       showLoad: false,
       canLoad: true,
       pageSize: 10,
-      type: 0, //接口'ob'字段, 排序
+      type: 1, //接口'ob'字段, 排序
       state: 1, //接口'state'字段, 0未开始, 1进行中, 2已经过期
-      type: 0,
     };
   },
   methods: {
@@ -151,7 +150,7 @@ export default {
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage({
-      ob: 0,
+      ob: 1,
       state: this.state,
       // labelId: this.groupTag
     });
@@ -165,7 +164,7 @@ export default {
   async onShow() {
     this.shopNum = 0;
     const listData = await this.getNextPage({
-      ob: 0,
+      ob: 1,
       state: this.state,
       // labelId: this.groupTag
     });

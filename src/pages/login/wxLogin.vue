@@ -79,6 +79,7 @@ export default {
       success: async res => {
         if (res.code) {
           this.code = res.code;
+          wx.setStorageSync("code", this.code)
           wx.getUserInfo({
             success: res => {
               // console.log(res);

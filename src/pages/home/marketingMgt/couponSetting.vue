@@ -7,11 +7,11 @@
       </div>
       <div class="value">
         <span class="value_text">面值：</span>
-        <input class="value_input" v-model="value_input" type="text" placeholder="请输入面值">
+        <input class="value_input" v-model="value_input" type="digit" placeholder="请输入面值">
       </div>
         <div class="grant">
         <span class="grant_text">发放总量：</span>
-        <input class="grant_input" v-model="grant_input" type="text" placeholder="请输入发放数量">
+        <input class="grant_input" v-model="grant_input" type="number" :placeholder="value_input ? '请输入发放数量' : '请先输入面值'" :disabled="!value_input">
       </div>
       <div class="effect">
         <span class="text">生效时间：</span>
@@ -19,7 +19,7 @@
           未设置
           <!-- <i class="img"></i> -->
         </span>
-        <picker class="picker_1" v-model="date" mode="date" :value="date" @change="bindDateChange">
+        <picker class="picker_1" mode="date" :start="startTime" :end="endTime" :value="date" @change="bindDateChange">
           <view class="picker">
             {{date}}
           </view>
@@ -31,7 +31,7 @@
           未设置
           <!-- <i class="img"></i> -->
         </span>
-        <picker class="picker_1" mode="date" :value="date1" @change="bindDateChange1">
+        <picker class="picker_1" mode="date" :start="startTime1" :value="date1" @change="bindDateChange1">
           <view class="picker">
             {{date1}}
           </view>
@@ -68,7 +68,10 @@ export default {
   data() {
     return {
       date: "",
+      startTime: new Date(),
+      endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 365 * 10),
       date1: "",
+      startTime1: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
       isLimitCount: "",
       please_input: "",
       isOriginalPrice: "",
@@ -76,7 +79,6 @@ export default {
       value_input: "",
       head_input: "",
       ling: "",
-      date: "",
       isAll: "",
       selIds: ""
     };
@@ -84,14 +86,34 @@ export default {
   methods: {
     bindDateChange: function(e) {
       this.date = e.mp.detail.value;
-      console.log(e);
+      this.startTime1 = e.mp.detail.value;
     },
     bindDateChange1: function(e) {
+      if(!this.date) {
+        wx.showToast({
+          title: '请先设置生效时间',
+          icon: 'none'
+        })
+        return
+      }
+      if(parseInt(this.date1) < parseInt(e.mp.detail.value)) {
+        wx.showToast({
+          title: '过期时间不得早于生效时间',
+          icon: 'none'
+        })
+        return
+      }
       this.date1 = e.mp.detail.value;
-      console.log(e);
+      this.endTime = this.date1
     },
     async btn_1() {
-      console.log(this);
+      if(this.head_input.split('').length > 8) {
+        wx.showToast({
+          title: '优惠券名称不能超过8个字符',
+          icon: 'none'
+        })
+        return
+      }
       this.isLimitCount = wx.getStorageSync("isLimitCount");
       console.log(this.isLimitCount, "选择");
       this.please_input = wx.getStorageSync("please_input");
@@ -100,15 +122,29 @@ export default {
       console.log(this.isOriginalPrice, "xz");
       // this.newCoupon = newCoupon.data;
       // console.log(newCoupon);
-      this.ok();
-      setTimeout(() => {
-        wx.navigateBack({
-          data: 1
-        });
-      }, 200);
+      this.ok().then(response => {
+        wx.showToast({
+          title: '创建成功',
+          icon: 'success'
+        })
+        wx.removeStorageSync('isLimitCount')
+        wx.removeStorageSync('please_input')
+        wx.removeStorageSync('isOriginalPrice')
+        wx.removeStorageSync('isAll')
+        this.date = ''
+        this.date1 = ''
+        this.startTime = new Date()
+        this.startTime1 = new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+        this.value_input = ''
+        this.grant_input = ''
+        this.head_input = ''
+        setTimeout(() => {
+          this.$router.back(-1)
+        }, 1500)
+      })
     },
-    async ok() {
-      var newCouponData = await this.$API.newCoupon({
+    ok() {
+      return this.$API.newCoupon({
         name: this.head_input,
         price: this.value_input,
         count: this.grant_input,
@@ -119,7 +155,7 @@ export default {
         isOriginalPrice: this.isOriginalPrice,
         originalGoodsIds: this.selIds.toString(),
         isAll: this.isAll
-      });
+      })
     },
     Use() {
       this.$router.push("/pages/home/marketingMgt/usageSettings/usageSettings");
@@ -198,6 +234,9 @@ export default {
     border: 1px solid #cecece
     border-radius: 4px
     width: 460px
+    &[disabled]
+      background-color: #cccccc
+      color: #ffffff
 .form
   padding: 0 25px
   background-color: #fff
