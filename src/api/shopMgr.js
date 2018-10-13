@@ -15,7 +15,7 @@ export default class shopMgr {
   editShopType = params => http.post('api/goods/editKeu', params)
 
   editGroups = params => http.post('api/goods/changeGroups', params)
-  editGroup = params => http.post('api/goods/changeGroups2', params)
+  // editGroup = params => http.post('api/goods/changeGroups2', params)
   switchShop = params => http.post('api/goods/removes', params)
 
   searchBuyExplan = params => http.post('api/configure/getConfigByType', params)

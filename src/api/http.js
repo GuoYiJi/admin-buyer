@@ -53,11 +53,16 @@ axios.defaults.adapter = function(config) {
                           },
                           header: {'Content-Type': 'application/x-www-form-urlencoded'},
                           method: 'POST',
-                          success: function(res) {
+                          success: function (res) {
                             wx.setStorageSync('sessionId', res.data.data.sessionId)
-                            wx.switchTab({
-                              url: '/pages/home/home'
+                            wx.showToast({
+                              title: '网络错误, 请再请求一次',
+                              icon: 'none'
                             })
+                            // wx.setStorage('sessionId', res.data.data.sessionId)
+                            // wx.switchTab({
+                            //   url: '/pages/home/home'
+                            // })
                           },
                           fail: function(err) {
                             setTimeout(() => {
@@ -84,7 +89,7 @@ axios.defaults.adapter = function(config) {
                 icon: 'none',
                 duration: 2000
               })
-              wx.setStorageSync('sessionId', '')
+              // wx.setStorageSync('sessionId', '')
               setTimeout(() => {
                 wx.redirectTo({
                   url: '/pages/login/wxLogin'
@@ -106,8 +111,7 @@ axios.defaults.adapter = function(config) {
             const msg = data.data.desc
             wx.showToast({
               title: `${msg}`,
-              icon: 'none',
-              duration: 2000
+              icon: 'none'
             })
           }
         },

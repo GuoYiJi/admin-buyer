@@ -1,5 +1,5 @@
 <template>
-  <!-- 创建拼团 | 编辑拼团 -->
+<!-- 创建拼团 | 编辑拼团 -->
 <div class="home">
   <ul class="line-box">
     <li>
@@ -37,18 +37,19 @@
     <li v-if="isEdit">
       <span class="title">拼团价: </span>
       <span class="inputPrice">
-          <input type="number" class="input_text" v-model="price">
+        <input type="digit" class="input_text" v-model="price">
         <p>元</p>
       </span>
     </li>
     <li v-else @click="toRoute('shopList')">
-    <span class="title">可使用的商品: </span>
-    <p class="blur">
-      {{ showShop }}
-    </p>
+      <span class="title">可使用的商品: </span>
+      <p class="blur">
+        {{ showShop }}
+      </p>
     </li>
   </ul>
   <i-toast id="toast" />
+  <i-message id="message" />
   <div class="footer">
     <p class="save" v-if="isEdit" @click="editGroup()">保存编辑</p>
     <p class="save" v-else @click="createGroup()">保存创建</p>
@@ -58,8 +59,10 @@
 <script>
 import wx from "wx";
 import config from "@/config"
-import { mapState } from "vuex"
+import mixin from '@/mixin'
+import {mapState} from "vuex"
 export default {
+  mixins: [mixin],
   components: {},
   data() {
     return {
@@ -77,7 +80,8 @@ export default {
       requestData: [],
       url: '',
       isEdit: false,
-      goodsId: ''
+      goodsId: '',
+      id: ''
     };
   },
   computed: {
@@ -95,47 +99,47 @@ export default {
     //创建拼团
     createGroup() {
       console.log(this.shopSelectList);
-      if(!this.personNum) {
+      if (!this.personNum) {
         this.$Toast({
           content: '请填写成团人数',
           type: 'warning'
         })
-      }else if(!this.setDate) {
+      } else if (!this.setDate) {
         this.$Toast({
           content: '请设置生效时间',
           type: 'warning'
         })
-      }else if(!this.setEndDate) {
+      } else if (!this.setEndDate) {
         this.$Toast({
           content: '请设置过期时间',
           type: 'warning'
         })
-      }else if(!this.limitTimes) {
+      } else if (!this.limitTimes) {
         this.$Toast({
           content: '请限制次数',
           type: 'warning'
         })
-      }else if(!this.limitNum) {
+      } else if (!this.limitNum) {
         this.$Toast({
           content: '请限制件数',
           type: 'warning'
         })
-      }else if(this.isEdit == true && !this.price) {
+      } else if (this.isEdit == true && !this.price) {
         this.$Toast({
           content: '请填写拼团价',
           type: 'warning'
         })
-      }else if (this.shopSelectList.length == 0) {
+      } else if (this.shopSelectList.length == 0) {
         this.$Toast({
           content: '请选择商品',
           type: 'warning'
         })
-      }else{
+      } else {
         this.shopSelectList.forEach((item, index) => {
           this.requestData[index] = {
             num: this.personNum,
-            startTime: this.setDate,
-            endTime: this.setEndDate,
+            startTime: this.setDate.split(' ')[0].toString(),
+            endTime: this.setEndDate.split(' ')[0].toString(),
             limitNum: this.limitNum,
             limitTimes: this.limitTimes,
             price: item.groupPrice,
@@ -146,14 +150,18 @@ export default {
         const vm = this
         wx.request({
           url: vm.url + '/api/shop/ping/addPing',
-          data: { pingList: vm.requestData, sessionId: wx.getStorageSync('sessionId'), shopId: config.appId },
+          data: {
+            pingList: vm.requestData,
+            sessionId: wx.getStorageSync('sessionId'),
+            shopId: config.appId
+          },
           method: 'POST',
           header: {
             'content-type': 'application/json' // 默认值
           },
           success(res) {
             console.log(res.data);
-            if(res.data.code == 1) {
+            if (res.data.code == 1) {
               vm.$Toast({
                 content: '创建拼团成功',
                 duration: 1000,
@@ -173,26 +181,30 @@ export default {
       wx.request({
         url: this.url + '/api/shop/ping/editPing',
         data: {
-          pingList: {
-            num: this.personNum,
-            startTime: this.setDate,
-            endTime: this.setEndDate,
-            limitNum: this.limitNum,
-            limitTimes: this.limitTimes,
-            price: this.price,
-            goodsId: this.goodsId
-          },
+          num: this.personNum,
+          startTime: this.setDate,
+          endTime: this.setEndDate,
+          limitNum: this.limitNum,
+          limitTimes: this.limitTimes,
+          price: this.price,
+          id: this.goodsId,
           sessionId: wx.getStorageSync('sessionId'),
           shopId: config.appId
         },
         method: 'POST',
         header: {
-          'content-type': 'application/json' // 默认值
+          'content-type': 'application/x-www-form-urlencoded' // 默认值
         },
         success(res) {
           console.log(res.data);
-          if(res.code === 1) {
-            vm.$router.back(-1);
+          wx.showToast({
+            title: '编辑成功',
+            icon: 'success'
+          })
+          if (res.data.code === 1) {
+            setTimeout(() => {
+              vm.$router.back(-1);
+            }, 1200)
           }
         }
       })
@@ -238,24 +250,24 @@ export default {
   mounted() {
     // console.log(this.$route.query.groupPriceData, this.$route.query.selIds)
     console.log(this.$route.query);
-    if(this.$route.query.isEdit === "true") {
+    if (this.$route.query.isEdit === "true") {
       this.isEdit = true;
-    }else {
+    } else {
       //初始化
       console.log("数据初始化===>");
       this.isEdit = false;
       this.setDate = '',
-      this.setEndDate = '',
-      // this.limitNum = 0,
-      // this.limitTimes = 0,
-      // this.personNum = 0,
-      // this.price = 0,
-      this.limitNum = '',
-      this.limitTimes = '',
-      this.personNum = '',
-      this.price = '',
-      this.goodsId = '',
-      this.$store.commit('DELETE_ROUNPPRICE', [])
+        this.setEndDate = '',
+        // this.limitNum = 0,
+        // this.limitTimes = 0,
+        // this.personNum = 0,
+        // this.price = 0,
+        this.limitNum = '',
+        this.limitTimes = '',
+        this.personNum = '',
+        this.price = '',
+        this.goodsId = '',
+        this.$store.commit('DELETE_ROUNPPRICE', [])
     }
     if (this.$route.query.pingInfo) {
       const pingInfo = JSON.parse(this.$route.query.pingInfo);
@@ -263,8 +275,8 @@ export default {
       this.personNum = pingInfo.num
       this.limitNum = pingInfo.limitNum
       this.limitTimes = pingInfo.limitTimes
-      this.setDate = pingInfo.startTime
-      this.setEndDate = pingInfo.endTime
+      this.setDate = pingInfo.startTime.split(' ')[0].toString()
+      this.setEndDate = pingInfo.endTime.split(' ')[0].toString()
       this.goodsId = pingInfo.id
       this.price = pingInfo.price
     }

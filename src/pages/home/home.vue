@@ -69,15 +69,13 @@ export default {
       })
     }
   },
-  created() {
-  },
-  mounted() {
-    this.getStatistics()
-  },
-  // onShow() {
-  //   console.log("我执行了");
+  // mounted() {
   //   this.getStatistics()
-  // }
+  // },
+  onShow() {
+    // console.log("我执行了");
+    this.getStatistics()
+  }
 };
 </script>
 <style lang="sass" scoped>

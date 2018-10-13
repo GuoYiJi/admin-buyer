@@ -28,7 +28,7 @@ export default {
   components: {},
   data() {
     return {
-      select: "",
+      select: {},
       shopData: []
     };
   },
@@ -38,7 +38,7 @@ export default {
     },
     goback() {
       //set group to vuex addshop
-      this.$store.commit("ADDSHOPEXPLAN", this.select );
+      this.$store.commit("ADDSHOPEXPLAN", this.select);
       this.$router.back(-1)
       // this.$router.push({
       //   path: "/" + $getUrl(),
@@ -50,6 +50,12 @@ export default {
       type: 3
     });
     this.shopData = data;
+    if(this.$route.query.id) {
+      // this.select.id = this.$route.query.id
+      console.log(this.$route.query.id);
+      this.select = {id: this.$route.query.id}
+      // this.$store.commit("ADDSHOPEXPLAN", {id: this.$toute.query.id});
+    }
   }
 };
 </script>

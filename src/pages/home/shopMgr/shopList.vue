@@ -21,16 +21,15 @@
           <div v-if="showLoad"><loading  /></div>
         </div>
       </div>
-      <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
-        <selsearch @comSearch="comSearch" />
-      </i-drawer>
       </scroll-view>
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
       <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
-
+    <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
+      <selsearch @comSearch="comSearch" />
+    </i-drawer>
   </div>
 </template>
 <script>
@@ -86,7 +85,7 @@ export default {
     },
     async handleTag(tag){
       this.tag = tag
-      var type = 0 ;
+      var type = 1 ;
       //refresh init
       this.shopNum = 0
       this.canLoad = true
@@ -197,7 +196,7 @@ export default {
   async mounted() {
     console.log(this.shopList)
     this.shopNum = 0;
-    const listData = await this.getNextPage({ob: 0,state: this.state});
+    const listData = await this.getNextPage({ob: 1,state: this.state});
     this.shopList = listData.data.list;
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
@@ -216,7 +215,7 @@ export default {
   bottom: 0
   left: 0
   right: 0
-  z-index: 7
+  z-index: 5
   height: 98px
   line-height: 98px
   color: #fff
@@ -226,10 +225,6 @@ export default {
 
 .loading
   height: 70px
-
-
-
-
 .box
   padding: 2% 0 50px 0%
 .home

@@ -89,6 +89,7 @@ const storeMgr = [
       navigationBarTitleText: '添加退货地址',
       'usingComponents': {
         'i-switch': '/iview/switch/index',
+        'i-message': '/iview/message/index',
       }
     }
   },{
@@ -97,6 +98,7 @@ const storeMgr = [
       navigationBarTitleText: '编辑退货地址',
       'usingComponents': {
         'i-switch': '/iview/switch/index',
+        'i-message': '/iview/message/index',
       }
     }
   },{

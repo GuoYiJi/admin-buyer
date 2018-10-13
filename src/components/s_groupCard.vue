@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <!-- <i class="select" v-if="edit" @click="select" :class="[check ? 'active' : 'close']"></i> -->
-      <div class="img" :style="{backgroundImage: 'url(' + shop.image || 'https://www.iwwdirect.com.au/images/404.jpg' + ')'}"></div>
+      <div class="img" :style="{backgroundImage: 'url(' + shop.image + ')'}"></div>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <p class="tips">
@@ -22,7 +22,7 @@
       <ul class="m_box">
         <li>售价: ￥{{shop.sellPrice}}</li>
         <li>利润: ￥{{shop.profit}}</li>
-        <li>折扣价<input v-model="pingPrie"  type="digit"/>元</li>
+        <li>折扣价: <input v-model="pingPrie" type="digit"/> 元</li>
       </ul>
     </i-modal>
     <i-modal :visible="visible2" @ok="comfirmDel('visible2')" @cancel="toClose('visible2')">
@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import noImage from '@/assets/img/shopMgr/noImage.png'
+// import noImage from '@/assets/img/shopMgr/noImage.png'
 import mixin from '@/mixin'
 export default {
   mixins: [mixin],
@@ -141,9 +141,9 @@ export default {
       this.visible4 = false
       if(index === 0) {
         //edit
-        this.visible1 = true
+        // this.visible1 = true
         // console.log(this.shop);
-        // this.toRoute('home/shopMgr/collage/collageMsg', {pingInfo: JSON.stringify(this.shop.ping), isEdit: true})
+        this.toRoute('home/shopMgr/collage/collageMsg', {pingInfo: JSON.stringify(this.shop.ping), isEdit: true})
         // this.$emit('openEdit')
       } else if(index === 1) {
         //下架 或上架
@@ -165,6 +165,9 @@ export default {
       })
       this.show = false
       this.$success(this.act + '成功！')
+      setTimeout(() => {
+        this.$emit('deleteItem', this.shop.id)
+      }, 1000)
     },
     // resetCheck(){
     //   this.check = false
@@ -307,8 +310,8 @@ ul.m_box
           +singleFile
         i.more-icon
           display: inline-block
-          width: 40px
-          height: 40px
+          width: 30px
+          height: 30px
           background: url("~@/assets/img/shopMgr/more.png") no-repeat center
           background-size: 100% 100%
 </style>

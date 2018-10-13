@@ -1,10 +1,9 @@
 <template>
 <div class="home">
   <div class="single_box">
-    <div v-for="(item,index) in singleSelect" :key="index" @click="selectOne(item)">
-      <div class="line">
-        <p><i class="select" :class="item.select && 'active'"></i>{{item.name}}</p>
-      </div>
+    <div class="line" v-for="(item,index) in singleSelect" :key="index" @click="selectOne(item.id, item.name, index)">
+      <!-- <p><i class="select" :class="item.select && 'active'"></i>{{item.name}}</p> -->
+      <selectIcon :isSelected="selectedList.some(ite => ite == item.id)" /><span>{{item.name}}</span>
     </div>
   </div>
 
@@ -17,7 +16,8 @@
 </template>
 <script>
 import wx from "wx";
-import btn from "@/components/btn.vue";
+import btn from "@/components/btn";
+import selectIcon from '@/components/selectIcon'
 // import line from '@/components/lineSelect'
 import mixin from "@/mixin.js";
 import {
@@ -26,7 +26,8 @@ import {
 export default {
   mixins: [mixin],
   components: {
-    btn
+    btn,
+    selectIcon
     // line
   },
   // computed: {
@@ -47,29 +48,56 @@ export default {
       singleSelect: [],
       selectId: "",
       selectText: '',
+      selectedList: []
     };
   },
   methods: {
-    selectOne(obj) {
-      // for(var i=0,l; l = this.singleSelect[i++];){
-      //   if(l.select) l.select = false
-      // }
-      obj.select = !obj.select
-      if (obj.select) {
-        this.selectId += obj.id + ",";
-        this.selectText += obj.name + ','
+    // selectOne(obj) {
+    //   // for(var i=0,l; l = this.singleSelect[i++];){
+    //   //   if(l.select) l.select = false
+    //   // }
+    //   obj.select = !obj.select
+    //   if (obj.select) {
+    //     this.selectId += obj.id + ",";
+    //     this.selectText += obj.name + ','
+    //   } else {
+    //     this.selectId = this.selectId.replace(obj.id + ',', '')
+    //     this.selectText = this.selectText.replace(obj.name + ',', '')
+    //   }
+    //   console.log(this.selectId)
+    // },
+    selectOne(id, name, index) {
+      if (this.selectedList[index] == '-1') {
+        this.$set(this.selectedList, index, id)
       } else {
-        this.selectId = this.selectId.replace(obj.id + ',', '')
-        this.selectText = this.selectText.replace(obj.name + ',', '')
+        this.$set(this.selectedList, index, '-1')
       }
-      console.log(this.selectId)
+      console.log(this.selectedList);
     },
     goback() {
       //addshop
       //set group to vuex
+      if (this.selectedList.every(item => item == '-1')) {
+        wx.showToast({
+          title: '请选择分组',
+          icon: 'none'
+        })
+        return
+      }
+
+      let nameArr = []
+      this.selectedList.forEach((item, index) => {
+        if (item !== '-1') {
+          nameArr.push(this.singleSelect[index].name)
+        }
+      })
+      console.log(nameArr);
+      this.selectedList = this.selectedList.filter(item => {
+        return item !== '-1'
+      })
       this.$store.commit('ADDSHOPGROUP', {
-        groupIds: this.selectId,
-        groupText: this.selectText
+        groupIds: this.selectedList.toString(),
+        groupText: nameArr.toString()
       })
       console.log(this.$store.state.shopGroup);
       this.$router.back(-1)
@@ -83,24 +111,19 @@ export default {
     } = await this.$API.searchType({
       types: '1'
     });
-
-    if (this.$route.query.groupIds) {
-      this.selectId = this.$route.query.groupIds
-    }
-    // console.log( this.selectId)
-    const arr = this.selectId.split(",");
-    this.selectText = ''
-    for (var i = 0, l;
-      (l = data[i++]);) {
-      console.log(arr.indexOf(l.id))
-      if (arr.indexOf(l.id) >= 0) {
-        l.select = true
-        this.selectText += l.name + ','
-      } else {
-        l.select = false;
-      }
-    }
     this.singleSelect = data;
+
+    if (JSON.parse(this.$route.query.shopGroup)) {
+      this.selectedList = JSON.parse(this.$route.query.shopGroup).groupIds.split(',')
+      console.log('111111111111111');
+    }else {
+      this.singleSelect.forEach((item, index) => {
+        this.selectedList[index] = '-1'
+      })
+    }
+    console.log(this.selectedList);
+
+    console.log('this.singleSelect =>', this.singleSelect);
   }
 };
 </script>
@@ -114,22 +137,20 @@ export default {
   padding: 80px 75px
   // background: #fff
 .single_box
-  p
-    margin-top: 10px
+  .line
+    display: flex
+    align-items: center
+    height: 109px
+    background: #fff
+    padding-left: 50px
+    margin-bottom: 10px
+    &:first-of-type
+      margin: 10px 0
+    p
+      margin-left: 20px
 // .select
 //   +select()
 //   left: 24px
 // .active
 //   +select-active
-.line
-  height: 109px
-  line-height: 109px
-  position: relative
-  background: #fff
-  padding-left: 84px
-.select
-  +select()
-  left: 24px
-.active
-  +select-active
 </style>

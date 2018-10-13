@@ -77,16 +77,18 @@ const route = [{
     config: {
       navigationBarTitleText: '创建拼团',
       'usingComponents': {
-        // 'i-message': '/iview/message/index',
+        'i-message': '/iview/message/index',
         'i-toast': '/iview/toast/index'
       }
     }
-  }, {
-    path: '/pages/home/shopMgr/collage/confirmCollage',
-    config: {
-      navigationBarTitleText: '确认拼团信息'
-    }
-  }, {
+  },
+  // {
+  //   path: '/pages/home/shopMgr/collage/confirmCollage',
+  //   config: {
+  //     navigationBarTitleText: '确认拼团信息'
+  //   }
+  // },
+  {
     path: '/pages/home/shopMgr/groupSetting',
     config: {
       navigationBarTitleText: '搭配设置',

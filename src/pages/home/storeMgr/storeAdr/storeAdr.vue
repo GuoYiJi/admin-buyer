@@ -83,6 +83,13 @@ export default {
         addressId: this.selectAdr
       });
       this.shopList.splice(this.delIndex, 1);
+      this.$API.getAdr({
+        pageNumber: 1,
+        pageSize: 10
+      }).then(response => {
+        // console.log(response);
+        this.shopList = response.data.list
+      })
       this.$success("删除成功！");
     },
     getNextPage() {

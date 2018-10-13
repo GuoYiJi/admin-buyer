@@ -9,32 +9,32 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y lower-threshold='80' style="height: 82%;" @scrolltolower="lower"  >
+      <scroll-view scroll-y  style="height: 100vh;" @scrolltolower="lower"  >
       <div class="scroll-box">
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index" >
             <!-- shopMatch.some(item => item.id === shop.id -->
-            <scard ref="scard" edit="true" :key="index" :check="shopMatch.some(item => item.goodsId === shop.id )" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            <!-- <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" :edit="edit" @deleteItem="deleteItem" :selectedId="selIds[index]" :index="index" /> -->
+            <scard ref="scard" edit="true" :key="index" :check="shopMatch.some(item => item.goodsId === shop.id)" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
           </p>
         </div>
         <div class="loading" v-if="canLoad">
           <div v-if="showLoad"><loading  /></div>
         </div>
       </div>
-      <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
-        <selsearch @comSearch="comSearch" />
-      </i-drawer>
       </scroll-view>
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定({{shopMatch.length}})</p>
     </div>
-
+    <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
+      <selsearch @comSearch="comSearch" />
+    </i-drawer>
   </div>
 </template>
 <script>
 import wx from "wx"
-import scard from '@/components/s_card'
+import scard from '@/components/s_macthShopCard'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
@@ -97,7 +97,7 @@ export default {
     },
     async handleTag(tag){
       this.tag = tag
-      var type = 0 ;
+      var type = 1 ;
       //refresh init
       this.shopNum = 0
       this.canLoad = true
@@ -181,11 +181,10 @@ export default {
         // })
         // console.log(index);
         //往shopMatch添值
-        console.log(shop);
         this.$store.commit('PUSHMATCH', {
           delivery: shop.delivery,//货期
           goodsId: shop.id,//商品ID
-          images: shop.images,
+          image: shop.image,
           name: shop.name,//名称
           profit: shop.profit,//利润
           sellCount: shop.sellCount,//销量
@@ -223,7 +222,7 @@ export default {
   async mounted() {
     //判断是否
     this.shopNum = 0;
-    const listData = await this.getNextPage({ob: 0,state: this.state});
+    const listData = await this.getNextPage({ob: 1,state: this.state});
     this.shopList = listData.data.list;
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
@@ -237,7 +236,7 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .footer
-  position: absolute
+  position: fixed
   bottom: 0
   left: 0
   right: 0
@@ -246,14 +245,10 @@ export default {
   color: #fff
   background: #F67C2F
   text-align: center
+  z-index: 2
   .save
-
 .loading
   height: 70px
-
-
-
-
 .box
   padding: 2% 0 50px 0%
 .home

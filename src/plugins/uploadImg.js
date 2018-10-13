@@ -19,7 +19,7 @@ function uploadImg (tempFilePath, callback) {
       name: tempFilePath.slice(location).toString(),
       key: "img/${filename}",
       policy: config.imgPolicy,
-      OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+      OSSAccessKeyId: config.OSSAccessKeyId,
       success_action_status: "200",
       signature: config.imgSignature
     },

@@ -26,23 +26,46 @@ export default {
   data() {
     return {
       singleSelect: [],
-      selId: ''
+      selId: '',
+      goodsIds: []
     };
   },
   methods: {
-    async goback() {
-      await this.$API.editGroups({
-        goodsIds: this.$route.query.ids,
+    goback() {
+      if(!this.selId) {
+        wx.showToast({
+          title: '请选择分组',
+          icon: 'none'
+        })
+        return
+      }
+      this.goodsIds = this.goodsIds.filter(item => {
+        return item !== '-1'
+      })
+      this.$API.editGroups({
+        goodsIds: this.goodsIds.toString(),
         groupId: this.selId,
+      }).then(response => {
+        wx.showToast({
+          title: '修改分组成功',
+          icon: 'success'
+        })
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 1200)
       })
       // this.$router.push({path: "/" + $getUrl(),query: {groups: this.selectId}});
-      this.$router.go(-1)
     },
     selectOne(id){
       this.selId = id
     }
   },
   async mounted() {
+    this.selId = ''
+    if(this.$route.query.ids) {
+      this.goodsIds = this.$route.query.ids.split(',')
+    }
+    console.log(this.goodsIds);
     const { data } = await this.$API.searchType({
       types: 1
     });

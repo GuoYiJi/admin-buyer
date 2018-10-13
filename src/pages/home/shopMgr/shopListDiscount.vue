@@ -21,15 +21,15 @@
           <div v-if="showLoad"><loading  /></div>
         </div>
       </div>
-      <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
-        <selsearch @comSearch="comSearch" />
-      </i-drawer>
       </scroll-view>
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
       <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
+    <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
+      <selsearch @comSearch="comSearch" />
+    </i-drawer>
     <i-message id="message" />
 
   </div>
@@ -96,7 +96,13 @@ export default {
         goodsIds: goodsId.toString(),
         disPrice: disPrice.toString(),
       }).then(response => {
-        this.$router.back(-1);
+        wx.showToast({
+          title: '创建成功',
+          icon: 'success'
+        })
+        setTimeout(() => {
+          this.$router.back(-1);
+        }, 1200)
       })
     },
     async handleTag(tag){
@@ -231,7 +237,7 @@ export default {
   bottom: 0
   left: 0
   right: 0
-  z-index: 7
+  z-index: 5
   height: 98px
   line-height: 98px
   color: #fff

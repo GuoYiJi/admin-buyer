@@ -11,7 +11,7 @@
     <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower">
       <div class="box">
         <p v-for="(shop,index) in shopList" :key="index">
-          <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @openEdit="openEdit" />
+          <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @deleteItem="deleteItem" @openEdit="openEdit" />
         </p>
         <div class="white-block"></div>
       </div>
@@ -48,6 +48,15 @@ export default {
     };
   },
   methods: {
+    deleteItem(id) {
+      console.log('id=====', id);
+      let newArr = this.shopList
+      newArr.forEach((item, index) => {
+        if (item.id === id) {
+          this.shopList.splice(index, 1)
+        }
+      })
+    },
     //选择操作
     switchSel(goodsId, bool, shop) {
       console.log(goodsId, bool, shop);

@@ -41,10 +41,10 @@
         <p class="input">市场档口: </p>
         <p class="blur">{{goods.stallInfo1 ? goods.stallInfo1 +'-'+goods.stallInfo2 +'-'+ goods.stallInfo3  : '请选择市场档口'}}</p>
       </div>
-      <div class="line b_line" @click="toRoute('home/addShop/buyDesc')" >
+      <div class="line b_line" @click="toRoute('home/addShop/buyDesc', {id: shopExplan.id})" >
         <!-- <i class="i_s3 i-icon"></i> -->
         <p class="input">采购说明: </p>
-        <p class="blur input_p_left">{{shopExplan.value ? shopExplan.value : '请选择采购说明' }}</p>
+          <p class="blur input_p_left">{{shopExplan.value ? shopExplan.value : '请选择采购说明' }}</p>
       </div>
       <div class="line b_line" >
         <p class="input">成本价: </p>
@@ -126,11 +126,11 @@
         <p class="blur">123764B402</p>
       </div> -->
     </div>
-    <div class="footer" v-if="!editType">
+    <!-- <div class="footer" v-if="!editType">
       <p class="getUp" @click="save(1)">立即上架</p>
       <p class="getIn" @click="save(0)">保存到仓库</p>
-    </div>
-    <div class="edit_footer" v-if="editType">
+    </div> -->
+    <div class="edit_footer">
       <p class="getUp" @click="save(2)">确认修改</p>
     </div>
     <!-- 弹出层 品类 -->
@@ -355,8 +355,8 @@ export default {
       marketText: '',
 
       //otherData
-      otherData: {},
-      otherData2: {},//品类二级专用数据
+      otherData: [],
+      otherData2: [],//品类二级专用数据
       groupData: [],
       groupVal: '',
 
@@ -375,19 +375,17 @@ export default {
         deliveryId: '',//货期排单ID
         delivery: '',//货期排单
         isTransfer: 1, //'0不可转发 1可以转发',
-        parameter: '',//商品参数
+        // parameter: '',//商品参数
         images: '', //轮播图片
         video: '',//商品视频
         content: '',//商品详情
         // sellPrice: this.costPrice+ this.profit,
         costPrice: '', //'成本价',
         profit: '', //'利润',
-        remark: '',//商品标题
         groupIds: '',//分组ID 逗号隔开
         // labelIds: '',//分类ID逗号隔开
         tag: '', //商品标签
         buyExplan: '', //采购说明
-        buyExplanId: '', //采购id
       },
       skuList: [
       //   {
@@ -399,6 +397,7 @@ export default {
     goodsLabelValueIds: [],//面料，版型等值的ID拼接  格式:绵Id,紧身Id
     postLabelInfo: [], //商品分类 一级品类 上衣
     postLabelInfo2: [], //商品二级以下分类  女装,面料,棉,版型,紧身
+    groupValue: [], //商品详情的分组信息
     };
   },
   computed: {
@@ -415,7 +414,93 @@ export default {
     ]),
   },
   async mounted() {
-    console.log(this.$route.query);
+    const response = await this.$API.L_selectGoodsDetail({
+      goodsId: this.$route.query.shopId
+    })
+
+    this.$store.commit('ADDSHOPTYPE', [])
+    this.$store.commit('ADDSHOPGROUP', {})
+    this.$store.commit('ADDSHOPEXPLAN', {})
+    this.goods = {}
+    this.imgList = []
+    Object.assign(this.$data, this.$options.data())
+
+    // this.goodsLabelValueIds
+    let labelList = []
+    let goodsLabel = response.data.goodsLabel
+    goodsLabel.forEach(item => {
+
+    })
+    let skuList = response.data.sku.skuList
+    skuList.forEach(item => {
+      let skuList = []
+      skuList.push({
+        skuCode: item.skuCode,
+        stock: item.stock,
+        image: item.image,
+        attrIds: item.attrIds
+      })
+      this.$store.commit('ADDSHOPTYPE', skuList)
+    })
+
+    this.videoSrc = response.data.video
+    this.imageList = [response.data.image].concat(response.data.images.split(','))
+    console.log("图片列表", this.imageList);
+    this.goods.name = response.data.name //商品名称
+    this.goods.stallInfo1 = response.data.stallInfo1//档口一级
+    this.goods.stallInfo2 = response.data.stallInfo2//档口二级
+    this.goods.stallInfo3 = response.data.stallInfo3//档口三级
+    this.goods.content = response.data.content //商品详情
+    this.goods.delivery = response.data.delivery//货期
+    this.goods.isTop = response.data.isTop//置顶
+    this.goods.labelInfo = response.data.labelInfo
+    this.goods.labelInfo2 = response.data.labelInfo2
+    this.goods.labelInfo3 = response.data.labelInfo3
+    this.goods.deliveryId = response.data.deliveryId
+    this.goods.labelIds = response.data.labelIds
+    this.goods.buyExplan = response.data.buyExplan
+    this.goods.buyExplanId = response.data.buyExplanId
+    this.goods.tag = response.data.tag
+    this.tagIds = response.data.tag
+    if(response.data.tagsList) {
+      let tagsList = response.data.tagsList
+      let ids = []
+      let text = []
+      tagsList.forEach(item => {
+        ids.push(item.id)
+        text.push(item.name)
+        // if(item.id ===)
+      })
+      this.goods.tag = ids.toString()
+      this.tagIds = ids.toString()
+      this.tagText = text.toString()
+    }
+    // this.goods.groupIds = response.data.groupList
+    if(response.data.isTop === 1) {
+      this.isTopBool = true
+    }else {
+      this.isTopBool = false
+    }
+    // response.data.labelList //分类
+    this.groupValue = response.data.groupList // 分组
+    this.goods.profit = response.data.profit //利润
+    this.goods.costPrice = response.data.costPrice //成本
+    // response.data.buyExplan //采购说明
+    this.$store.commit("ADDSHOPEXPLAN", {value : response.data.buyExplan, id: response.data.buyExplanId});//采购说明
+    console.log('采购说明', this.shopExplan);
+    response.data.groupList.forEach(item => {
+      this.$store.commit('ADDSHOPGROUP', {
+        groupIds: item.id,
+        groupText: item.name
+      })
+    })// 商品分组
+    this.goods.isTransfer = response.data.isTransfer
+    console.log('是否可转售: ', this.goods.isTransfer);
+    // this.$store.commit("ADDSHOPEXPLAN", this.select)
+    // response.data.
+    // response.data.
+    // response.data.
+
     //check editShop
     if(this.$route.query.id){
       //数据注入
@@ -437,6 +522,7 @@ export default {
       // this.tagIds = ''
       // this.mktFirstData = {}
     }
+    console.log("执行到了这一步");
     //get searchMarket
     this.getMarketData(0)
     //get 排期 品类 版型 面料 分组 标签
@@ -466,6 +552,8 @@ export default {
       }
     }
     this.tagData = tagArr
+
+    console.log('获取的标签数据=======>', this.tagData);
   },
   methods: {
     setTop(name) {
@@ -513,20 +601,15 @@ export default {
           name: tempFilePath.slice(location).toString(),
           key: "img/${filename}",
           policy: config.imgPolicy,
-          // OSSAccessKeyId: "6MKOqxGiGU4AUk44",
           OSSAccessKeyId: config.OSSAccessKeyId,
           success_action_status: "200",
-          signature: config.imgSignature,
-          // "conditions": [
-          //   ["content-length-range", 0, 100000 * 1024 * 1024] // 设置上传文件的大小限制,5mb
-          // ]
+          signature: config.imgSignature
         },
         success: function(res) {
           console.log(res);
           console.log("tempFilePath  ========", tempFilePath);
           if (parseInt(res.statusCode) == 400) {
-            // that.handleError("上传的图片大小不能超过2m!");
-            that.handleError("上传的图片大小超过限制!")
+            that.handleError("上传的图片大小不能超过2m!");
           } else if (parseInt(res.statusCode) == 200) {
             if(that.maxNum && that.imageList.length >= that.maxNum){
               that.handleError('不能超过15张图片噢！')
@@ -860,6 +943,7 @@ export default {
         this.tagText += item.name+','
       }
       console.log(this[name])
+      console.log('选择后的tagdata ===========> ', this.tagData);
 
     },
     async addTag(){

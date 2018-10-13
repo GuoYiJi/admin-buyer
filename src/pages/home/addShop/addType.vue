@@ -33,7 +33,7 @@
         <div class="add_line b_line" v-for="(item, index) in lineList" :key="index">
           <p>{{item.color}}</p>
           <p>{{item.tag}}</p>
-          <p class="num"><input v-model="item.num" min="0" class="input_num" :value="item.num" /></p>
+          <p class="num"><input v-model="item.num" min="0" class="input_num" /></p>
           <p class="del" @click="delLine(index)">删除</p>
         </div>
       </div>
@@ -176,7 +176,7 @@ export default {
               id: String(i) + String(k),
               color: j,
               tag: l,
-              num: 1
+              num: 100
             };
             lineArr.push(lineObj);
           }
@@ -232,7 +232,7 @@ export default {
           name: tempFilePath.slice(location).toString(),
           key: "img/${filename}",
           policy: config.imgPolicy,
-          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+          OSSAccessKeyId: config.OSSAccessKeyId,
           success_action_status: "200",
           signature: config.imgSignature
         },

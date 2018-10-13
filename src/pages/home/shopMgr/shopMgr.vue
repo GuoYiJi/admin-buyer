@@ -52,6 +52,7 @@
         <group />
       </div>
     </div>
+    <i-message id="message" />
   </div>
 </template>
 <script>

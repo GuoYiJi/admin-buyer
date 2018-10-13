@@ -8,7 +8,7 @@
   <div class="content">
     <p class="title">从素材中选取</p>
     <div class="img_box">
-      <div class="imgItem_box" v-for="(material, materialIndex) in materialList" :key="materialIndex" @click="setWall(material.image)">
+      <div class="imgItem_box" v-for="(material, materialIndex) in materialList" :key="materialIndex" @click="setWall(material.image, materialIndex)">
         <i class="img" :style="{backgroundImage: 'url('+ material.image  +')'}">
           <span class="using" v-if="materialIndex === index">正在使用</span>
         </i>
@@ -26,17 +26,19 @@ export default {
   components: {},
   data() {
     return {
-      index: 0,
+      index: -1,
       img: "",
       materialList: [],
-      usedWall: ''
+      // usedWall: ''
     };
   },
   methods: {
-    setWall(image) {
+    setWall(image, index) {
       this.$API.warehouse({
         wall: image
       }).then(response => {
+        this.index = index
+        this.img = image
         wx.showToast({
           title: '已设置封面',
           icon: 'success'
@@ -56,6 +58,7 @@ export default {
             self.$API.warehouse({
               wall: self.img
             }).then(response => {
+              self.index = -1
               wx.showToast({
                 title: '已设置封面',
                 icon: 'success'
@@ -76,7 +79,7 @@ export default {
           name: tempFilePath.slice(location).toString(),
           key: "img/${filename}",
           policy: config.imgPolicy,
-          OSSAccessKeyId: "6MKOqxGiGU4AUk44",
+          OSSAccessKeyId: config.OSSAccessKeyId,
           success_action_status: "200",
           signature: config.imgSignature
         },
@@ -97,20 +100,23 @@ export default {
   },
   mounted() {
     // this.getExpress()
-    this.$API.s_getImg({
-      type: 4
-    }).then(response => {
-      console.log(response);
-      this.materialList = response.data
-    })
     this.$API.selectWarehouse().then(response => {
-      this.usedWall = response.data.wall
-    })
-    this.materialList.forEach((item, index) => {
-      if(item.image == this.usedWall) {
-        this.index = index
-        return
-      }
+      // this.usedWall = response.data.wall
+      this.img = response.data.wall
+
+      this.$API.s_getImg({
+        type: 4
+      }).then(response => {
+        console.log(response);
+        this.materialList = response.data
+        this.materialList.forEach((item, index) => {
+          if(item.image == this.img) {
+            console.log("找到相同的封面了", index);
+            this.index = index
+            return
+          }
+        })
+      })
     })
   }
 };
