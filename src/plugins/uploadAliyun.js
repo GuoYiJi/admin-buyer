@@ -73,7 +73,11 @@ const getPolicyBase64 = function () {
   const policyText = {
     "expiration": srcT, //设置该Policy的失效时间，超过这个失效时间之后，就没有办法通过这个policy上传文件了
     "conditions": [
+<<<<<<< HEAD
       ["content-length-range", 0, 100000 * 1024 * 1024] // 设置上传文件的大小限制,5mb
+=======
+      ["content-length-range", 0, 1000 * 1024 * 1024] // 设置上传文件的大小限制,5mb
+>>>>>>> 8c9a121e5213adbccab5c89ab0d829af5cd21ffd
     ]
   };
 
