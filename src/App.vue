@@ -2,6 +2,9 @@
 <script>
 export default {
   mpType: 'app',
+  onError(err) {
+    console.log('err', err)
+  }
   // onLaunch () {
   //   // alert('1')
   // },

@@ -12,14 +12,14 @@
         </li>
       </ul>
     </div>
-    <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower">
+    <div>
       <div class="box">
         <p v-for="(shop,index) in shopList" :key="index">
           <scard ref="scard" :shop="shop" @switchSel="switchSel" :edit="edit" @deleteItem="deleteItem" :selectedId="selIds[index]" :index="index" @searchShopGroupItem="searchShopGroupItem" />
         </p>
         <div class="white-block"></div>
       </div>
-    </scroll-view>
+    </div>
     <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
       <selsearch @comSearch="comSearch" />
     </i-drawer>
@@ -33,7 +33,7 @@
   </i-modal>
   <div class="footer" v-if="!edit">
     <p class="style2" @click="toShow('edit')">批量处理</p>
-    <p class="style3" @click="toRoute('home/addShop/addShop')">添加商品</p>
+    <p class="style3" @click="toRoute('home/addShop/editShop')">添加商品</p>
   </div>
   <div class="footer" v-else>
     <!-- <p class="all-btn"><i class="select" @click="selectAll" :class="allCheck && 'active'"></i>全部</p> -->
@@ -50,8 +50,9 @@ import scard from '@/components/s_card'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
 export default {
-  mixins: [mixin],
+  mixins: [mixin, TabMixins],
   components: {
     scard,
     loading,
@@ -179,7 +180,6 @@ export default {
       // return this.$API.getAdr(obj);
     },
     lower(e) {
-      console.log(e);
       if (!this.canLoad) {
         wx.showToast({
           title: '没有更多数据了',
@@ -286,6 +286,8 @@ export default {
     }
 
   },
+  onShow() {
+  },
   async mounted() {
     this.shopNum = 0;
     const listData = await this.getNextPage({
@@ -299,7 +301,6 @@ export default {
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
   },
   // onShow() { //返回显示页面状态函数
   //   this.onLoad()//再次加载，实现返回上一页页面刷新

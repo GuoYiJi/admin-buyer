@@ -69,7 +69,7 @@
           <div class="tag_item"
             v-for="(item,index) in typeArr" :key="index"
             @click="selects(index,'typeArr')">
-            <i class="select" :class="[item.select && 'select-active']"></i>
+            <i class="select" :class="{ 'select-active': item.select }"></i>
             <p>{{item.name}}</p>
           </div>
           <!-- <div class="tag_item">
@@ -100,6 +100,7 @@ import ibox from "@/components/chooseImage";
 import btn from "@/components/btn";
 import mixin from "@/mixin";
 import config from "@/config";
+import { mapState , mapGetters } from 'vuex'
 export default {
   mixins: [mixin],
   components: {
@@ -131,6 +132,9 @@ export default {
     };
   },
   computed: {
+    ...mapState([
+      'goodsDetail'
+    ]),
     selColor(){
       return this.selectColor.join(',')
     },
@@ -168,7 +172,7 @@ export default {
           for (var k = 0, l; (l = this.selectTag[k++]); ) {
             const imgObj = {
               id: String(i) + String(k),
-              img: ""
+              img: ''
             };
             // add imgList
             imgArr.push(imgObj);
@@ -181,6 +185,13 @@ export default {
             lineArr.push(lineObj);
           }
         }
+        // const { goodsDetail } = this;
+        // if (goodsDetail) {
+        //   goodsDetail.sku.skuList.forEach((item, index) => {
+        //     imgArr[index].img = item.image;
+        //     lineArr[index].num = item.stock;
+        //   })
+        // }
         this.imgList = imgArr;
         this.lineList = lineArr;
       }
@@ -281,7 +292,6 @@ export default {
         };
         skuList.push(obj);
       }
-      console.log(skuList)
       this.$store.commit("ADDSHOPTYPE", skuList);
       this.$router.back(-1);
       // this.toRoute("home/addShop/addShop");
@@ -289,21 +299,77 @@ export default {
     }
   },
   async mounted() {
-    const colorData = await this.$API.s_searchType({
-      specId: 1
-    })
-    for(var i=0,l; l=colorData.data[i++];){
-      l.select = false
+    try {
+      
+      const { goodsDetail } = this;
+      if (goodsDetail && goodsDetail.sku) {
+        const { sku } = goodsDetail;
+        let imgArr = [];
+        let lineArr = [];
+        sku.skuList.forEach((item, index) => {
+          console.log(item);
+          imgArr[index] = {
+            ...item,
+            img: item.image
+          }
+          lineArr[index] = {
+            ...item,
+            color: item.skuCode.split(',')[0],
+            tag: item.skuCode.split(',')[1],
+            num: item.stock
+          };
+        })
+        this.imgList = imgArr;
+        this.lineList = lineArr;
+        sku.specGroup.forEach(group => {
+          let key;
+          switch (group.enValue) {
+            case 'color':
+              key = 'selectColor'
+              break;
+            case 'size':
+              key = 'selectTag';
+              break;
+          }
+          if (key) {
+            this[key] = group.specAttr.map(item => item.name)
+          }
+        })
+      }
+      const colorData = await this.$API.s_searchType({
+        specId: 1
+      })
+      for(var i=0,l; l=colorData.data[i++];){
+        l.select = false
+      }
+      const sizeData = await this.$API.s_searchType({
+        specId: 2
+      })
+      for(var j=0,k; k=sizeData.data[j++];){
+        k.select = false
+      }
+      this.colorArr = colorData.data.map(item => {
+        if (goodsDetail && goodsDetail.sku) {
+          if (goodsDetail.sku.specGroup[0].specAttr.findIndex(spec => spec.id === item.id) !== -1) {
+            item.select = true;
+          }
+        }
+        return item;
+      })
+      this.typeArr = sizeData.data.map(item => {
+        if (goodsDetail && goodsDetail.sku) {
+          if (goodsDetail.sku.specGroup[1].specAttr.findIndex(spec => spec.id === item.id) !== -1) {
+            item.select = true;
+          }
+        }
+        return item;
+      })
+    } catch (err) {
+      console.log(err);
     }
-    this.colorArr = colorData.data
-    const sizeData = await this.$API.s_searchType({
-      specId: 2
-    })
-    for(var j=0,k; k=sizeData.data[j++];){
-      k.select = false
-    }
-    this.typeArr = sizeData.data
-    this.addLine();
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   }
 };
 </script>

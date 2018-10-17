@@ -11,6 +11,8 @@ const debug = process.env.NODE_ENV !== 'production'
 const store = new Vuex.Store({
   state: {
     addShopType: [],
+    goodsDetail: {
+    },
     editAdr: '',
     shopGroup: {},
     shopExplan: {},

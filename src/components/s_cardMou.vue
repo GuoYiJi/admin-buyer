@@ -85,7 +85,7 @@ export default {
       this.visible4 = false
       if(index === 0) {
         //edit
-        this.toRoute('home/addShop/addShop',this.shop)
+        this.toRoute('home/addShop/editShop',this.shop)
       } else if(index === 1) {
         //下架 或上架
         this.visible2 = true

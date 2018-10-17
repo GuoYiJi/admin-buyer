@@ -2,6 +2,7 @@ const home = [{
         path: '/pages/home/home',
         name: 'home',
         config: {
+            navigationBarTitleText: '店铺',
             // enablePullDownRefresh: true,
             navigationBarBackgroundColor: '#FA8134',
             navigationBarTextStyle: 'white'

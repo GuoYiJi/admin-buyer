@@ -13,10 +13,16 @@
       <!-- <p class="collage_price">折扣价: {{groupPrice ? '￥' + groupPrice : '未设置'}}</p> -->
       <p class="collage_price">折扣价: {{shop.disPrice}}</p>
       <p class="price">
-        <span>售价:￥{{shop.sellPrice}}</span>
+        <span class="countPrice">售价:￥{{shop.sellPrice}}</span>
         <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
+        <span class="action" @click="handleActionClick">
+          <span class="more-icon">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </span>
+        </span>
       </p>
-      <i class="more-icon" @click="toOpen('visible4')"></i>
     </div>
   </div>
   <i-modal :visible="visible1" @ok="comfirmGPrice('visible1', groupPrice)" @cancel="toClose('visible1')">
@@ -27,7 +33,7 @@
     </ul>
   </i-modal>
   <i-modal :visible="visible2" @ok="comfirmDel('visible2')" @cancel="toClose('visible2')">
-    <div class="m_tips">确定要{{actions4[1].name}}该商品？</div>
+    <div class="m_tips">确定要下架该商品？</div>
   </i-modal>
   <i-modal title="请选择操作" :visible="visible4" :actions="actions4" :action-mode="vertical" @iclick="handleClick4"></i-modal>
   <i-message id="message" />
@@ -35,6 +41,7 @@
 </template>
 <script>
 import mixin from '@/mixin'
+import EventBus from '@/assets/js/EventBus';
 // import noImage from '@/assets/img/shopMgr/noImage.png'
 export default {
   mixins: [mixin],
@@ -51,10 +58,15 @@ export default {
     return {
       check: false,
       visible1: false,
+      visible2: false,
       visible4: false,
       groupPrice: '',
-      actions4: [{
+      actions4: [
+        {
           name: "编辑"
+        },
+        {
+          name: '下架'
         },
         {
           name: "分组"
@@ -75,16 +87,42 @@ export default {
     console.log(this.groupPrice);
   },
   methods: {
+    handleActionClick() {
+
+      wx.showActionSheet({
+        itemList: ['编辑', '下架', '分组'],
+        success: res => {
+          switch (res.tapIndex) {
+            case 0:
+              this.visible1 = true;
+              break;
+            case 1:
+              this.visible2 = true;
+              break;
+            case 2:
+              this.$store.commit('ADDSHOPGROUP', {
+                groupIds: this.shop.groupIds,
+                goodsIds: this.shop.id,
+                type: 'update'
+              })
+              this.toRoute('home/shopMgr/classify');
+              break;
+            case 3:
+              break;
+          }
+        }
+      })
+    },
     async comfirmDel(name) {
-      this[name] = false
+      this.visible2 = false;
       let state = 0
-      if (this.act != '下架') state = 1
       await this.$API.switchShop({
         goodsIds: this.shop.id,
-        state: state
+        state
       })
-      this.show = false
-      this.$success(this.act + '成功！')
+      this.show = false;
+      this.$success('下架成功');
+      EventBus.$emit('on-discount-list-delete', this.shop.id);
     },
     select() {
       if (this.groupPrice == '') {
@@ -143,20 +181,9 @@ export default {
       }
     },
     handleClick4({mp: {detail}}) {
-      const index = detail.index
-      this.visible4 = false
-      if (index === 0) {
-        //edit
-        this.visible1 = true
-        // this.toRoute('home/addShop/addShop', this.shop)
-      }  else if (index === 1) {
-        //group
-        this.toRoute('home/shopMgr/classify', {
-          groupIds: this.shop.groupIds,
-          goodsIds: this.shop.id
-        })
-      } else if (index === 2) {
-        this.toClose('visible4')
+      const index = detail.index;
+      this.visible4 = false;
+      switch (index) {
       }
     },
   }
@@ -220,7 +247,7 @@ ul.m_box
     margin-right: 20px
     background-repeat: no-repeat
     background-position: center
-    background-size: 100% 100%
+    background-size: cover
   .desc
     flex: 1
     overflow: hidden
@@ -266,19 +293,34 @@ ul.m_box
       +singleFile
     .price
       width: 100%
-      color: #FF0000
-      font-weight: bold
-      font-size: 30px
-      +singleFile
-      .sell
-        color: #333
+      display: flex
+      align-items: center
+      .countPrice
+        flex: 1
+        +singleFile()
+        color: #FF0000
         font-size: 28px
-        font-style: normal
-    .more-icon
-      +bg-img('shopMgr/more.png')
-      +icon(30px)
-      height: 30px
-      position: absolute
-      bottom: 30px
-      right: 24px
+        font-weight: bold
+      .sell
+        flex: 1
+        +singleFile()
+        color: #333333
+        font-size: 26px
+      .action
+        position: relative;
+        height: 100%;
+      .more-icon
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        height: 100%;
+        span.dot
+          display: inline-block;
+          margin-left: 5px;
+          width: 10px
+          height: 10px
+          border-radius: 50%
+          background-color: #000
+          &:first-child
+            margin-left: 0;
 </style>

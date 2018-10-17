@@ -157,7 +157,7 @@ ul.m_box
     margin-right: 20px
     background-position: center
     background-repeat: no-repeat
-    background-size: 100% 100%
+    background-size: cover
   .desc
     flex: 1
     overflow: hidden

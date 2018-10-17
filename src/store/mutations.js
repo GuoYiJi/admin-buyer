@@ -48,5 +48,9 @@ export default {
   },
   SETDISOUNTPRICE: (state, index, value) => {
     state.discountSelectList[index] = value
+  },
+
+  ADD_GOODS_DETAIL(state, data) {
+    state.goodsDetail = data;
   }
 }

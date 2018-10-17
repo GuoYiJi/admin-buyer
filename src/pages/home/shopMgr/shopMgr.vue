@@ -1,53 +1,50 @@
 <template>
-  <div class="home">
-    <div class="search-box" >
+  <div class="home" :style="{ 'padding-top': topContainerHeight + 'px' }">
+    <div class="search-box" id="topContainer">
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
         <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>
       </div>
-      <div class="nav">
-        <div class="list">
-          <span
-            v-for="(item,idx) in navData"
-            :key="idx"
-            class="item"
-            :class="[tag === item.id && 'active']"
-            @click="handleNav(item.id)"
-          >{{item.text}}</span>
-          <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
-        </div>
+      <div class="zan-tab-container">
+        <zan-tab
+          :list="navData"
+          :selected-id="selectedId"
+          scroll
+          @tabchange="handleZanTabChange"
+          :height="45"
+        />
       </div>
     </div>
     <div class="content">
-      <div v-if="tag == 1">
+      <div v-if="selectedId == 1">
         <!-- 全部 -->
         <all />
       </div>
-      <div v-else-if="tag == 2">
+      <div v-else-if="selectedId == 2">
         <!-- 出售中 -->
         <selling />
       </div>
-      <div v-else-if="tag == 3">
+      <div v-else-if="selectedId == 3">
         <!-- 仓库中 -->
         <stocking />
       </div>
-      <div v-else-if="tag == 4">
+      <div v-else-if="selectedId == 4">
         <!-- 上新 -->
         <news />
       </div>
-      <div v-else-if="tag == 5">
+      <div v-else-if="selectedId == 5">
         <!-- 热销 -->
         <hot />
       </div>
-      <div v-else-if="tag == 6">
+      <div v-else-if="selectedId == 6">
         <!-- 折扣 -->
         <discount />
       </div>
-      <div v-else-if="tag == 7">
+      <div v-else-if="selectedId == 7">
         <!-- 拼团 -->
         <collage @toRoute="toRoute" />
       </div>
-      <div v-else-if="tag == 8">
+      <div v-else-if="selectedId == 8">
         <!-- 搭配 -->
         <group />
       </div>
@@ -65,6 +62,7 @@ import group from '@/components/s_group'
 import news from '@/components/s_news'
 import hot from '@/components/s_hot'
 import all from '@/components/s_all'
+import EventBus from '@/assets/js/EventBus';
 export default {
   components: {
     collage,
@@ -78,64 +76,84 @@ export default {
   },
   data() {
     return {
-      tag: 1,
+      // tag: 1,
+      selectedId: 2,
+      tag: 6,
+      topContainerHeight: 0,
       navData: [
         {
           id: 1,
-          text: '全部'
+          title: '全部'
         },{
           id: 2,
-          text: '出售中'
+          title: '出售中'
         },{
           id: 3,
-          text: '仓库中'
+          title: '仓库中'
         },{
           id: 4,
-          text: '新品上新'
+          title: '新品上新'
         },{
           id: 5,
-          text: '爆款精选'
+          title: '爆款精选'
         },{
           id: 6,
-          text: '特价折扣'
+          title: '特价折扣'
         },{
           id: 7,
-          text: '拼团优惠'
+          title: '拼团优惠'
         },{
           id: 8,
-          text: '搭配专区'
+          title: '搭配专区'
         }
       ]
     };
   },
   methods: {
     handleNav(tag) {
-      this.tag = tag
+      this.tag = tag;
     },
     toRoute(url, params) {
       this.$router.push({path: url, query: params})
+    },
+    handleZanTabChange(e) {
+      let { detail: selectedId } = e.mp;
+      if (selectedId === this.selectedId) return;
+      this.selectedId = selectedId;
     }
   },
+  onReachBottom() {
+    EventBus.$emit('onReachBottom');
+  },
+  onPullDownRefresh() {
+    EventBus.$emit('onPullDownRefresh');
+  },
   mounted() {
-
+    const query = wx.createSelectorQuery()
+    query.select('#topContainer').boundingClientRect();
+    query.exec(res => {
+      this.topContainerHeight = res[0].height;
+    })
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data())
   }
 };
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 
-.content
-  padding-top: 200px
 .home
-  height: 100%
+  padding-top: 235px
 .search-box
   width: 100%
   position: fixed
   top: 0
   left: 0
   z-index: 5
-  padding: 30px 0
+  padding: 30px 0 0
   background: #fff
+  box-sizing: border-box;
   .input
     display: flex
     padding: 0px 35px
@@ -161,6 +179,8 @@ export default {
 .active
   color: #F67C2F
   // font-weight: 600
+.zan-tab-container
+  background-color: #f5f5f5;
 .nav
   overflow: hidden
   text-align: center

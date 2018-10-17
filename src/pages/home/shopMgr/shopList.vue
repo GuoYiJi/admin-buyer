@@ -10,18 +10,18 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower">
-      <div class="scroll-box">
-        <div class="box">
-          <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
-          </p>
-        </div>
-        <div class="loading" v-if="canLoad">
-          <div v-if="showLoad"><loading  /></div>
+      <div>
+        <div class="scroll-box">
+          <div class="box">
+            <p v-for="(shop,index) in shopList" :key="index" >
+              <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            </p>
+          </div>
+          <div class="loading" v-if="canLoad">
+            <div v-if="showLoad"><loading  /></div>
+          </div>
         </div>
       </div>
-      </scroll-view>
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
@@ -39,6 +39,7 @@ import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
 import { mapState } from 'vuex'
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
 export default {
   mixins: [mixin],
   components: {
@@ -60,6 +61,7 @@ export default {
   },
   data() {
     return {
+      selecteds: [],
       showUp: false,
       asceSale: true,
       ascePrice: true,
@@ -81,6 +83,30 @@ export default {
   },
   methods: {
     confirm(){
+      this.selecteds.forEach(item => {
+        const { id, groupPrice, bool } = item;
+        if(bool){
+          if(this.selIds && this.selIds.some(item => item == id)) {
+            const start = this.selIds.indexOf(id)
+            this.selIds[start] = id;
+            this.groupPriceData[start] = groupPrice;
+            this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
+          }else {
+            this.selIds.push(id);
+            this.groupPriceData.push(groupPrice)
+            this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
+          }
+          // console.log(this.groupPriceData);
+        }else {
+          const start = this.selIds.indexOf(id)
+          this.selIds.splice(start, 1)
+          this.groupPriceData.splice(start, 1)
+          // console.log(this.groupPriceData);
+          this.$store.commit('SPLICEROUNPPRICE', start);
+        }
+        // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
+        console.log(this.shopSelectList);
+      })
       this.$router.back(-1);
     },
     async handleTag(tag){
@@ -159,27 +185,9 @@ export default {
     },
     // 根据选中状态处理ids: GoodsId, 拼团价, 是否已勾选
     switchSel(id, groupPrice, bool){
-      if(bool){
-        if(this.selIds && this.selIds.some(item => item == id)) {
-          const start = this.selIds.indexOf(id)
-          this.selIds[start] = id;
-          this.groupPriceData[start] = groupPrice;
-          this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
-        }else {
-          this.selIds.push(id);
-          this.groupPriceData.push(groupPrice)
-          this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
-        }
-        // console.log(this.groupPriceData);
-      }else {
-        const start = this.selIds.indexOf(id)
-        this.selIds.splice(start, 1)
-        this.groupPriceData.splice(start, 1)
-        // console.log(this.groupPriceData);
-        this.$store.commit('SPLICEROUNPPRICE', start);
-      }
-      // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
-      console.log(this.shopSelectList);
+      this.selecteds.push({
+        id, groupPrice, bool
+      })
     },
     // 设置拼团id和价格数组
     // obj: {id: this.shop.id, price: this.groupPrice}
@@ -193,6 +201,9 @@ export default {
 
 
   },
+  onReachBottom() {
+    this.lower();
+  },
   async mounted() {
     console.log(this.shopList)
     this.shopNum = 0;
@@ -201,7 +212,6 @@ export default {
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
 
   },
 

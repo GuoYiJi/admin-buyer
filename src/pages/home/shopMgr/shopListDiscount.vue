@@ -10,18 +10,18 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower"  >
-      <div class="scroll-box">
-        <div class="box">
-          <p v-for="(shop,index) in shopList" :key="index" >
-            <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
-          </p>
-        </div>
-        <div class="loading" v-if="canLoad">
-          <div v-if="showLoad"><loading  /></div>
+      <div>
+        <div class="scroll-box">
+          <div class="box">
+            <p v-for="(shop,index) in shopList" :key="index" >
+              <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+            </p>
+          </div>
+          <div class="loading" v-if="canLoad">
+            <div v-if="showLoad"><loading  /></div>
+          </div>
         </div>
       </div>
-      </scroll-view>
     </div>
     <div class="footer">
       <p class="save" @click="confirm">确定{{groupNum}}</p>
@@ -40,7 +40,7 @@ import scard from '@/components/s_discountSelect'
 import loading from "@/commond/loading";
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 export default {
   mixins: [mixin],
   components: {
@@ -140,7 +140,8 @@ export default {
     },
     searchShop(params){
       params.pageSize = this.pageSize
-      return this.$API.s_getCanGroup(params)
+      console.log('123312');
+      return this.$API.searchShopGroup({...params, isDis: 0})
       // return this.$API.s_getCanGroup(params)
     },
     getNextPage(params) {
@@ -160,13 +161,11 @@ export default {
       if (this.showLoad) return;
       this.showLoad = true;
       const listData = await this.getNextPage({ob: this.type,state: this.state});
-      setTimeout(() => {
-        if (listData.data.list.length < this.pageSize) {
-          this.canLoad = false;
-        }
-        this.shopList = this.shopList.concat(listData.data.list);
-        this.showLoad = false;
-      }, 2000);
+      if (listData.data.list.length < this.pageSize) {
+        this.canLoad = false;
+      }
+      this.shopList = this.shopList.concat(listData.data.list);
+      this.showLoad = false;
     },
     async comSearch(searchParams){
       //searchParams 筛选的查询参数
@@ -215,6 +214,9 @@ export default {
 
 
   },
+  onReachBottom() {
+    this.lower();
+  },
   async mounted() {
     console.log(this.shopList)
     this.shopNum = 0;
@@ -223,9 +225,10 @@ export default {
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
-    console.log(this.shopList)
-
   },
+  onUnload() {
+    Object.assign(this, this.$options.data())
+  }
 
 };
 </script>
@@ -254,11 +257,10 @@ export default {
 .box
   padding: 2% 0 50px 0%
 .home
-  height: 100%
-
+  padding-top: 92px;
+  padding-bottom: 98px;
 .scroll-box
   // padding: 10px 0
-  height: 800px
   // overflow: auto
   p
     margin: 5px 0
@@ -273,6 +275,11 @@ export default {
 .sort-select
   height: 100%
 .top-nav
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 100%;
   // left: 0
   // right: 0
   // top: 180px

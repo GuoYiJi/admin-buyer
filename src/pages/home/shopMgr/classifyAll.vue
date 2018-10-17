@@ -81,6 +81,7 @@ export default {
   left: 0
   right: 0
   padding: 80px 75px
+  text-align: center;
   // background: #fff
 .single_box
   p

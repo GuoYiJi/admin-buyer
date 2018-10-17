@@ -12,14 +12,14 @@
         </li>
       </ul>
     </div>
-    <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower">
+    <div>
       <div class="box">
         <p v-for="(shop,index) in shopList" :key="index">
           <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" act="上架" :edit="edit" @deleteItem="deleteItem" :selectedId="selIds[index]" :index="index" @searchShopGroupItem="searchShopGroupItem" />
         </p>
         <div class="white-block"></div>
       </div>
-    </scroll-view>
+    </div>
     <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
       <selsearch @comSearch="comSearch" />
     </i-drawer>
@@ -32,7 +32,7 @@
   </i-modal>
   <div class="footer" v-if="!edit">
     <p class="style2" @click="toShow('edit')">批量处理</p>
-    <p class="style3" @click="toRoute('home/addShop/addShop')">添加商品</p>
+    <p class="style3" @click="toRoute('home/addShop/editShop')">添加商品</p>
   </div>
   <div class="footer" v-else>
     <!-- <p class="all-btn"><i class="select" @click="selectAll" :class="allCheck && 'active'"></i>全部</p> -->
@@ -48,8 +48,9 @@ import wx from "wx"
 import scard from '@/components/s_card'
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
 export default {
-  mixins: [mixin],
+  mixins: [mixin, TabMixins],
   components: {
     scard,
     selsearch

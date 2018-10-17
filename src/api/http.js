@@ -54,6 +54,7 @@ axios.defaults.adapter = function(config) {
                           header: {'Content-Type': 'application/x-www-form-urlencoded'},
                           method: 'POST',
                           success: function (res) {
+                            console.log(res.data.data.sessionId);
                             wx.setStorageSync('sessionId', res.data.data.sessionId)
                             wx.showToast({
                               title: '网络错误, 请再请求一次',

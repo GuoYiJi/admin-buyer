@@ -1,9 +1,9 @@
 <template>
 <div class="home">
   <div class="single_box">
-    <div class="line" v-for="(item,index) in singleSelect" :key="index" @click="selectOne(item.id, item.name, index)">
+    <div class="line" v-for="(item,index) in singleSelect" :key="index" @click="handleItemClick(index, item.checked)">
       <!-- <p><i class="select" :class="item.select && 'active'"></i>{{item.name}}</p> -->
-      <selectIcon :isSelected="selectedList.some(ite => ite == item.id)" /><span>{{item.name}}</span>
+      <selectIcon :isSelected="item.checked" /><span>{{item.name}}</span>
     </div>
   </div>
 
@@ -20,6 +20,7 @@ import btn from "@/components/btn";
 import selectIcon from '@/components/selectIcon'
 // import line from '@/components/lineSelect'
 import mixin from "@/mixin.js";
+import { mapState , mapGetters } from 'vuex'
 import {
   $getUrl
 } from "@/utils";
@@ -51,6 +52,11 @@ export default {
       selectedList: []
     };
   },
+  computed: {
+    ...mapState([
+      'shopGroup'
+    ])
+  },
   methods: {
     // selectOne(obj) {
     //   // for(var i=0,l; l = this.singleSelect[i++];){
@@ -66,64 +72,59 @@ export default {
     //   }
     //   console.log(this.selectId)
     // },
-    selectOne(id, name, index) {
-      if (this.selectedList[index] == '-1') {
-        this.$set(this.selectedList, index, id)
-      } else {
-        this.$set(this.selectedList, index, '-1')
-      }
-      console.log(this.selectedList);
+    handleItemClick(index, checked) {
+      this.$set(this.singleSelect, index, {
+        ...this.singleSelect[index],
+        checked: !checked
+      });
     },
     goback() {
+      const selects = this.singleSelect.filter(item => item.checked);
       //addshop
       //set group to vuex
-      if (this.selectedList.every(item => item == '-1')) {
+      if (!selects.length) {
         wx.showToast({
           title: '请选择分组',
           icon: 'none'
         })
         return
       }
-
-      let nameArr = []
-      this.selectedList.forEach((item, index) => {
-        if (item !== '-1') {
-          nameArr.push(this.singleSelect[index].name)
-        }
-      })
-      console.log(nameArr);
-      this.selectedList = this.selectedList.filter(item => {
-        return item !== '-1'
-      })
       this.$store.commit('ADDSHOPGROUP', {
-        groupIds: this.selectedList.toString(),
-        groupText: nameArr.toString()
+        groupIds: selects.map(item => item.id).join(','),
+        groupText: selects.map(item => item.name).join(',')
       })
-      console.log(this.$store.state.shopGroup);
       this.$router.back(-1)
       // this.$router.push({path: "/" + $getUrl(),query: {groups: this.selectId}});
       // this.$router.go(-1)
     }
   },
   async mounted() {
-    const {
+    let {
       data
     } = await this.$API.searchType({
       types: '1'
     });
-    this.singleSelect = data;
+    try {
 
-    if (JSON.parse(this.$route.query.shopGroup)) {
-      this.selectedList = JSON.parse(this.$route.query.shopGroup).groupIds.split(',')
-      console.log('111111111111111');
-    }else {
-      this.singleSelect.forEach((item, index) => {
-        this.selectedList[index] = '-1'
-      })
-    }
-    console.log(this.selectedList);
+      let groupIds = [];
+      if (this.shopGroup.groupIds) {
+        groupIds = this.shopGroup.groupIds.split(',').filter(item => !!item);
+      }
+      // if (JSON.parse(this.$route.query.shopGroup)) {
+      //   groupIds = JSON.parse(this.$route.query.shopGroup).groupIds.split(',');
+      // }
 
-    console.log('this.singleSelect =>', this.singleSelect);
+      data = data.map(item => {
+        const index = groupIds.findIndex(id => id === item.id);
+        if (index !== -1) {
+          item.checked = true;
+        } else {
+          item.checked = false;
+        }
+        return item;
+      });
+      this.singleSelect = data;
+    } catch (err) {console.log(err)}
   }
 };
 </script>

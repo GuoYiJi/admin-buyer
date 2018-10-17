@@ -39,68 +39,68 @@
     </div>
   </div>
   <!-- 全部订单 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-if="tag == 1">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-if="tag == 1">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 代付款 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 2">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 2">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 拼单 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 3">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 3">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 待发货 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 4">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 4">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 已发货 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 5">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 5">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 已完成 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 6">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 6">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 已关闭 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 7">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 7">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 售后 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 8">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 8">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
   <!-- 取消 -->
-  <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 9">
+  <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 9">
     <div class="white-block"></div>
     <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
       <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
     </div>
-  </scroll-view>
+  </div>
 </div>
 </template>
 <script>
@@ -313,68 +313,91 @@ export default {
     },
     // 上拉刷新
     upper(e) {
-      console.log("上拉触顶:", e);
       this.showSearch = true
     },
     // 下拉加载
-    lower(e) {
-      console.log("下拉触底:", e);
-      this.showSearch = false
-      this.pageNumber++
-      if (!this.canLoad) {
-        wx.showToast({
-          title: '没有更多数据了',
-          icon: 'none',
-          duration: 1500
-        })
-        return
-      }
-      wx.showLoading({
-        title: '加载中',
+    lower(e, hasLoading = true) {
+      return new Promise((resolve, reject) => {
+        // this.showSearch = false
+        this.pageNumber++
+        if (!this.canLoad) {
+          wx.showToast({
+            title: '没有更多数据了',
+            icon: 'none',
+            duration: 1500
+          })
+          return
+        }
+        if (hasLoading) {
+          console.log('加载中')
+          wx.showLoading({
+            title: '加载中',
+          })
+        }
+        // const vm = this;
+        if (this.tag === 1) {
+          this.$API.L_selectOrderPage({
+            pageNumber: this.pageNumber,
+            pageSize: 10,
+            orderType: this.orderType,
+          })
+            .then(response => {
+              this.orderList = this.orderList.concat(response.data.list);
+              if (this.orderList.length === response.data.totalRow) {
+                this.canLoad = false
+              }
+              hasLoading && wx.hideLoading()
+              resolve();
+            })
+            .catch(err => {
+              reject();
+            })
+        } else if (this.tag === 8) {
+          this.$API.L_selectOrderRefund({
+            pageNumber: this.pageNumber,
+            pageSize: 10,
+            orderType: this.orderType,
+          }).then(response => {
+            this.orderList = this.orderList.concat(response.data.list);
+            if (this.orderList.length === response.data.totalRow) {
+              this.canLoad = false
+            }
+            hasLoading && wx.hideLoading()
+            resolve();
+          })
+        } else {
+          this.$API.L_selectOrderPage({
+            state: this.state,
+            orderType: this.orderType, //默认综合排序
+            pageNumber: this.pageNumber,
+            pageSize: this.pageSize
+          }).then(response => {
+            this.orderList = this.orderList.concat(response.data.list);
+            if (this.orderList.length === response.data.totalRow) {
+              this.canLoad = false
+            }
+            hasLoading && wx.hideLoading()
+            resolve();
+          })
+        }
       })
-      // const vm = this;
-      if (this.tag === 1) {
-        this.$API.L_selectOrderPage({
-          pageNumber: this.pageNumber,
-          pageSize: 10,
-          orderType: this.orderType,
-        }).then(response => {
-          this.orderList = this.orderList.concat(response.data.list);
-          if (this.orderList.length === response.data.totalRow) {
-            this.canLoad = false
-          }
-          wx.hideLoading()
-        })
-      } else if (this.tag === 8) {
-        this.$API.L_selectOrderRefund({
-          pageNumber: this.pageNumber,
-          pageSize: 10,
-          orderType: this.orderType,
-        }).then(response => {
-          this.orderList = this.orderList.concat(response.data.list);
-          if (this.orderList.length === response.data.totalRow) {
-            this.canLoad = false
-          }
-          wx.hideLoading()
-        })
-      } else {
-        this.$API.L_selectOrderPage({
-          state: this.state,
-          orderType: this.orderType, //默认综合排序
-          pageNumber: this.pageNumber,
-          pageSize: this.pageSize
-        }).then(response => {
-          this.orderList = this.orderList.concat(response.data.list);
-          if (this.orderList.length === response.data.totalRow) {
-            this.canLoad = false
-          }
-          wx.hideLoading()
-        })
-      }
     },
     toRoute(path) {
       this.$router.push("/pages/home/" + path);
     },
+  },
+  onPullDownRefresh() {
+
+    this.pageNumber = 0;
+    this.orderList = [];
+    this.canLoad = true;
+    this.lower(null, false)
+      .finally(() => {
+        wx.stopPullDownRefresh();
+      });
+  },
+  onReachBottom() {
+    this.lower();
   },
   mounted() {
     console.log("onShow 执行");
@@ -385,6 +408,9 @@ export default {
       wx.setStorageSync('isPersonal', response.data.isPersonal)
     })
     this.handleNav(this.tag, this.state)
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   }
 };
 </script>

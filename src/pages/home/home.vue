@@ -35,7 +35,7 @@
         <i class="n_icon n_h4"></i>
         <p>营销管理</p>
       </div>
-      <div class="n_item" @click="toRoute('home/addShop/addShop')">
+      <div class="n_item" @click="toRoute('home/addShop/editShop')">
         <i class="n_icon n_h5"></i>
         <p>添加商品</p>
       </div>

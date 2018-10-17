@@ -3,6 +3,8 @@ import App from './App'
 // css
 import '@/assets/css/weui.css'
 import '@/assets/css/init.css'
+import '@/assets/scss/vant-css.scss';
+
 // vuex
 // import wx from 'wx'
 import store from '@/store'
@@ -11,6 +13,13 @@ import MpvueRouterPatch from 'mpvue-router-patch'
 import check from '@/plugins/check'
 import config from '@/config'
 import {$Message, $Toast, $success} from '@/utils/index'
+Vue.mixin({
+  onUnload() {
+    // if (this.$options.data) {
+    //   Object.assign(this, this.$options.data())
+    // }
+  }
+})
 Vue.use(MpvueRouterPatch)
 
 Vue.prototype.$API = api

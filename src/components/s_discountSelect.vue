@@ -2,7 +2,7 @@
   <div class="order-shop-card">
     <div class="item-card">
       <i class="select" v-if="edit" @click="select(shop.disPrice)" :class="[check ? 'active' : 'close']"></i>
-      <i class="img" :style="{backgroundImage: 'url(' + shop.images + ')'}"></i>
+      <i class="img" :style="{backgroundImage: 'url(' + shop.image + ')'}"></i>
       <div class="desc">
         <p class="title">{{shop.name}}</p>
         <span class="stall">档口:{{shop.stallInfo1 + '-' + shop.stallInfo2 +'-'+ shop.stallInfo3}}</span>
@@ -73,7 +73,6 @@ export default {
     },
     comfirmGPrice(name, disPrice){
       this.toClose(name)
-      console.log('disPrice==>' + disPrice);
       if(!disPrice) {
         this.$Toast({
           content: '折扣价格不能为空',
@@ -87,18 +86,17 @@ export default {
         // }
         // this.$emit('setGroupPrice',obj)
       }else{
-        console.log('disPrice==>' + disPrice);
-        this.$API.updateDisGoods({
-          goodsId: this.shop.id,
-          disPrice
-        }).then(respons => {
-          if(respons.code === 1) {
-            this.$Toast({
-              content: '修改成功',
-              type: 'success'
-            })
-          }
-        })
+        // this.$API.updateDisGoods({
+        //   goodsId: this.shop.id,
+        //   disPrice
+        // }).then(respons => {
+        //   if(respons.code === 1) {
+        //     this.$Toast({
+        //       content: '修改成功',
+        //       type: 'success'
+        //     })
+        //   }
+        // })
       }
     },
     async comfirmDel(name){
@@ -148,7 +146,7 @@ export default {
     margin-right: 20px
     background-repeat: no-repeat
     background-position: center
-    background-size: 100% 100%
+    background-size: cover
   .desc
     flex: 1
     overflow: hidden

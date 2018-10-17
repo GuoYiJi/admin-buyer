@@ -1,45 +1,57 @@
 <template>
 <div class="home">
-  <scroll-view class="scroll-y" scroll-y style="height: 100vh" @scrolltolower="lower">
-  <div v-for="(item, index) in shopList" :key="index">
-    <scroll-view scroll-x="true" style="width: 100%">
-      <div class="scroll-x" :style="{width: 445 + 290 * widthArr[index]+ 'rpx'}">
+  <div class="scroll-y">
+    <div v-for="(item, index) in shopList" :key="index">
+      <scroll-view scroll-x="true" style="width: 100%">
+        <div class="scroll-x">
 
-        <div class="left-box">
-          <div class="title">
-            <i class="icon"></i>
-            <span>{{item.title || '未设置标题'}}</span>
-          </div>
-          <div class="main-img">
-            <div class="border">
-              <i class="shop-img" :style="{backgroundImage: 'url(' + item.matchGoods[0].image + ');'}"></i>
+          <div class="left-box">
+            <div class="title">
+              <i class="icon"></i>
+              <span>{{item.title || '未设置标题'}}</span>
             </div>
-            <span class="title">{{item.matchGoods[0].name}}</span>
-            <span class="desc"> 货期:{{item.matchGoods[0].delivery}}丨销量:{{item.matchGoods[0].sellCount}}</span>
-            <span class="price"><strong>售价:￥{{item.matchGoods[0].sellPrice}}</strong>利润:￥{{item.matchGoods[0].profit}}</span>
+            <div class="main-img">
+              <div class="border">
+                <i class="shop-img" :style="{backgroundImage: 'url(' + item.firstGoods.image + ');'}"></i>
+              </div>
+              <span class="title">{{item.firstGoods.name}}</span>
+              <span class="desc"> 货期:{{item.firstGoods.delivery}}丨销量:{{item.firstGoods.sellCount}}</span>
+              <span class="price"><strong>售价:￥{{item.firstGoods.sellPrice}}</strong>利润:￥{{item.firstGoods.profit}}</span>
+            </div>
+            <div class="footer">
+              <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
+              <button class="down" @click="showModal('visible2', item.id)">下架</button>
+            </div>
+          </div>
+          <div class="right-box">
+            <div>
+              <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx < (item.matchGoods.length / 2)">
+                <div class="border">
+                  <i class="shop-img" :style="{backgroundImage: 'url(' + ite.image + ');'}"></i>
+                </div>
+                <span class="title">{{ite.name}}</span>
+                <span class="desc"> 货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</span>
+                <span class="price"><strong>售价:￥{{ite.sellPrice}}</strong>利润:￥{{ite.profit}}</span>
+              </div>
+            </div>
+            <div>
+              <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx >= (item.matchGoods.length / 2)">
+                <div class="border">
+                  <i class="shop-img" :style="{backgroundImage: 'url(' + ite.image + ');'}"></i>
+                </div>
+                <span class="title">{{ite.name}}</span>
+                <span class="desc"> 货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</span>
+                <span class="price"><strong>售价:￥{{ite.sellPrice}}</strong>利润:￥{{ite.profit}}</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="right-box" :style="{width: 290 * widthArr[index] + 50 +'rpx'}">
-          <div class="item-img" v-for="(ite, inx) in item.matchGoods" :key="inx" v-if="inx > 0">
-            <div class="border">
-              <i class="shop-img" :style="{backgroundImage: 'url(' + ite.image + ');'}"></i>
-            </div>
-            <span class="title">{{ite.name}}</span>
-            <span class="desc"> 货期:{{ite.delivery}}丨销量:{{ite.sellCount}}</span>
-            <span class="price"><strong>售价:￥{{ite.sellPrice}}</strong>利润:￥{{ite.profit}}</span>
-          </div>
-        </div>
-      </div>
-    </scroll-view>
-    <div class="footer">
-      <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
-      <button class="down" @click="showModal('visible2', item.id)">下架</button>
+      </scroll-view>
     </div>
+    <i-modal :visible="visible2" @ok="downMatchState(index)" @cancel="cancelModal('visible2')">
+      <div>确定要下架此搭配吗?</div>
+    </i-modal>
   </div>
-  <i-modal :visible="visible2" @ok="downMatchState(index)" @cancel="cancelModal('visible2')">
-    <div>确定要下架此搭配吗?</div>
-  </i-modal>
-  </scroll-view>
   <div class="white-space"></div>
   <div class="create">
     <!-- <btn :title="'创建搭配'" @click="pageTo('/pages/home/shopMgr/setNewMatch')" /> -->
@@ -53,8 +65,10 @@ import wx from "wx";
 import btn from "@/components/btn.vue";
 import mixin from "@/mixin";
 import { mapState } from "vuex"
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
+
 export default {
-  mixins: [mixin],
+  mixins: [mixin, TabMixins],
   components: {
     btn
   },
@@ -193,7 +207,14 @@ export default {
   async created() {
     const listData = await this.getNextPage({});
     console.log(listData);
-    this.shopList = listData.data.list;//搭配列表->包含搭配图片
+    this.shopList = listData.data.list.map(item => {
+      
+      if (item.matchGoods.length) {
+        let firstGoods = item.matchGoods.splice(0, 1);
+        item.firstGoods = firstGoods[0];
+      }
+      return item;
+    });//搭配列表->包含搭配图片
     // this.shopList.forEach((item, index) => {
     //   this.widthArr[index] = Math.round((item.matchGoods.length - 1) / 2)
     // })
@@ -285,11 +306,10 @@ export default {
   .right-box
     // float: left
     background-color: #ffffff
-    display: flex
-    margin-left: 50px
-    flex-wrap: wrap
+    white-space: nowrap;
+    margin-bottom: -20px
     .item-img
-      display: flex
+      display: inline-block
       width: 270px
       max-height: 640px
       overflow: hidden
@@ -330,9 +350,6 @@ export default {
   margin-top: 10px
   padding: 10px 25px
   display: flex
-  justify-content: flex-end
-  background-color: #ffffff
-  +border(1px, top, #CCCCCC)
   button
     padding: 20px 40px
     margin-right: 8px

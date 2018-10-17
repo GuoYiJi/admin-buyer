@@ -28,20 +28,20 @@
         </li>
       </ul>
     </div>
-    <scroll-view scroll-y style="height: 100vh" @scrolltolower="lower">
+    <div @scrolltolower="lower">
       <div class="box">
         <p v-for="(shop,index) in shopList" :key="index">
           <scard ref="scard" :shop="shop" :edit="edit" :act="shop.state == 0 ? '上架' : '下架'" @deleteItem="deleteItem"/>
         </p>
         <div class="white-block"></div>
       </div>
-    </scroll-view>
+    </div>
   </div>
   <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
     <selsearch @comSearch="comSearch" />
   </i-drawer>
   <div class="footer" v-if="!edit">
-    <p class="style2" @click="toRoute('home/addShop/addShop')">添加商品</p>
+    <p class="style2" @click="toRoute('home/addShop/editShop')">添加商品</p>
   </div>
 </div>
 </template>
@@ -50,8 +50,10 @@ import wx from "wx"
 import scard from '@/components/s_card'
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import EventBus from '@/assets/js/EventBus';
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
 export default {
-  mixins: [mixin],
+  mixins: [mixin, TabMixins],
   components: {
     scard,
     selsearch
@@ -151,7 +153,6 @@ export default {
       // return this.$API.getAdr(obj);
     },
     lower(e) {
-      console.log(e);
       if (!this.canLoad) {
         wx.showToast({
           title: '没有更多数据了',
@@ -169,16 +170,19 @@ export default {
       this.getNextPage({
         ob: this.type,
         state: this.state
-      }).then(response => {
-        vm.shopList = vm.shopList.concat(response.data.list);
-        if (response) {
-          vm.showLoad = false
-        }
-        if (vm.shopList.length === response.data.totalRow) {
-          vm.canLoad = false
-        }
-        wx.hideLoading()
       })
+        .then(response => {
+          vm.shopList = vm.shopList.concat(response.data.list);
+          if (response) {
+            vm.showLoad = false
+          }
+          if (vm.shopList.length === response.data.totalRow) {
+            vm.canLoad = false
+          }
+        })
+        .finally(() => {
+          wx.hideLoading();
+        })
     },
     async comSearch(searchParams) {
       //searchParams 筛选的查询参数
@@ -195,7 +199,6 @@ export default {
     }
   },
   async mounted() {
-    console.log(this.shopList)
     this.shopNum = 0;
     const listData = await this.getNextPage({
       ob: 1
@@ -205,7 +208,7 @@ export default {
       this.canLoad = false;
     }
 
-  },
+  }
   // onShow() { //返回显示页面状态函数
   //   this.onLoad()//再次加载，实现返回上一页页面刷新
   // }

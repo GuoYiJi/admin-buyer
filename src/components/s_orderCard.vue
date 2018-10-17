@@ -798,7 +798,7 @@ export default {
           })
           this.showLogistics = false
           setTimeout(() => {
-            this.$emit('spliceShopList')
+            wx.startPullDownRefresh();
           }, 1500)
         })
       } else {
@@ -836,7 +836,7 @@ export default {
           })
           this.showLogistics = false
           setTimeout(() => {
-            this.$emit('spliceShopList')
+            wx.startPullDownRefresh();
           }, 1500)
         })
       }
@@ -987,7 +987,7 @@ export default {
         border-radius: 6px
         margin-right: 20px
         background-position: center
-        background-size: 100% 100%
+        background-size: cover
         &:last-of-type
           margin: 0
     .icon

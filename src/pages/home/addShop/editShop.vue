@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" :style="{ paddingBottom: footerContainerHeight + 'px' }">
     <div class="add_video">
       <p class="a_title">请添加视频: (最多可添加1个)</p>
       <div class="v_box">
@@ -21,43 +21,130 @@
           <!-- <img :src="item" /> -->
           <!-- <i class="cancel_shop" @click="toCancel(index)"></i>
         </div> -->
-        <div class="add" v-for="(item, index) in imageList" :key="index" :style="{backgroundImage: 'url(' + item + ')'}">
-          <i class="cancel_shop" @click="toCancel(index)"></i>
-        </div>
-        <!-- <div v-for="(item, index) in imageList" :key="index"><image :src="item"></image></div> -->
-        <div class="addBtn" @tap="bindButtonTapImage">
-          <p>+图片</p>
+        <div class="add_image__bd">
+          <div class="uploader__file" v-for="(item, index) in imageList" :key="index">
+            <div class="uploader__file-inner">
+              <div class="add" :style="{backgroundImage: 'url(' + item + ')'}">
+                <i class="cancel_shop" @click="toCancel(index)"></i>
+              </div>
+            </div>
+          </div>
+          <!-- <div v-for="(item, index) in imageList" :key="index"><image :src="item"></image></div> -->
+          <div class="uploader__file">
+            <div class="uploader__file-inner">
+              <div class="addBtn" @tap="bindButtonTapImage">
+                <p>+图片</p>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
     <div class="line-box">
-      <div class="line b_line">
-        <!-- <i class="i_s2 i-icon"></i> -->
-        <p class="input">商品标题:  </p>
-        <p class="blur"><input type="text" v-model="goods.name" placeholder="请输入商品标题"></p>
-        <!-- <p class="blur">未设置</p> -->
+    </div>
+    <div class="van-cell-group van-hairline--top-bottom">
+      
+      <div class="van-cell van-field">
+        <div class="van-cell__title">商品标题</div>
+        <div class="van-cell__value">
+          <div class="van-field__body">
+            <input class="van-field__control" v-model="goods.name" placeholder="输入商品标题" type="text" />
+          </div>
+        </div>
       </div>
-      <div class="line b_line"  @click="toOpen('showMarket')">
-        <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">市场档口: </p>
-        <p class="blur">{{goods.stallInfo1 ? goods.stallInfo1 +'-'+goods.stallInfo2 +'-'+ goods.stallInfo3  : '请选择市场档口'}}</p>
+      <div class="van-cell van-cell--clickable" @click="toOpen('showMarket')">
+        <div class="van-cell__title">市场档口</div>
+        <div class="van-cell__value">
+          <span class="van-ellipsis">{{goods.stallInfo1 ? goods.stallInfo1 +'-'+goods.stallInfo2 +'-'+ goods.stallInfo3  : '请选择市场档口'}}</span>
+        </div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
       </div>
-      <div class="line b_line" @click="toRoute('home/addShop/buyDesc', {id: shopExplan.id})" >
-        <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">采购说明: </p>
-          <p class="blur input_p_left">{{shopExplan.value ? shopExplan.value : '请选择采购说明' }}</p>
+      <div class="van-cell van-cell--clickable"  @click="toRoute('home/addShop/buyDesc', {id: shopExplan.id})">
+        <div class="van-cell__title">采购说明</div>
+        <div class="van-cell__value">
+          <span class="van-ellipsis">{{shopExplan.value ? shopExplan.value : '请选择采购说明' }}</span>
+        </div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
       </div>
-      <div class="line b_line" >
-        <p class="input">成本价: </p>
-        <input v-model="goods.costPrice" type="digit" class="input_box" />
+      <div class="van-cell van-field">
+        <div class="van-cell__title">成本价</div>
+        <div class="van-cell__value">
+          <div class="van-field__body">
+            <input class="van-field__control" v-model="goods.costPrice" placeholder="输入成本价" type="digit" />
+          </div>
+        </div>
       </div>
-      <div class="line" >
-        <p class="input">利润: </p>
-        <input type="digit" v-model="goods.profit" class="input_box small" />
-        <p class="input sale" >售价: <span class="red">{{sellPrice}}</span></p>
+      <div class="van-cell van-field">
+        <div class="van-cell__title">利润</div>
+        <div class="van-cell__value">
+          <div class="van-field__body">
+            <input class="van-field__control" v-model="goods.profit" placeholder="输入利润" type="digit" />
+            <div class="van-field__button">
+              售价: <span>{{sellPrice}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="van-cell-group van-hairline--top-bottom">
+
+      <div class="van-cell van-cell--clickable" @click="toOpen('showTime')">
+        <div class="van-cell__title"><span>货期排单</span></div>
+        <div class="van-cell__value"><span>{{goods.delivery ? goods.delivery : '请选择货期排单'}}</span></div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
+      <div class="van-cell van-cell--clickable" @click="toOpen('showType1')">
+        <div class="van-cell__title"><span>品类</span></div>
+        <div class="van-cell__value"><span>{{ goods.labelInfo2 ? goods.labelInfo + '-' + goods.labelInfo2: '选择品类'}}</span></div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
+      <div class="van-cell van-cell--clickable" :class="{ 'van-cell--sku': addShopType.length }" @click="handleTypeClick">
+        <div class="van-cell__title"><span>规格与库存</span></div>
+        <div class="van-cell__value">
+          <div class="sku-items" v-if="addShopType.length > 0">
+            <div class="sku-item" v-for="(item,index) in addShopType" :key="index" :style="{ display: isLoadmore ? 'block' : index > 2 ? 'none' : 'block' }">
+              {{item.skuCode + '/' + item.stock}}
+            </div>
+            <div class="sku-item__loadmore" @click.stop="handleLoadmoreClick" v-if="addShopType.length > 3">{{ isLoadmore ? '收起' : '更多' }} <i class="van-icon van-icon-arrow" :class="{ 'van-cell__right-icon--down': isLoadmore }"></i></div>
+          </div>
+          <div v-else>
+            点击选择规格与库存
+          </div>
+        </div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
+      <div class="van-cell van-cell--clickable" @click="toRoute('home/shopMgr/classify', {shopGroup: JSON.stringify(shopGroup)})">
+        <div class="van-cell__title"><span>商品分组</span></div>
+        <div class="van-cell__value"><span>{{shopGroup.groupText ? shopGroup.groupText : '选择分组'}}</span></div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
+      <div class="van-cell van-cell--clickable" @click="toOpen('showTag')">
+        <div class="van-cell__title"><span>商品标签</span></div>
+        <div class="van-cell__value" :style="{ textAlign: !goods.tag ? 'right' : 'left' }"><span>{{goods.tag ? tagText : '选择标签'}}</span></div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
+      <div class="van-cell van-cell--clickable">
+        <div class="van-cell__title"><span>支持转售</span></div>
+        <div class="van-cell__value">
+          <span>
+            <div class="van-switch" style="font-size: 30px" :class="{ 'van-switch--on': goods.isTransfer === 1 }" @click="selectTransfer( goods.isTransfer === 0 ? 1 : 0 )">
+              <div class="van-switch__node"></div>
+            </div>
+          </span>
+        </div>
+      </div>
+      <div class="van-cell van-cell--clickable">
+        <div class="van-cell__title"><span>置顶</span></div>
+        <div class="van-cell__value">
+          <span>
+            <div class="van-switch" style="font-size: 30px" :class="{ 'van-switch--on': goods.isTop === 1 }" @click="selectTop( goods.isTop === 0 ? 1 : 0 )">
+              <div class="van-switch__node"></div>
+            </div>
+          </span>
+        </div>
       </div>
     </div>
     <div class="line-box">
-      <div class="line b_line" @click="toOpen('showTime')">
+<!--       <div class="line b_line" @click="toOpen('showTime')">
         <p class="input">货期排单: </p>
         <p class="blur">{{goods.delivery ? goods.delivery : '请选择货期排单'}}</p>
       </div>
@@ -65,7 +152,7 @@
         <p class="input">品类: </p>
         <p class="blur">{{ goods.labelInfo2 ? goods.labelInfo + '-' + goods.labelInfo2: '点击选择品类'}} </p>
       </div>
-      <div class="line b_line shopType" @click="toRoute('home/addShop/addType')">
+      <div class="line b_line shopType" @click="handleTypeClick">
         <p class="input">规格与库存: </p>
         <div class="blur">
           <div class="hasType" v-if="addShopType.length > 0">
@@ -81,7 +168,7 @@
       <div class="line b_line" v-for="(code, codeIndex) in type3Data" :key="codeIndex" @click="getNextLevlList(code.id, code.name, codeIndex)">
         <p class="input">{{code.name}}</p>
         <p class="blur">{{versionName[codeIndex] ? versionName[codeIndex] : '点击选择' + code.name}}</p>
-      </div>
+      </div> -->
       <!-- <div class="line b_line" @click="toOpen('showType2')" v-if="type2Data.length > 0">
         <p class="input">版型：</p>
         <p class="blur">{{goods.labelInfo2 ? goods.labelInfo2 : '点击选择版型'}}</p>
@@ -90,49 +177,22 @@
         <p class="input">面料类型：</p>
         <p class="blur">{{goods.labelInfo3 ? goods.labelInfo3 : '点击选择面料'}}</p>
       </div> -->
-      <div class="line b_line" @click="toRoute('home/shopMgr/classify', {shopGroup: JSON.stringify(shopGroup)})" >
-        <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">商品分组</p>
-        <p class="blur input_p_left">{{shopGroup.groupText ? shopGroup.groupText : '点击选择分组'}}</p>
-      </div>
-      <div class="line b_line" @click="toOpen('showTag')">
-        <!-- <i class="i_s3 i-icon"></i> -->
-        <p class="input">商品标签</p>
-        <p class="blur input_p_left">{{goods.tag ? tagText : '点击选择标签'}}</p>
-      </div>
-      <div class="line b_line" >
-        <p class="input">转售: </p>
-        <div class="blur">
-          <div class="sel_box">
-            <div class="sel_item" @click="selectTransfer(1)">
-              <i class="select" :class="[goods.isTransfer === 1 && 'active']"></i>
-              <p>支持</p>
-            </div>
-            <div class="sel_item" @click="selectTransfer(0)">
-              <i class="select" :class="[goods.isTransfer === 0 && 'active']"></i>
-              <p>不支持</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="line b_line" >
-        <p class="input">置顶: </p>
-        <div class="blur">
-          <i-switch :value="isTopBool" @change="onChange"></i-switch>
-        </div>
-      </div>
       <!-- <div class="line b_line" >
         <p class="input">商品ID：</p>
         <p class="blur">123764B402</p>
       </div> -->
     </div>
-    <!-- <div class="footer" v-if="!editType">
-      <p class="getUp" @click="save(1)">立即上架</p>
-      <p class="getIn" @click="save(0)">保存到仓库</p>
-    </div> -->
-    <div class="edit_footer">
-      <p class="getUp" @click="save(2)">确认修改</p>
+    <div class="footer" id="footerContainer">
+      <block v-if="!hasEditGoods">
+        <p class="getUp" @click="save(1)">立即上架</p>
+        <p class="getIn" @click="save(0)">保存到仓库</p>
+      </block>
+      <block v-else>
+        <p class="getUp" @click="save(2)">确认修改</p>
+      </block>
     </div>
+<!--     <div class="edit_footer" v-else>
+    </div> -->
     <!-- 弹出层 品类 -->
     <div class="modal_box" v-if="showType1">
       <div class="modal_time" >
@@ -150,7 +210,7 @@
           <li class="item"
             v-for="(item,idx) in type1Data"
             @click="confirmType('showType1', item)"
-            :class="[type1Text.id == item.id && 'active']"
+            :class="{ active: type1Text.id == item.id }"
             :key="idx">{{item.name}}
           </li>
         </ul>
@@ -181,7 +241,7 @@
           v-for="(item,idx) in otherData"
           v-if="item.typeId == 4"
           @click="select('timeText', item)"
-          :class="[timeText.id == item.id && 'active']"
+          :class="{ 'active': timeText.id == item.id }"
           :key="idx">{{item.name}}</li>
         </div>
       </div>
@@ -307,6 +367,8 @@ export default {
   },
   data() {
     return {
+      footerContainerHeight: 0,
+      isLoadmore: false,
       topTips: false,
       isTopBool: false,
       showProgress: false, // 上传进度条
@@ -343,7 +405,9 @@ export default {
       type2Text: '',
       type3Text: '',
       type4Text: '',
-      timeText: '',
+      timeText: {
+
+      },
       imageList: [],
       //market adr
       selectFMarket: '',
@@ -394,6 +458,7 @@ export default {
       //   image: '',//图片
       // }
     ],
+    hasEditGoods: false,
     goodsLabelValueIds: [],//面料，版型等值的ID拼接  格式:绵Id,紧身Id
     postLabelInfo: [], //商品分类 一级品类 上衣
     postLabelInfo2: [], //商品二级以下分类  女装,面料,棉,版型,紧身
@@ -406,6 +471,7 @@ export default {
         this.goods.sellPrice = Number(this.goods.costPrice) + Number(this.goods.profit)
         return this.goods.sellPrice + '元'
       }
+      return '0.00元'
     },
     ...mapState([
       'addShopType',
@@ -414,130 +480,143 @@ export default {
     ]),
   },
   async mounted() {
-    const response = await this.$API.L_selectGoodsDetail({
-      goodsId: this.$route.query.shopId
+    const query = wx.createSelectorQuery()
+    query.select('#footerContainer').boundingClientRect();
+    query.exec(res => {
+      this.footerContainerHeight = res[0].height;
+    })
+    const { shopId } = this.$route.query;
+    // this.hasGoodsthis.$route.query.shopId
+    this.hasEditGoods = !!shopId;
+    wx.setNavigationBarTitle({
+      title: shopId ? '编辑商品' : '添加商品'
+    })
+    //get 排期 品类 版型 面料 分组 标签
+    const { data: searchType } = await this.$API.searchType({
+      types: '1,2,3,4'
     })
 
-    this.$store.commit('ADDSHOPTYPE', [])
-    this.$store.commit('ADDSHOPGROUP', {})
-    this.$store.commit('ADDSHOPEXPLAN', {})
-    this.goods = {}
-    this.imgList = []
-    Object.assign(this.$data, this.$options.data())
 
-    // this.goodsLabelValueIds
-    let labelList = []
-    let goodsLabel = response.data.goodsLabel
-    goodsLabel.forEach(item => {
+    this.otherData = searchType;
 
+    this.type1Data = searchType.filter(item => {
+      return parseInt(item.typeId) === 2
     })
-    let skuList = response.data.sku.skuList
-    skuList.forEach(item => {
-      let skuList = []
-      skuList.push({
-        skuCode: item.skuCode,
-        stock: item.stock,
-        image: item.image,
-        attrIds: item.attrIds
+
+    //get searchMarket
+    this.getMarketData(0)
+    if (shopId) {
+      const response = await this.$API.L_selectGoodsDetail({
+        goodsId: this.$route.query.shopId
       })
+
+      this.$store.commit('ADD_GOODS_DETAIL', response.data);
+
+      // this.goodsLabelValueIds
+      let labelList = []
+      let goodsLabel = response.data.goodsLabel
+      goodsLabel.forEach(item => {
+
+      })
+      let skuList = response.data.sku.skuList
+      skuList.forEach(item => {
+        let skuList = []
+        skuList.push({
+          skuCode: item.skuCode,
+          stock: item.stock,
+          image: item.image,
+          attrIds: item.attrIds
+        })
+      })
+
       this.$store.commit('ADDSHOPTYPE', skuList)
-    })
+      
+      this.videoSrc = response.data.video
+      this.imageList = response.data.images.split(',').filter(item => !!item).concat(response.data.content.split(',').filter(item => !!item))
+      this.goods.state = response.data.state;
+      this.goods.name = response.data.name //商品名称
+      this.goods.stallInfo1 = response.data.stallInfo1//档口一级
+      this.goods.stallInfo2 = response.data.stallInfo2//档口二级
+      this.goods.stallInfo3 = response.data.stallInfo3//档口三级
+      this.goods.content = response.data.content //商品详情
+      this.goods.delivery = response.data.delivery//货期
+      this.goods.labelInfo = response.data.labelInfo
+      this.goods.labelInfo2 = response.data.labelInfo2
+      this.goods.labelInfo3 = response.data.labelInfo3
+      this.goods.deliveryId = response.data.deliveryId
+      this.goods.labelIds = response.data.labelIds
+      this.goods.buyExplan = response.data.buyExplan
+      this.goods.buyExplanId = response.data.buyExplanId
+      this.goods.tag = response.data.tag
+      this.tagIds = response.data.tag
+      this.goods.id = shopId;
+      if(response.data.tagsList) {
+        let tagsList = response.data.tagsList
+        let ids = []
+        let text = []
+        tagsList.forEach(item => {
+          ids.push(item.id)
+          text.push(item.name)
+          // if(item.id ===)
+        })
+        this.goods.tag = ids.toString()
+        this.tagIds = ids.toString()
+        this.tagText = text.toString()
+      }
+      // this.goods.groupIds = response.data.groupList
+      // response.data.labelList //分类
+      this.groupValue = response.data.groupList // 分组
+      this.goods.profit = response.data.profit //利润
+      this.goods.costPrice = response.data.costPrice //成本
+      // response.data.buyExplan //采购说明
+      this.$store.commit("ADDSHOPEXPLAN", {value : response.data.buyExplan, id: response.data.buyExplanId});//采购说明
 
-    this.videoSrc = response.data.video
-    this.imageList = [response.data.image].concat(response.data.images.split(','))
-    console.log("图片列表", this.imageList);
-    this.goods.name = response.data.name //商品名称
-    this.goods.stallInfo1 = response.data.stallInfo1//档口一级
-    this.goods.stallInfo2 = response.data.stallInfo2//档口二级
-    this.goods.stallInfo3 = response.data.stallInfo3//档口三级
-    this.goods.content = response.data.content //商品详情
-    this.goods.delivery = response.data.delivery//货期
-    this.goods.isTop = response.data.isTop//置顶
-    this.goods.labelInfo = response.data.labelInfo
-    this.goods.labelInfo2 = response.data.labelInfo2
-    this.goods.labelInfo3 = response.data.labelInfo3
-    this.goods.deliveryId = response.data.deliveryId
-    this.goods.labelIds = response.data.labelIds
-    this.goods.buyExplan = response.data.buyExplan
-    this.goods.buyExplanId = response.data.buyExplanId
-    this.goods.tag = response.data.tag
-    this.tagIds = response.data.tag
-    if(response.data.tagsList) {
-      let tagsList = response.data.tagsList
-      let ids = []
-      let text = []
-      tagsList.forEach(item => {
-        ids.push(item.id)
-        text.push(item.name)
-        // if(item.id ===)
-      })
-      this.goods.tag = ids.toString()
-      this.tagIds = ids.toString()
-      this.tagText = text.toString()
-    }
-    // this.goods.groupIds = response.data.groupList
-    if(response.data.isTop === 1) {
-      this.isTopBool = true
-    }else {
-      this.isTopBool = false
-    }
-    // response.data.labelList //分类
-    this.groupValue = response.data.groupList // 分组
-    this.goods.profit = response.data.profit //利润
-    this.goods.costPrice = response.data.costPrice //成本
-    // response.data.buyExplan //采购说明
-    this.$store.commit("ADDSHOPEXPLAN", {value : response.data.buyExplan, id: response.data.buyExplanId});//采购说明
-    console.log('采购说明', this.shopExplan);
-    response.data.groupList.forEach(item => {
-      this.$store.commit('ADDSHOPGROUP', {
-        groupIds: item.id,
-        groupText: item.name
-      })
-    })// 商品分组
-    this.goods.isTransfer = response.data.isTransfer
-    console.log('是否可转售: ', this.goods.isTransfer);
-    // this.$store.commit("ADDSHOPEXPLAN", this.select)
-    // response.data.
-    // response.data.
-    // response.data.
+      response.data.groupList.forEach(item => {
+        this.$store.commit('ADDSHOPGROUP', {
+          groupIds: item.id,
+          groupText: item.name
+        })
+      })// 商品分组
+      this.$set(this.goods, 'isTransfer', response.data.isTransfer);
+      this.$set(this.goods, 'isTop', response.data.isTop);
+      // this.$store.commit("ADDSHOPEXPLAN", this.select)
+      // response.data.
+      // response.data.
+      // response.data.
 
-    //check editShop
-    if(this.$route.query.id){
-      //数据注入
-      this.editType = true
-      this.goods = this.$route.query
-    }else if(this.$route.query.isAddVideo === 'true'){
-      //重置缓存数据
-      console.log("初始化data");
-      this.$store.commit('ADDSHOPTYPE', [])
-      this.$store.commit('ADDSHOPGROUP', {})
-      this.$store.commit('ADDSHOPEXPLAN', {})
+      //check editShop
+      if(this.$route.query.id){
+        //数据注入
+        this.editType = true
+        this.goods = this.$route.query
+      }
+      searchType.filter(item => item.typeId == 4).some(item => {
+        if (item.id === this.goods.deliveryId) {
+          this.timeText = Object.assign({}, item);
+          return true;
+        }
+      })
+    } else {
+      searchType.filter(item => item.typeId == 1).some(item => {
+        this.$store.commit('ADDSHOPGROUP', {
+          groupIds: item.id,
+          groupText: item.name
+        });
+        return true;
+      });
+      this.$store.commit('ADDSHOPTYPE', []);
+      this.$store.commit('ADDSHOPEXPLAN', {});
+      this.$store.commit('ADD_GOODS_DETAIL', {});
       this.goods.video = ''
       this.goods.imageList = []
       this.goods.images = ''
-      this.imgList = []
-      Object.assign(this.$data, this.$options.data())
-      // this.versionName = []
-      // this.clickNum = 0
-      // this.tagIds = ''
-      // this.mktFirstData = {}
+      this.imgList = [];
     }
-    console.log("执行到了这一步");
-    //get searchMarket
-    this.getMarketData(0)
-    //get 排期 品类 版型 面料 分组 标签
-    const {data} = await this.$API.searchType({
-      types: '2,3,4'
-    })
-    console.log("品类数据==================>",data);
-    this.otherData = data
-    this.type1Data = data.filter(item => {
-      return parseInt(item.typeId) === 2
-    })
+    
     //过滤tagData
-    let tagArr  = []
-    this.tagText = ''
-    this.tagIds = ''
+    let tagArr  = [];
+    this.tagText = '';
+    this.tagIds = '';
     for(var i=0,l; l=this.otherData[i++];){
       if(l.typeId == 3) {
         if(this.goods.tag && this.goods.tag.split(',').indexOf(l.id) >=0 ){
@@ -551,18 +630,38 @@ export default {
         tagArr.push(l)
       }
     }
-    this.tagData = tagArr
-
-    console.log('获取的标签数据=======>', this.tagData);
+    this.tagData = tagArr;
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   },
   methods: {
+    handleLoadmoreClick() {
+      this.isLoadmore = !this.isLoadmore;
+    },
+    // 添加规格或编辑规格
+    handleTypeClick() {
+      this.$router.push({
+        path: '/pages/home/addShop/addType'
+      })
+    },
     setTop(name) {
       this[name] = false
       this.setData({
         isTopBool: true
       });
-      this.goods.isTop = 1
-      console.log(this.goods.isTop);
+      this.goods.isTop = 1;
+    },
+    selectTop(type) {
+      this.$API.selectTopGoods()
+        .then(res => {
+          if (res.data) {
+            this.topTips = true
+          } else {
+            console.log(type);
+            this.$set(this.goods, 'isTop', type);
+          }
+        })
     },
     onChange({ mp: { detail } }) {
       if (this.isTopBool == false) {
@@ -590,82 +689,96 @@ export default {
     },
     //上传图片
     uploadImg(tempFilePath) {
-      console.log('lastIndexOf ============', tempFilePath.slice(tempFilePath.lastIndexOf('/') + 1).toString());
-      var location = tempFilePath.lastIndexOf('/') + 1;
-      var that = this;
-      const uploadTask = wx.uploadFile({
-        url: config.uploadImageUrl,
-        filePath: tempFilePath,
-        name: "file",
-        formData: {
-          name: tempFilePath.slice(location).toString(),
-          key: "img/${filename}",
-          policy: config.imgPolicy,
-          OSSAccessKeyId: config.OSSAccessKeyId,
-          success_action_status: "200",
-          signature: config.imgSignature
-        },
-        success: function(res) {
-          console.log(res);
-          console.log("tempFilePath  ========", tempFilePath);
-          if (parseInt(res.statusCode) == 400) {
-            that.handleError("上传的图片大小不能超过2m!");
-          } else if (parseInt(res.statusCode) == 200) {
-            if(that.maxNum && that.imageList.length >= that.maxNum){
-              that.handleError('不能超过15张图片噢！')
-              return
+      return new Promise((resolve) => {
+        var location = tempFilePath.lastIndexOf('/') + 1;
+        var that = this;
+        const uploadTask = wx.uploadFile({
+          url: config.uploadImageUrl,
+          filePath: tempFilePath,
+          name: "file",
+          formData: {
+            name: tempFilePath.slice(location).toString(),
+            key: "img/${filename}",
+            policy: config.imgPolicy,
+            OSSAccessKeyId: config.OSSAccessKeyId,
+            success_action_status: "200",
+            signature: config.imgSignature
+          },
+          success: function(res) {
+            if (parseInt(res.statusCode) == 400) {
+              that.handleError("上传的图片大小不能超过2m!");
+            } else if (parseInt(res.statusCode) == 200) {
+              resolve(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
+              // that.imgList.push(
+              //   config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString()
+              // );
+              // that.getImg(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
+              // that.$emit('getImg', config.uploadImageUrl + "/img" + tempFilePath.substring(10))
             }
-            that.imgList.push(
-              config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString()
-            );
-            console.log('图片列表===>' + that.imgList);
-            // that.$emit('getImg', config.uploadImageUrl + "/img" + tempFilePath.substring(10))
-            that.getImg(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
+          },
+          fail: function(err) {
+            reject();
           }
-        },
-        fail: function(err) {
-          console.log(err);
-        }
+        })
       })
-      uploadTask.onProgressUpdate((res) => {
-        if(res.progress === 100) {
-          wx.showToast({
-            title: '上传完成'
-          })
-        }
-      })
+      // uploadTask.onProgressUpdate((res) => {
+      //   if(res.progress === 100) {
+      //     wx.showToast({
+      //       title: '上传完成'
+      //     })
+      //   }
+      // })
     },
     //控制添加图片张数
     bindButtonTapImage() {
       const maxNum = this.maxNum;
-      wx.showLoading({
-        title: '加载中',
-      });
+      // wx.showLoading({
+      //   title: '加载中',
+      // });
       var that = this;
-      if ( maxNum && this.imageList.length >= maxNum) {
-        this.handleError(`不能超过${maxNum}张图片噢！`);
-        wx.hideLoading();
-        return;
-      }
+      // if ( maxNum && this.imageList.length >= maxNum) {
+      //   this.handleError(`不能超过${maxNum}张图片噢！`);
+      //   wx.hideLoading();
+      //   return;
+      // }
       //选择图片
       wx.chooseImage({
         sizeType: "original",
-        count: this.uploadNum,
+        count: 15 - this.imageList.length,
         success: function(res) {
-          console.log(res);
           var tempFilePath = res.tempFilePaths;
-          console.log(tempFilePath);
+          let promiseAll = [];
+
           tempFilePath.forEach(item => {
-            that.uploadImg(item);
+            promiseAll.push(that.uploadImg(item));
           })
+          wx.showLoading({
+            title: '上传中'
+          })
+          Promise.all(promiseAll)
+            .then(res => {
+              that.imageList.push(
+                ...res
+              );
+              // that.getImg(config.uploadImageUrl + "/img/" + tempFilePath.slice(location).toString())
+            })
+            .catch(err => {
+              wx.showToast({
+                title: '网络出错',
+                icon: 'none'
+              })
+            })
+            .finally(() => {
+              wx.hideLoading();
+            })
         },
         fail: function() {
-          wx.showLoading({
-            title: '操作失败',
-          })
+          // wx.showLoading({
+          //   title: '操作失败',
+          // })
         },
         complete: function() {
-          wx.hideLoading();
+          // wx.hideLoading();
         }
       });
     },
@@ -792,29 +905,30 @@ export default {
     // 请求
     async save(state){
       var value = await wx.getStorageSync('sessionId')
-      if(this.goods.name.split('').length > 18) {
-        this.handleError('标题最多不能超过18个字符')
-      }
+      // if(this.goods.name.split('').length > 18) {
+      //   this.handleError('标题最多不能超过18个字符')
+      // }
       if( this.imageList.length > 0){
-        this.goods.image = this.imageList.slice(0,1).toString()
-        this.goods.images = this.imageList.slice(0,5).join(',')
+        this.goods.image = this.imageList[0];
+        this.goods.images = this.imageList.slice(0, 3).join(',')
       }
-      if(this.imageList.length > 5){
-        this.goods.content = this.imageList.slice(5).join(',')
+      if(this.imageList.length > 3){
+        this.goods.content = this.imageList.slice(3).join(',')
       }
+      let labelIds = [];
       if(this.type1Text.id){
+        labelIds.push(this.type1Text);
         this.goods.labelIds = this.type1Text.id + ','
-        console.log('this.goods.labelIds=>'+ this.goods.labelIds);
       }
       if(this.type2Text.id){
+        labelIds.push(this.type2Text);
         this.goods.labelIds += this.type2Text.id + ','
         console.log('this.goods.labelIds=>'+ this.goods.labelIds);
       }
       if(this.type3Text.id){
+        labelIds.push(this.type3Text);
         this.goods.labelIds += this.type3Text.id + ','
       }
-
-      this.goods.state = state
       this.goods.groupIds = this.shopGroup.groupIds
       //add buyExplan
       this.goods.buyExplan = this.shopExplan.value
@@ -842,7 +956,10 @@ export default {
 
       const obj = {
         goodsLabelValueIds: this.goodsLabelValueIds.toString(),
-        goods: this.goods,
+        goods: {
+          ...this.goods,
+          state: this.hasEditGoods ? this.goods.state : state
+        },
         skuList: this.addShopType,
         sessionId: value,
         shopId: config.appId,
@@ -850,7 +967,7 @@ export default {
 
       obj.name = this.name
       obj.labelInfo = this.goods.labelInfo
-      obj.labelInfo2 = this.goods.labelInfo2 + ',' + this.versionName.concat(this.postLabelInfo2).toString()
+      obj.labelInfo2 = [this.goods.labelInfo2].concat(this.versionName).concat(this.postLabelInfo2).join(',');
       obj.labelInfo3 = this.versionName.toString()
       obj.isTop = this.isTop
       console.log('obj=>' + obj)
@@ -868,7 +985,7 @@ export default {
         let arr = str.split(',')
         console.log(arr)
         arr = unique(arr)
-        obj.attrIds = arr.join(',')
+        obj.attrIds = arr.filter(item => !!item).join(',')
         console.log('111')
       }
 
@@ -925,8 +1042,9 @@ export default {
       setTimeout(()=>{
         //跳转到商品列表
         // this.toRoute('home/shopMgr/shopMgr')
+        wx.setStorageSync('is-update-goods', true);
         this.$router.back(-1)
-      },2000)
+      }, 2000)
 
     },
     selectTagIds(name,item){
@@ -1076,7 +1194,7 @@ export default {
       })
     },
     selectTransfer(type) {
-      this.goods.isTransfer = type
+      this.$set(this.goods, 'isTransfer', type);
     }
   },
 
@@ -1084,6 +1202,19 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+.home
+  padding-bottom: 87px;
+.van-cell-group
+  margin-top: 20px;
+  &:first-child
+    margin-top: 0;
+.van-cell--sku
+  .van-cell__title
+    flex: none;
+  .van-cell__value
+    text-align: left;
+    .sku-items
+      padding-left: 15px;
 
 .progress-item
   width: 100%
@@ -1253,19 +1384,28 @@ export default {
   .getUp
     background: #F67C2F
 .footer
-  padding: 30px 70px
-  background: #fff
-  display: flex
-  justify-content: space-between
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 90px;
+  line-height: 90px;
+  padding: 39px 70px 44px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   p
-    width: 300px
-    height: 90px
-    line-height: 90px
+    flex: 1;
+    margin-right: 10px;
     color: #fff
     font-size: 32px
     background: #ccc
     text-align: center
     border-radius: 6px
+    &:last-child
+      margin-right: 0;
   .getUp
     background: #F67C2F
 
@@ -1328,29 +1468,47 @@ export default {
     height: 68px
     line-height: 108px
     padding: 20px
-
+.uploader__file
+  float: left
+  padding: 0 10px;
+  width: 33.333333%;
+  box-sizing: border-box;
+  &-inner
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-top: 100%;
+    margin-bottom: 20px;
+  // margin: 0 20px 20px 0
 .add_image
-  width: 100%
   background: #fff
-  display: flex
-  flex-wrap: wrap
-  padding: 20px
+  display: flex;
+  padding: 20px 10px;
+  &__bd
+    width: 100%;
+    margin-bottom: -20px;
+    overflow: hidden;
   .add,.addBtn
-    display: block
-    width: 200px
-    height: 200px
-    margin: 0 20px 20px 0
     background-position: center
     background-repeat: no-repeat
-    background-size: 100% 100%
+    background-size: cover
   .addBtn
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     background-color: #EAEAEA
     display: flex
     align-items: center
     justify-content: center
     font-size: 28px
   .add
-    position: relative
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     .cancel_shop
       position: absolute
       top: 10px

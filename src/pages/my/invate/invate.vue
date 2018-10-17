@@ -1,25 +1,10 @@
 <template>
   <div class="home">
-    <div class="top">
-      <image src="http://hd.wallpaperswide.com/thumbs/european_architecture-t2.jpg" mode="aspectFit" />
-    </div>
-    <div class="detail">
-      {{myArticle.content}}
-    </div>
+    <img class="top-image" src="http://brpublic.beautifulreading.com/1c4480f68e6b7812a912722321899f26" mode="widthFix" alt="" lazy-load />
     <div class="footer">
         <!-- <btn :title="'立即推广'" /> -->
         <button class="icon" open-type="share">立即推广</button>
     </div>
-    <!-- <div class="cover" v-show="showTime">
-      <div class="alertwx">
-        <div class="alert-img">
-          <button class="icon" open-type="share"></button>
-          <img src="http://www.qckj.link/upload/goods/20180520/1526794348353_160563.jpg">
-        </div>
-        <span>微信好友</span>
-        <div class="cancelbtn" @click="colseBut">取消</div>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -66,13 +51,18 @@ export default {
 </script>
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
+.home
+  padding-bottom: 120px;
+.top-image
+  display: block;
+  width: 100%;
+  height: auto;
 .footer
-  padding: 0 75px
-  position: fixed
-  left: 0
-  right: 0
-  bottom: 80px
-  z-index: 6
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: 0;
   button.icon
     width: 100%
     height: 90px
@@ -82,11 +72,13 @@ export default {
     color: #ffffff
     font-weight: bold
     font-size: 32px
+    border-radius: 0;
+    &:after
+      border-radius: 0;
 .detail
   padding: 0 30px
   font-size: 30px
 .home
-  height: 100%
   background: #fff
   color: #333
 .top
@@ -94,53 +86,4 @@ export default {
   image
     width: 100%
     background-color: #ffffff
-.cover
-  background: rgba(255,255,255,0)
-  position: absolute
-  top: 0
-  left: 0
-  width: 750px
-  height: 100%
-  .alertwx
-    width: 491px
-    height: 378px
-    background: #fff
-    box-shadow: 1px 2px 3px
-    border-radius: 10px
-    position: absolute
-    top: 25%
-    left: 18%
-    .alert-img
-      margin: 30px auto
-      width: 130px
-      height: 130px
-      img
-        width: 130px
-        height: 130px
-        border-radius: 50%
-      .icon
-        +bg-img('login/wxLogin.png')
-        display: inline-block
-        width: 90px
-        height: 90px
-        position: absolute
-        top: 80px
-        right: 200px
-      button::after
-        border: none
-    span
-      padding: 10px 186px
-      font-size: 28px
-      text-align: center
-
-    .cancelbtn
-      margin: 20px auto
-      width: 340px
-      height: 60px
-      background: #F67C2F
-      border-radius: 10px
-      text-align: center
-      line-height: 60px
-      font-size: 30px
-      color: #fff
 </style>

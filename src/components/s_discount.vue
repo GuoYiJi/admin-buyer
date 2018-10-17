@@ -9,7 +9,7 @@
           <li :class="[tag === 5 && 'nav-active']" @click="handleTag(5)">筛选<div class="sort-box"><i class="option-icon"></i></div></li>
         </ul>
       </div>
-      <scroll-view scroll-y style="height: 100vh;" @scrolltolower="lower">
+      <div>
         <div class="box">
           <p v-for="(shop,index) in shopList" :key="index">
             <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" :edit="edit" />
@@ -33,7 +33,7 @@
           </p>
           <div class="white-block"></div>
         </div>
-      </scroll-view>
+      </div>
     </div>
     <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
       <selsearch @comSearch="comSearch" />
@@ -63,8 +63,10 @@ import wx from "wx"
 import scard from '@/components/s_listCardDiscount'
 import mixin from '@/mixin'
 import selsearch from '@/components/selectSearch'
+import TabMixins from '@/assets/js/shopMgrTabItemMixins';
+import EventBus from '@/assets/js/EventBus';
 export default {
-  mixins: [mixin],
+  mixins: [mixin, TabMixins],
   components: {
     scard,
     selsearch
@@ -150,7 +152,6 @@ export default {
       // return this.$API.getAdr(obj);
     },
     lower(e) {
-      console.log(e);
       if (!this.canLoad) {
         wx.showToast({
           title: '没有更多数据了',
@@ -238,7 +239,9 @@ export default {
   },
   mounted() {
     //do something after mounting vue instance
-    console.log("mounted直行了");
+    EventBus.$on('on-discount-list-delete', id => {
+      this.shopList = this.shopList.filter(item => item.id !== id);
+    })
     this.shopNum = 0;
     this.getNextPage({
       ob: 1,
@@ -251,6 +254,9 @@ export default {
         this.canLoad = false;
       }
     })
+  },
+  destroyed() {
+    EventBus.$off('on-discount-list-delete');
   },
   onShow() {
     console.log("onShow直行了");

@@ -7,10 +7,10 @@ export default {
       this[name] = false
     },
     toRoute (path, params = {}) {
-      if (path === 'home/addShop/addShop') {
-        this.$router.push({path: '/pages/' + path, query: {isAddVideo: true}})
-        return
-      }
+      // if (path === 'home/addShop/editShop') {
+      //   this.$router.push({path: '/pages/' + path, query: {isAddVideo: true}})
+      //   return
+      // }
       this.$router.push({path: '/pages/' + path, query: params})
     },
     select (name, value) {

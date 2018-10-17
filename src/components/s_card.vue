@@ -12,17 +12,19 @@
       <div class="price">
         <span class="countPrice">售价:￥{{shop.sellPrice}}</span>
         <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
-        <span class="more-icon" @click="toOpen('visible4')" v-if="!edit">
-          <span class="dot"><i></i></span>
-          <span class="dot"><i></i></span>
-          <span class="dot"><i></i></span>
+        <span class="action" @click="handleActionClick" v-if="!edit">
+          <span class="more-icon">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </span>
         </span>
       </div>
       <!-- <i class="more-icon" @click="toOpen('visible4')"></i> -->
     </div>
   </div>
   <i-modal :visible="visible2" @ok="comfirmDel('visible2')" @cancel="toClose('visible2')">
-    <div class="m_tips">确定要{{actions4[1].name}}该商品？</div>
+    <div class="m_tips">确定要{{shop.state === 1 ? '下架' : '上架'}}该商品？</div>
   </i-modal>
   <i-modal :visible="visible3" @ok="confirmSet('visible3')" @cancel="toClose('visible3')">
     <ul class="m_tips">
@@ -83,20 +85,6 @@ export default {
       visible4: false,
       visible2: false,
       visible3: false,
-      // vertical: '',
-      actions4: [{
-          name: "编辑"
-        },
-        {
-          name: "下架"
-        },
-        {
-          name: "分组"
-        },
-        {
-          name: "取消"
-        }
-      ],
       groupList: [],
       isSelectList: []
       // selectedId: ''
@@ -115,6 +103,40 @@ export default {
     // }
   },
   methods: {
+    handleActionClick() {
+      console.log(this.shop);
+      const { state } = this.shop;
+
+      wx.showActionSheet({
+        itemList: ['编辑', state === 0 ? '上架' : '下架', '分组'],
+        success: res => {
+          switch (res.tapIndex) {
+            case 0:
+              //edit
+              this.toRoute('home/addShop/editShop', {
+                shopId: this.shop.id
+              })
+              break;
+            case 1:
+              //下架 或上架
+              this.visible2 = true
+              break;
+            case 2:
+              //group
+              this.$API.searchType({
+                types: 1
+              }).then(response => {
+                // console.log(this.shop.groupIds);
+                this.groupList = response.data
+                this.isSelectList = this.shop.groupIds.split(',')
+                console.log(this.isSelectList);
+                this.toOpen('visible3')
+              })
+              break;
+          }
+        }
+      })
+    },
     confirmSet(name) {
       if (this.isSelectList.every(item => item === '-1')) {
         wx.showToast({
@@ -126,9 +148,9 @@ export default {
       this.isSelectList = this.isSelectList.filter(item => {
         return item !== '-1'
       })
-      this.$API.editGroups({
-        goodsIds: this.shop.id,
-        groupId: this.isSelectList.toString()
+      this.$API.changeGroups2({
+        goodsId: this.shop.id,
+        groupIds: this.isSelectList.filter(item => !!item).toString()
       }).then(response => {
         wx.showToast({
           title: '修改分组成功',
@@ -140,7 +162,7 @@ export default {
     },
     selectIcon(id, index) {
       if (this.isSelectList[index]) {
-        this.$set(this.isSelectList, index, '-1')
+        this.$set(this.isSelectList, index, '')
       } else {
         this.$set(this.isSelectList, index, id)
       }
@@ -171,37 +193,6 @@ export default {
     // selectAll(bool){
     //   this.check = bool
     // },
-    handleClick4({
-      mp: {
-        detail
-      }
-    }) {
-      const index = detail.index
-      this.visible4 = false
-      if (index === 0) {
-        //edit
-        this.toRoute('home/addShop/editShop', {
-          shopId: this.shop.id
-        })
-      } else if (index === 1) {
-        //下架 或上架
-        this.visible2 = true
-      } else if (index === 2) {
-        //group
-        this.$API.searchType({
-          types: 1
-        }).then(response => {
-          // console.log(this.shop.groupIds);
-          this.groupList = response.data
-          this.isSelectList = this.shop.groupIds.split(',')
-          console.log(this.isSelectList);
-          this.toOpen('visible3')
-        })
-        // this.toRoute('home/shopMgr/classify',{groupIds: JSON.stringify(this.shop.groupIds)})
-      } else if (index === 3) {
-        this.toClose('visible4')
-      }
-    },
 
     async comfirmDel(name) {
       this[name] = false
@@ -223,7 +214,6 @@ export default {
   },
   mounted() {
     // this.check = false
-    this.actions4[1].name = this.act
     // console.log(this.shopList)
   },
 
@@ -267,7 +257,7 @@ export default {
       margin: 0 20px
       background-position: center
       background-repeat: no-repeat
-      background-size: 100% 100%
+      background-size: cover
     .desc
       flex: 1
       overflow: hidden
@@ -307,20 +297,23 @@ export default {
         +singleFile()
         color: #333333
         font-size: 26px
+      .action
+        position: relative;
+        height: 100%;
       .more-icon
-        width: 50px
-        display: flex
-        align-items: center
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        height: 100%;
         span.dot
-          flex: 0 0 33%
-          display: flex
-          align-items: center
-          i
-            display: inline-block
-            width: 10px
-            height: 10px
-            border-radius: 50%
-            background-color: #000
+          display: inline-block;
+          margin-left: 5px;
+          width: 10px
+          height: 10px
+          border-radius: 50%
+          background-color: #000
+          &:first-child
+            margin-left: 0;
 ul.m_tips
   max-height: 650px
   display: flex

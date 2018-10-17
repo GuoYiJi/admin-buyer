@@ -10,11 +10,18 @@
           <button class="group">{{shop.ping.num}}人成团</button>
         </p>
         <p class="sellnum">货期:{{shop.delivery}}丨销量:{{shop.sellCount}}</p>
-        <p class="collage_price">拼团价: {{shop.disPrice ? '￥' + shop.disPrice : '未设置'}}</p>
+        <p class="collage_price">拼团价: ￥{{shop.ping.price}}</p>
         <p class="price">
           <span class="countPrice">售价:￥{{shop.sellPrice}}</span>
           <span class="sell">&nbsp;&nbsp;&nbsp;利润:￥{{shop.profit}}</span>
-          <i class="more-icon" @click="toOpen('visible4')"></i>
+
+          <span class="action" @click="handleActionClick">
+            <span class="more-icon">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </span>
+          </span>
         </p>
       </div>
     </div>
@@ -91,6 +98,22 @@ export default {
     // }
   },
   methods: {
+    handleActionClick() {
+
+      wx.showActionSheet({
+        itemList: ['编辑', '下架'],
+        success: res => {
+          switch (res.tapIndex) {
+            case 0:
+              this.toRoute('home/shopMgr/collage/collageMsg', {pingInfo: JSON.stringify(this.shop.ping), isEdit: true})
+              break;
+            case 1:
+              this.visible2 = true
+              break;
+          }
+        }
+      })
+    },
     comfirmGPrice(name, disPrice){
       this.toClose(name)
       // console.log('disPrice==>' + disPrice);
@@ -176,7 +199,6 @@ export default {
   mounted() {
     // this.check = false
     this.actions4[1].name = this.act
-    console.log(this.shopList)
   },
 
 }
@@ -252,7 +274,7 @@ ul.m_box
       margin-right: 20px
       background-position: center
       background-repeat: no-repeat
-      background-size: 100% 100%
+      background-size: cover
     .desc
       flex: 1
       display: flex
@@ -308,10 +330,21 @@ ul.m_box
           font-size: 28px
           text-align: left
           +singleFile
-        i.more-icon
-          display: inline-block
-          width: 30px
-          height: 30px
-          background: url("~@/assets/img/shopMgr/more.png") no-repeat center
-          background-size: 100% 100%
+        .action
+          position: relative;
+          height: 100%;
+        .more-icon
+          display: flex;
+          align-items: center;
+          padding-left: 20px;
+          height: 100%;
+          span.dot
+            display: inline-block;
+            margin-left: 5px;
+            width: 10px
+            height: 10px
+            border-radius: 50%
+            background-color: #000
+            &:first-child
+              margin-left: 0;
 </style>

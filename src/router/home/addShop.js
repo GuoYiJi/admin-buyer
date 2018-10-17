@@ -27,7 +27,6 @@ const addShop = [
   }, {
     path: '/pages/home/addShop/editShop',
     config: {
-      navigationBarTitleText: '编辑商品',
       'usingComponents': {
         'i-message': '/iview/message/index',
         'i-modal': '/iview/modal/index',
