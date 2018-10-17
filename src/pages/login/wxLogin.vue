@@ -65,8 +65,8 @@ export default {
         encryptedData: this.userInfo.encryptedData,
         iv: this.userInfo.iv
       });
-      console.log(data.data);
-      await wx.setStorageSync("sessionId", data.data.sessionId);
+      await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
+      wx.setStorageSync('is-login', true);
       await wx.setStorageSync("avatar", data.data.avatar);
       // this.toRoute("home/home");
       wx.switchTab({
@@ -79,7 +79,6 @@ export default {
       success: async res => {
         if (res.code) {
           this.code = res.code;
-          wx.setStorageSync("code", this.code)
           wx.getUserInfo({
             success: res => {
               // console.log(res);
