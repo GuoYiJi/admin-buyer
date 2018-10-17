@@ -1,8 +1,8 @@
 var fileHost = 'https://huiti-img.oss-cn-shanghai.aliyuncs.com'
 export default {
-    // url: 'https://app.gzbeidouxing.top/huiti',
+    url: 'https://app.gzbeidouxing.top/huiti',
     // url: 'http://35c10a1f.ngrok.io/huiti',
-    url: process.env.NODE_ENV === 'production' ? 'https://app.gzbeidouxing.top/huiti' : 'http://1929u21c31.imwork.net/huiti',
+    // url: process.env.NODE_ENV === 'production' ? 'https://app.gzbeidouxing.top/huiti' : 'http://1929u21c31.imwork.net/huiti',
     // url: 'http://app.gzbeidouxing.top/huiti',
     uploadImageUrl: `${fileHost}`, //默认存在根目录，可根据需求改
     AccessKeySecret: 'GYyUHcqlyvWCGJ8QCsxOU9En2iD9Rw',

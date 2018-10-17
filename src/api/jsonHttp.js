@@ -17,7 +17,7 @@ export default {
     wx.showLoading({
       title: '加载中',
     })
-    var value = await wx.getStorageSync('sessionId')
+    var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
     if (value) {
       params.sessionId = value
     }
@@ -48,7 +48,7 @@ export default {
                 icon: 'none',
                 duration: 2000
               })
-              wx.setStorageSync('sessionId', '')
+              wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, '')
               setTimeout(()=>{ 
                 wx.redirectTo({url: '/pages/login/wxLogin'})
               },2000) 

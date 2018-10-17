@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "选择运费模板",
+  "usingComponents": {
+    "i-toast": "/iview/toast/index"
+  }
+}

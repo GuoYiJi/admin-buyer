@@ -622,7 +622,7 @@ export default {
         dataType: 'json',
         data: {
           shopId: config.appId,
-          sessionId: wx.getStorageSync('sessionId'),
+          sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
           orderIds: vm.orderId,
           orderDeliver: skuIdArr
         },

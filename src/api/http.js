@@ -13,6 +13,7 @@ axios.defaults.adapter = function(config) {
   wx.showLoading({
     title: '加载中',
   })
+  console.log('sfdsd')
   return new Promise((resolve, reject) => {
     // console.log(config)
     try {
@@ -46,7 +47,7 @@ axios.defaults.adapter = function(config) {
                         wx.request({
                           url: TEST_URL + '/api/account/authLogin',
                           data: {
-                            code: wx.getStorageSync('code'),
+                            code: res.code,
                             shopId: 'wx3a5f4001c0e1d32f',
                             encryptedData: res.encryptedData,
                             iv: res.iv
@@ -54,8 +55,7 @@ axios.defaults.adapter = function(config) {
                           header: {'Content-Type': 'application/x-www-form-urlencoded'},
                           method: 'POST',
                           success: function (res) {
-                            console.log(res.data.data.sessionId);
-                            wx.setStorageSync('sessionId', res.data.data.sessionId)
+                            wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId)
                             wx.showToast({
                               title: '网络错误, 请再请求一次',
                               icon: 'none'
@@ -90,7 +90,7 @@ axios.defaults.adapter = function(config) {
                 icon: 'none',
                 duration: 2000
               })
-              // wx.setStorageSync('sessionId', '')
+              // wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, '')
               setTimeout(() => {
                 wx.redirectTo({
                   url: '/pages/login/wxLogin'
@@ -102,7 +102,7 @@ axios.defaults.adapter = function(config) {
             //   icon: 'none',
             //   duration: 2000
             // })
-            // wx.setStorageSync('sessionId', '')
+            // wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, '')
             // setTimeout(() => {
             //   wx.redirectTo({
             //     url: '/pages/login/wxLogin'
@@ -143,7 +143,7 @@ http.interceptors.request.use(async (configs) => {
   // if(wx.getStorage('sessionId')) {
   //   config.data += '&sessionId=' + localStorage.getItem('sessionId')
   // }
-  var value = await wx.getStorageSync('sessionId')
+  var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
   if (value) {
     configs.data += '&sessionId=' + value
   }
@@ -181,6 +181,7 @@ export default {
   post(url, params = {}, back = true) {
     return new Promise(async (resolve, reject) => {
       try {
+
         const data = await http.post(url, qs.stringify(params))
         resolve(data)
         // const code = Number(data.data.code)

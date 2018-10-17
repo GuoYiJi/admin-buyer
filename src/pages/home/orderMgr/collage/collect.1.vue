@@ -262,7 +262,7 @@ export default {
       console.log(this.goodsId)
       }
       console.log( this.orderGoodsList)
-      this.azzSessionId =  wx.getStorageSync('sessionId')
+      this.azzSessionId =  wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       this.url = config.url+'/api/order/shopClose'
       console.log(this.url)
       this.appId = config.appId

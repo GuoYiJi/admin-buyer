@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "发货方式",
+  "usingComponents": {
+    "i-switch": "/iview/switch/index"
+  }
+}

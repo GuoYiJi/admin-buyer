@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "添加退货地址",
+  "usingComponents": {
+    "i-switch": "/iview/switch/index",
+    "i-message": "/iview/message/index"
+  }
+}

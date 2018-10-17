@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "创建拼团",
+  "usingComponents": {
+    "i-message": "/iview/message/index",
+    "i-toast": "/iview/toast/index"
+  }
+}

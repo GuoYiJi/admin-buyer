@@ -904,7 +904,7 @@ export default {
 
     // 请求
     async save(state){
-      var value = await wx.getStorageSync('sessionId')
+      var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       // if(this.goods.name.split('').length > 18) {
       //   this.handleError('标题最多不能超过18个字符')
       // }

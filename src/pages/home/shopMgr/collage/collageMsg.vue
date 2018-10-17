@@ -152,7 +152,7 @@ export default {
           url: vm.url + '/api/shop/ping/addPing',
           data: {
             pingList: vm.requestData,
-            sessionId: wx.getStorageSync('sessionId'),
+            sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
             shopId: config.appId
           },
           method: 'POST',
@@ -188,7 +188,7 @@ export default {
           limitTimes: this.limitTimes,
           price: this.price,
           id: this.goodsId,
-          sessionId: wx.getStorageSync('sessionId'),
+          sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
           shopId: config.appId
         },
         method: 'POST',
