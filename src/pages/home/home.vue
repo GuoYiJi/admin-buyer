@@ -39,10 +39,6 @@
         <i class="n_icon n_h5"></i>
         <p>添加商品</p>
       </div>
-      <div class="n_item" @click="toRoute('home/buyIn/buyIn')">
-        <i class="n_icon n_h6"></i>
-        <p>采购入库</p>
-      </div>
       <div class="n_item" @click="toRoute('home/allData')">
         <i class="n_icon n_h7"></i>
         <p>数据统计</p>

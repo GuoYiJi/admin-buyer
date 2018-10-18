@@ -125,6 +125,9 @@ export default {
       });
       this.singleSelect = data;
     } catch (err) {console.log(err)}
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   }
 };
 </script>

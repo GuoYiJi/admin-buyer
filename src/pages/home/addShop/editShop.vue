@@ -531,7 +531,7 @@ export default {
 
       this.$store.commit('ADDSHOPTYPE', skuList)
       
-      this.videoSrc = response.data.video
+      this.videoSrc = response.data.video;
       this.imageList = response.data.images.split(',').filter(item => !!item).concat(response.data.content.split(',').filter(item => !!item))
       this.goods.state = response.data.state;
       this.goods.name = response.data.name //商品名称
@@ -570,13 +570,17 @@ export default {
       this.goods.costPrice = response.data.costPrice //成本
       // response.data.buyExplan //采购说明
       this.$store.commit("ADDSHOPEXPLAN", {value : response.data.buyExplan, id: response.data.buyExplanId});//采购说明
-
+      let groupIds = [];
+      let groupTexts = [];
       response.data.groupList.forEach(item => {
-        this.$store.commit('ADDSHOPGROUP', {
-          groupIds: item.id,
-          groupText: item.name
-        })
+        groupIds.push(item.id);
+        groupTexts.push(item.name)
       })// 商品分组
+      
+      this.$store.commit('ADDSHOPGROUP', {
+        groupIds: groupIds.join(','),
+        groupText: groupTexts.join(',')
+      })
       this.$set(this.goods, 'isTransfer', response.data.isTransfer);
       this.$set(this.goods, 'isTop', response.data.isTop);
       // this.$store.commit("ADDSHOPEXPLAN", this.select)
@@ -958,6 +962,7 @@ export default {
         goodsLabelValueIds: this.goodsLabelValueIds.toString(),
         goods: {
           ...this.goods,
+          video: this.videoSrc,
           state: this.hasEditGoods ? this.goods.state : state
         },
         skuList: this.addShopType,

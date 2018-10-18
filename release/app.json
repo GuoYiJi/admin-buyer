@@ -36,8 +36,6 @@
     "pages/home/marketingMgt/settings/settings",
     "pages/home/marketingMgt/settings/settingsT",
     "pages/home/marketingMgt/usageSettings/usageSettings",
-    "pages/home/buyIn/buyIn",
-    "pages/home/addShop/addShop",
     "pages/home/addShop/buyDesc",
     "pages/home/addShop/addType",
     "pages/home/addShop/editShop",

@@ -23,5 +23,5 @@ const orderMgr = require('./home/orderMgr')
 const marketingMgt = require('./home/marketingMgt')
 const buyIn = require('./home/buyIn')
 const addShop = require('./home/addShop')
-const homes = [].concat(home, storeMgr, shopMgr, marketingMgt, buyIn, addShop, orderMgr)
+const homes = [].concat(home, storeMgr, shopMgr, marketingMgt, addShop, orderMgr)
 module.exports = homes

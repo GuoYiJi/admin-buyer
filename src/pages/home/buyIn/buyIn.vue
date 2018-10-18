@@ -292,7 +292,7 @@ export default {
   //离开当前页面后执行
   destroyed: function () {
       this.flag = false;
-  },
+  }
 };
 </script>
 <style lang="sass" scoped>

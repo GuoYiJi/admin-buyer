@@ -70,6 +70,9 @@ export default {
       types: 1
     });
     this.singleSelect = data;
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   }
 };
 </script>

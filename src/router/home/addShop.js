@@ -1,16 +1,5 @@
 const addShop = [
   {
-    path: '/pages/home/addShop/addShop',
-    config: {
-      navigationBarTitleText: '添加商品',
-      'usingComponents': {
-        'i-message': '/iview/message/index',
-        'i-modal': '/iview/modal/index',
-        'i-progress': '/iview/progress/index',
-        'i-switch': '/iview/switch/index'
-      }
-    }
-  }, {
     path: '/pages/home/addShop/buyDesc',
     config: {
       navigationBarTitleText: '采购说明'

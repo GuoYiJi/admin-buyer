@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "采购管理",
-  "usingComponents": {
-    "i-drawer": "/iview/drawer/index"
-  }
-}
