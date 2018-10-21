@@ -39,6 +39,7 @@
     "pages/home/addShop/buyDesc",
     "pages/home/addShop/addType",
     "pages/home/addShop/editShop",
+    "pages/home/addShop/addShop",
     "pages/home/orderMgr/orderMgr",
     "pages/home/orderMgr/logisticsDetail",
     "pages/home/orderMgr/orderdetails",

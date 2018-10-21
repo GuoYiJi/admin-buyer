@@ -1,7 +1,7 @@
 <template>
-  <div class="order-shop-card">
+  <div class="order-shop-card" @click="select(shop.id, index, shop)">
     <div class="item-card">
-      <div v-if="edit" class="select-box" @click="select(shop.id, index, shop)" :class="{'active': check}">
+      <div v-if="edit" class="select-box" :class="{'active': check}">
         <!-- <i class="select" :class="{'active': check}"></i> -->
       </div>
       <i class="img" :style="{backgroundImage: 'url(' + shop.image + ')'}"></i>
@@ -119,6 +119,7 @@ export default {
     //点击选中按钮
     select(id, index){
       console.log(id, index);
+      if (!this.edit) return;
       //通知父组件 选中或取消
       // if(this.check) {
       //   // this.selectedId = ''
@@ -129,7 +130,7 @@ export default {
       //   this.$emit('switchSel', this.shop.id, true, this.shop)
       //   // this.$emit('switchSel', id, true, index)
       // }
-      if(this.shopMatch.length >= 10) {
+      if(this.shopMatch.length >= 50) {
         wx.showToast({
           title: '最多选择10件商品',
           icon: 'none'
@@ -241,7 +242,7 @@ export default {
       margin: 0 20px
       background-position: center
       background-repeat: no-repeat
-      background-size: 100% 100%
+      background-size: cover
     .desc
       flex: 1
       overflow: hidden

@@ -44,7 +44,7 @@ export default {
       })
       this.$API.editGroups({
         goodsIds: this.goodsIds.toString(),
-        groupId: this.selId,
+        groupIds: this.selId,
       }).then(response => {
         wx.showToast({
           title: '修改分组成功',
@@ -65,7 +65,6 @@ export default {
     if(this.$route.query.ids) {
       this.goodsIds = this.$route.query.ids.split(',')
     }
-    console.log(this.goodsIds);
     const { data } = await this.$API.searchType({
       types: 1
     });

@@ -673,13 +673,14 @@ export default {
       this.isEdited = false
     },
     cut(pIndex, index) {
+      console.log(this.orderItem.orderGoods[pIndex].skuList[index].skuId);
       this.$set(this.lastSkuList[pIndex], index, {
         deliver: this.lastSkuList[pIndex][index].deliver -= 1,
         color: this.lastSkuList[pIndex][index].color,
         size: this.lastSkuList[pIndex][index].size,
         num: this.lastSkuList[pIndex][index].num,
         remain: this.lastSkuList[pIndex][index].remain,
-        skuId: this.lastSkuList[pIndex][index].skuId
+        skuId: this.orderItem.orderGoods[pIndex].skuList[index].skuId
       })
     },
     add(pIndex, index) {
@@ -689,7 +690,7 @@ export default {
         size: this.lastSkuList[pIndex][index].size,
         num: this.lastSkuList[pIndex][index].num,
         remain: this.lastSkuList[pIndex][index].remain,
-        skuId: this.lastSkuList[pIndex][index].skuId
+        skuId: this.orderItem.orderGoods[pIndex].skuList[index].skuId
       })
     },
     cancel(pIndex) {
@@ -727,7 +728,7 @@ export default {
       //   dataType: 'json',
       //   data: {
       //     shopId: config.appId,
-      //     sessionId: wx.getStorageSync('sessionId'),
+      //     sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
       //     orderIds: this.orderId,
       //     orderDeliver: skuIdArr
       //   },
@@ -742,22 +743,23 @@ export default {
     save() {
       let skuIdArr = []
       let vm = this
+      console.log(this.lastSkuList);
       this.lastSkuList.forEach((item, index) => {
-        item.forEach(ite => {
+        item.forEach((ite, subIndex) => {
           skuIdArr.push({
             num: ite.deliver,
-            skuId: ite.skuId
+            skuId: this.orderItem.orderGoods[index].skuList[subIndex].skuId
           })
         })
       })
-      // console.log(skuIdArr);
+      const sessionId = wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`);
       wx.request({
         url: config.url + '/api/order/goods/addChildren',
         method: 'POST',
         dataType: 'json',
         data: {
           shopId: config.appId,
-          sessionId: wx.getStorageSync('sessionId'),
+          sessionId,
           orderIds: vm.orderId,
           orderDeliver: skuIdArr
         },
@@ -872,22 +874,29 @@ export default {
       // })
       // this.orderGoodsNum = num
       // 获取商品规格数据
-      let arr = []
-      this.orderItem.orderGoods.forEach((item, index) => {
-        arr.push([])
-        item.skuList.forEach(skuItem => {
-          arr[index].push({
-            color: skuItem.skuCode.split(',')[0].toString(),
-            size: skuItem.skuCode.split(',')[1].toString(),
-            num: skuItem.num,
-            deliver: 0,
-            remain: skuItem.remainNum,
-            skuId: skuItem.skuId
+      try {
+
+        let arr = []
+        console.log(this.orderItem);
+        this.orderItem.orderGoods.forEach((item, index) => {
+          arr.push([])
+          item.skuList.forEach(skuItem => {
+            console.log(skuItem.skuId);
+            arr[index].push({
+              color: skuItem.skuCode.split(',')[0].toString(),
+              size: skuItem.skuCode.split(',')[1].toString(),
+              num: skuItem.num,
+              deliver: 0,
+              remain: skuItem.remainNum,
+              skuId: skuItem.skuId
+            })
           })
         })
-      })
-      this.skuList = arr
-      this.lastSkuList = arr
+        this.skuList = arr
+        this.lastSkuList = arr
+      } catch (err) {
+        console.log(err);
+      }
     }
     if (this.orderItem.goodsList) {
       console.log("找到售后订单: ", this.isRefund);

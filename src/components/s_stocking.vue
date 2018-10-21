@@ -15,7 +15,7 @@
     <div>
       <div class="box">
         <p v-for="(shop,index) in shopList" :key="index">
-          <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" act="上架" :edit="edit" @deleteItem="deleteItem" :selectedId="selIds[index]" :index="index" @searchShopGroupItem="searchShopGroupItem" />
+          <scard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" act="上架" :edit="edit" @deleteItem="deleteItem" :selectedId="selIds[index]" :index="index" @searchShopGroupItem="searchShopGroupItem" delete-btn />
         </p>
         <div class="white-block"></div>
       </div>
@@ -38,6 +38,7 @@
     <!-- <p class="all-btn"><i class="select" @click="selectAll" :class="allCheck && 'active'"></i>全部</p> -->
     <p class="style1" @click="toShow('showUp')">上架</p>
     <p class="style2" @click="toGroup">分组</p>
+    <p class="style1" @click="handleDeleteGoods">删除</p>
     <p class="style3" @click="toggleEdit()">完成</p>
   </div>
   <i-message id="message" />
@@ -119,6 +120,34 @@ export default {
         return
       }
       this[name] = true
+    },
+    handleDeleteGoods() {
+      let goodsIds = this.selIds.filter(item => item !== '-1').filter(item => !!item);
+      if (!goodsIds.length) {
+        wx.showToast({
+          title: '请先选择商品',
+          icon: 'none'
+        })
+        return
+      }
+      this.$API.deleteGoods({
+        goodsIds: goodsIds.join(',')
+      })
+        .then(res => {
+          wx.showToast({
+            title: '删除成功',
+            icon: 'none',
+            duration: 1500
+          })
+          this.shopList = this.shopList.filter(item => {
+            if (goodsIds.findIndex(id => item.id === id) === -1) {
+              return true;
+            }
+          })
+          this.shopList.forEach((item, index) => {
+            this.selIds[index] = '-1'
+          })
+        })
     },
     toggleEdit() {
       this.edit = !this.edit

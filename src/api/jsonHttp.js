@@ -13,7 +13,7 @@ const vm = new Vue()
 
 
 export default {
-  async post(url, params = {}) {
+  async post(url, params = {}, options = {}) {
     wx.showLoading({
       title: '加载中',
     })
@@ -22,14 +22,18 @@ export default {
       params.sessionId = value
     }
     params.shopId = config.appId
+    console.log(options.header)
     return new Promise(async (resolve, reject) => {
       try {
         wx.request({
           url: URL + '/' + url,
-          data: JSON.stringify(params),
-          // header: config.headers,
+          data: options.header ? params : JSON.stringify(params),
+          header: {
+            ...options.header
+          },
           method: 'POST',
           // dataType: 'json',
+          
           success: function(data){
             // return data
             // console.log(data.data.desc)

@@ -45,6 +45,10 @@ export default {
     selectIcon
   },
   props: {
+    deleteBtn: {
+      type: Boolean,
+      default: false
+    },
     //编辑
     edit: {
       type: Boolean,
@@ -104,11 +108,14 @@ export default {
   },
   methods: {
     handleActionClick() {
-      console.log(this.shop);
       const { state } = this.shop;
-
+      let itemList = ['编辑', state === 0 ? '上架' : '下架', '分组'];
+      
+      if (this.deleteBtn) {
+        itemList.push('删除');
+      }
       wx.showActionSheet({
-        itemList: ['编辑', state === 0 ? '上架' : '下架', '分组'],
+        itemList,
         success: res => {
           switch (res.tapIndex) {
             case 0:
@@ -129,9 +136,23 @@ export default {
                 // console.log(this.shop.groupIds);
                 this.groupList = response.data
                 this.isSelectList = this.shop.groupIds.split(',')
-                console.log(this.isSelectList);
                 this.toOpen('visible3')
               })
+              break;
+            case 3:
+              const { shop: { id: goodsId } } = this;
+              this.$API.deleteGoods({
+                goodsIds: goodsId
+              })
+                .then(res => {
+                  const { data } = res;
+                  wx.showToast({
+                    title: '删除成功',
+                    icon: 'none',
+                    duration: 1500
+                  })
+                  this.$emit('deleteItem', this.shop.id);
+                })
               break;
           }
         }
@@ -148,8 +169,8 @@ export default {
       this.isSelectList = this.isSelectList.filter(item => {
         return item !== '-1'
       })
-      this.$API.changeGroups2({
-        goodsId: this.shop.id,
+      this.$API.editGroups({
+        goodsIds: this.shop.id,
         groupIds: this.isSelectList.filter(item => !!item).toString()
       }).then(response => {
         wx.showToast({
@@ -161,6 +182,14 @@ export default {
       })
     },
     selectIcon(id, index) {
+      if (this.isSelectList.filter(item => !!item).length <= 1 && this.isSelectList[index]) {
+        wx.showToast({
+          title: '至少需要一个分组',
+          icon: 'none',
+          duration: 1500
+        })
+        return;
+      }
       if (this.isSelectList[index]) {
         this.$set(this.isSelectList, index, '')
       } else {

@@ -39,6 +39,7 @@ export default {
       }).then(response => {
         this.index = index
         this.img = image
+        wx.setStorageSync('FMimg', image);
         wx.showToast({
           title: '已设置封面',
           icon: 'success'
@@ -47,6 +48,9 @@ export default {
     },
     chooseImg() {
       const self = this;
+      wx.showLoading({
+        title: '上传中'
+      })
       wx.chooseImage({
         count: 1,
         success: function(file) {
@@ -58,6 +62,7 @@ export default {
             self.$API.warehouse({
               wall: self.img
             }).then(response => {
+              wx.setStorageSync('FMimg', self.img);
               self.index = -1
               wx.showToast({
                 title: '已设置封面',
@@ -65,6 +70,10 @@ export default {
               })
             })
           });
+          wx.hideLoading();
+        },
+        fail: res => {
+          wx.hideLoading();
         }
       });
     },

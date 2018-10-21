@@ -169,6 +169,11 @@ export default {
     //     that.FMimg = res.data;
     //   }
     // });
+    const FMimg = wx.getStorageSync('FMimg');
+    if (FMimg) {
+      this.FMimg = FMimg;
+      wx.removeStorageSync('FMimg');
+    }
     wx.getStorage({
       key: "remark",
       success: function(res) {

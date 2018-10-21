@@ -10,14 +10,29 @@ import qs from 'qs'
 import wx from 'wx'
 const vm = new Vue();
 let isLogin = false;
-function login() {
+let loginLoading = false;
+let loginCbs = [];
+function login(cb) {
   return new Promise((resolve, reject) => {
-    const _flag = wx.getStorageSync('is-login');
-    if (isLogin || _flag) {
-      wx.setStorageSync('is-login');
-      resolve();
+    loginCbs.push(cb);
+    if (loginLoading) {
       return;
     }
+    const _flag = wx.getStorageSync(`${process.env.NODE_ENV}_is-login`);
+    if (isLogin || _flag) {
+      wx.setStorageSync(`${process.env.NODE_ENV}_is-login`);
+      loginCbs.forEach(cb => {
+        if (typeof cb === 'function') {
+          cb();
+        }
+      })
+      loginCbs = [];
+      return;
+    }
+    wx.showLoading({
+      title: '登录中'
+    })
+    loginLoading = true;
     wx.login({
       success: async res => {
         const { code } = res;
@@ -29,6 +44,8 @@ function login() {
                 wx.reLaunch({
                   url: '/pages/login/wxLogin'
                 })
+                loginLoading = false;
+                wx.hideLoading();
               } else {
                 wx.getUserInfo({
                   success: res => {
@@ -43,12 +60,19 @@ function login() {
                       header: {'Content-Type': 'application/x-www-form-urlencoded'},
                       method: 'POST',
                       success: function (res) {
-                        console.log('res', res)
                         wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
                         isLogin = true;
-                        resolve();
+                        loginLoading = false;
+                        wx.hideLoading();
+                        loginCbs.forEach(cb => {
+                          if (typeof cb === 'function') {
+                            cb();
+                          }
+                        })
+                        loginCbs = [];
                       },
                       fail: function(err) {
+                        loginLoading = false;
                         wx.redirectTo({
                           url: '/pages/login/wxLogin'
                         })
@@ -56,17 +80,25 @@ function login() {
                     })
                   },
                   fail: err => {
+                    wx.hideLoading();
+                    loginLoading = false;
                     wx.reLaunch({
                       url: '/pages/login/wxLogin'
                     })
                   }
                 });
               }
+            },
+            fail: () => {
+              wx.hideLoading();
+              loginLoading = false;
             }
           })
         }
       },
       fail: () => {
+        wx.hideLoading();
+        loginLoading = false;
       }
     });
   })
@@ -75,7 +107,6 @@ axios.defaults.adapter = function(config) {
   wx.showLoading({
     title: '加载中',
   })
-  console.log('sfdsd')
   return new Promise((resolve, reject) => {
     // console.log(config)
     try {
@@ -95,81 +126,9 @@ axios.defaults.adapter = function(config) {
             resolve(data.data)
             // return data.data
           } else if (code === 2) {
-            // 重新登陆 清除登陆信息 location.reload()
-            // window.location.reload()
-            // if(wx.getStorageSync('code')) {
-            //   wx.login({
-            //     success: async res => {
-            //       // console.log("微信登录成功 res ==>", res);
-            //       wx.setStorageSync("code", res.code)
-            //       if (res.code) {
-            //         wx.getUserInfo({
-            //           success: res => {
-            //             // console.log("获取用户信息成功 res ==>", res);
-            //             wx.request({
-            //               url: TEST_URL + '/api/account/authLogin',
-            //               data: {
-            //                 code: res.code,
-            //                 shopId: 'wx3a5f4001c0e1d32f',
-            //                 encryptedData: res.encryptedData,
-            //                 iv: res.iv
-            //               },
-            //               header: {'Content-Type': 'application/x-www-form-urlencoded'},
-            //               method: 'POST',
-            //               success: function (res) {
-            //                 wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId)
-            //                 wx.showToast({
-            //                   title: '网络错误, 请再请求一次',
-            //                   icon: 'none'
-            //                 })
-            //                 // wx.setStorage('sessionId', res.data.data.sessionId)
-            //                 // wx.switchTab({
-            //                 //   url: '/pages/home/home'
-            //                 // })
-            //               },
-            //               fail: function(err) {
-            //                 setTimeout(() => {
-            //                   wx.redirectTo({
-            //                     url: '/pages/login/wxLogin'
-            //                   })
-            //                 }, 2000)
-            //               }
-            //             })
-            //           },
-            //           fail: err => {
-            //             // this.userInfoBool = true
-            //           }
-            //         });
-            //       }
-            //     },
-            //     fail: () => {
-            //       self.handleError("授权失败！");
-            //     }
-            //   });
-            // } else {
-            //   wx.showToast({
-            //     title: '您没有授权, 请授权登录',
-            //     icon: 'none',
-            //     duration: 2000
-            //   })
-            //   // wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, '')
-            //   setTimeout(() => {
-            //     wx.redirectTo({
-            //       url: '/pages/login/wxLogin'
-            //     })
-            //   }, 2000)
-            // }
-            // wx.showToast({
-            //   title: '登录过期，请重新登录',
-            //   icon: 'none',
-            //   duration: 2000
-            // })
-            // wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, '')
-            // setTimeout(() => {
-            //   wx.redirectTo({
-            //     url: '/pages/login/wxLogin'
-            //   })
-            // }, 2000)
+            wx.reLaunch({
+              url: '/pages/login/wxLogin'
+            })
           } else if (code === 0) {
             const msg = data.data.desc
             wx.showToast({
@@ -205,8 +164,7 @@ http.interceptors.request.use(async (configs) => {
   // if(wx.getStorage('sessionId')) {
   //   config.data += '&sessionId=' + localStorage.getItem('sessionId')
   // }
-  var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
-  console.log('value', value);
+  var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`);
   if (value) {
     configs.data += '&sessionId=' + value
   }
@@ -244,11 +202,10 @@ export default {
   post(url, params = {}, back = true) {
     return new Promise((resolve, reject) => {
       try {
-        login()
-          .then(async res => {
-            const data = await http.post(url, qs.stringify(params))
-            resolve(data)
-          })
+        login(async res => {
+          const data = await http.post(url, qs.stringify({...params}))
+          resolve(data)
+        })
         // const code = Number(data.data.code)
         // console.log(data)
         // if(code === 1) {

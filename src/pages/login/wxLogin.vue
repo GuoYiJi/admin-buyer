@@ -50,28 +50,34 @@ export default {
       } else {
         this.userInfoBool = true;
         this.userInfo = e.mp.detail;
-        // this.login(e.mp.detail);
+        this.login(e.mp.detail);
       }
     },
     async login(encryptedData) {
-      const data = await this.$API.authLogin({
-        code: this.code,
-        avatar: this.userInfo.userInfo.avatarUrl,
-        nick: this.userInfo.userInfo.nickName,
-        // phone: "",
-        // appId: config.appId,
-        encryptedDataPhone: encryptedData.encryptedData,
-        ivPhone: encryptedData.iv,
-        encryptedData: this.userInfo.encryptedData,
-        iv: this.userInfo.iv
-      });
-      await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
-      wx.setStorageSync('is-login', true);
-      await wx.setStorageSync("avatar", data.data.avatar);
-      // this.toRoute("home/home");
-      wx.switchTab({
-        url: '/pages/home/home'
-      })
+
+      try {
+
+        const data = await this.$API.authLogin({
+          code: this.code,
+          avatar: this.userInfo.userInfo.avatarUrl,
+          nick: this.userInfo.userInfo.nickName,
+          // phone: "",
+          // appId: config.appId,
+          encryptedDataPhone: encryptedData.encryptedData,
+          ivPhone: encryptedData.iv,
+          encryptedData: this.userInfo.encryptedData,
+          iv: this.userInfo.iv
+        });
+        await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
+        wx.setStorageSync('is-login', true);
+        await wx.setStorageSync("avatar", data.data.avatar);
+        // this.toRoute("home/home");
+        wx.switchTab({
+          url: '/pages/home/home'
+        })
+      } catch (err) {
+        
+      }
     }
   },
   async mounted() {

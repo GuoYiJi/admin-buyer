@@ -6,13 +6,16 @@ export default class shopMgr {
   addShopTag = params => http.post('api/label/data/addTag', params)
 
   editShop = params => jsonHttp.post('api/goods/edit', params)
+  deleteGoods = params => jsonHttp.post('api/goods/deleteGoods', params, {
+    header: {'Content-Type': 'application/x-www-form-urlencoded'}
+  });
   //  delShop = params => http.post('',params)
   searchShopState = params => http.post('api/goods/pageManage', params)
   searchShopGroup = params => http.post('api/goods/pageManageByLabel', params)
 
   addShopType = params => http.post('api/goods/addKeu', params)
   delShopType = params => http.post('api/goods/deleteKeu', params)
-  editShopType = params => http.post('api/goods/editKeu', params)
+  editShopType = params => jsonHttp.post('api/goods/editKeu', params)
 
   editGroups = params => http.post('api/goods/changeGroups', params)
   changeGroups2 = params => http.post('api/goods/changeGroups2', params)

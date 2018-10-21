@@ -1,5 +1,5 @@
 <template>
-  <div class="home" :style="{ paddingBottom: footerContainerHeight + 'px' }">
+  <div class="home">
     <div class="add_video">
       <p class="a_title">请添加视频: (最多可添加1个)</p>
       <div class="v_box">
@@ -10,7 +10,8 @@
           <!-- <p class="show_pro"><progress percent="20" show-info /></p> -->
         </div>
         <div class="add" @tap="bindButtonTap">
-          <p>+视频</p>
+          <p v-if="videoSrc">更换视频</p>
+          <p v-else>+视频</p>
         </div>
       </div>
     </div>
@@ -112,6 +113,14 @@
         </div>
         <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
       </div>
+
+      <div class="van-cell van-cell--clickable" v-for="(code, codeIndex) in type3Data" :key="codeIndex" @click="getNextLevlList(code.id, code.name, codeIndex)">
+        <div class="van-cell__title"><span>{{code.name}}</span></div>
+        <div class="van-cell__value">
+          <span>{{versionName[codeIndex] ? versionName[codeIndex] : '点击选择' + code.name}}</span>
+        </div>
+        <i class="van-icon van-icon-arrow van-cell__right-icon"></i>
+      </div>
       <div class="van-cell van-cell--clickable" @click="toRoute('home/shopMgr/classify', {shopGroup: JSON.stringify(shopGroup)})">
         <div class="van-cell__title"><span>商品分组</span></div>
         <div class="van-cell__value"><span>{{shopGroup.groupText ? shopGroup.groupText : '选择分组'}}</span></div>
@@ -169,14 +178,7 @@
         <p class="input">{{code.name}}</p>
         <p class="blur">{{versionName[codeIndex] ? versionName[codeIndex] : '点击选择' + code.name}}</p>
       </div> -->
-      <!-- <div class="line b_line" @click="toOpen('showType2')" v-if="type2Data.length > 0">
-        <p class="input">版型：</p>
-        <p class="blur">{{goods.labelInfo2 ? goods.labelInfo2 : '点击选择版型'}}</p>
-      </div>
-      <div class="line b_line" @click="toOpen('showType3')" v-if="type3Data.length > 0">
-        <p class="input">面料类型：</p>
-        <p class="blur">{{goods.labelInfo3 ? goods.labelInfo3 : '点击选择面料'}}</p>
-      </div> -->
+      
       <!-- <div class="line b_line" >
         <p class="input">商品ID：</p>
         <p class="blur">123764B402</p>
@@ -257,35 +259,16 @@
         <div class="content">
           <!-- <li class="item" @click="select('type3Text','现货')" :class="[type3Text == '现货' && 'active']" >现货</li> -->
           <li class="item"
-          v-for="(type,typeIndex) in type4Data"
+          v-for="(type, typeIndex) in item.type4Data"
           :key="idx"
           @click="selectItem(type, idx)"
-          :class="[type3Text.id == type.id && 'active']"
+          :class="{ active: item.checkedId == type.id }"
           >{{type.name}}</li>
 
         </div>
       </div>
     </div>
 
-    <!-- 弹出层 面料类型 -->
-    <!-- <div class="modal_box" v-if="showType3">
-      <div class="modal_time" >
-        <div class="top">
-          <p class="cancel" @click="toClose('showType3')">取消</p>
-          <p class="title">选择面料类型</p>
-          <p class="confirm" @click="confirmType('showType3')">确定</p>
-        </div>
-        <div class="content"> -->
-          <!-- <li class="item" @click="select('materialText','现货')" :class="[materialText == '现货' && 'active']" >现货</li> -->
-          <!-- <li class="item"
-          v-for="(item,idx) in type3Data"
-          :key="idx"
-          @click="select('type3Text',item)"
-          :class="[type3Text.id == item.id && 'active']"
-          >{{item.name}}</li>
-        </div>
-      </div>
-    </div> -->
 
     <!-- 弹出层  商品标签-->
     <div class="modal_box" v-if="showTag">
@@ -468,7 +451,7 @@ export default {
   computed: {
     sellPrice(){
       if(this.goods.costPrice && this.goods.profit) {
-        this.goods.sellPrice = Number(this.goods.costPrice) + Number(this.goods.profit)
+        this.goods.sellPrice = (Number(this.goods.costPrice) + Number(this.goods.profit)).toFixed(2)
         return this.goods.sellPrice + '元'
       }
       return '0.00元'
@@ -480,11 +463,6 @@ export default {
     ]),
   },
   async mounted() {
-    const query = wx.createSelectorQuery()
-    query.select('#footerContainer').boundingClientRect();
-    query.exec(res => {
-      this.footerContainerHeight = res[0].height;
-    })
     const { shopId } = this.$route.query;
     // this.hasGoodsthis.$route.query.shopId
     this.hasEditGoods = !!shopId;
@@ -502,6 +480,8 @@ export default {
     this.type1Data = searchType.filter(item => {
       return parseInt(item.typeId) === 2
     })
+    // this.type2Data = searchType.filter(item => parseInt(item.typeId) === 3);
+    // this.type3Data = searchType.filter(item => parseInt(item.typeId) === 4);
 
     //get searchMarket
     this.getMarketData(0)
@@ -514,9 +494,11 @@ export default {
 
       // this.goodsLabelValueIds
       let labelList = []
-      let goodsLabel = response.data.goodsLabel
-      goodsLabel.forEach(item => {
+      let goodsLabel = response.data.goodsLabel;
 
+      goodsLabel.forEach((item, index) => {
+        this.versionName[index] = item.labelValue;
+        this.goodsLabelValueIds.push(item.labelVId);
       })
       let skuList = response.data.sku.skuList
       skuList.forEach(item => {
@@ -550,6 +532,7 @@ export default {
       this.goods.tag = response.data.tag
       this.tagIds = response.data.tag
       this.goods.id = shopId;
+      
       if(response.data.tagsList) {
         let tagsList = response.data.tagsList
         let ids = []
@@ -563,6 +546,22 @@ export default {
         this.tagIds = ids.toString()
         this.tagText = text.toString()
       }
+      this.clickNum = 1;
+      response.data.labelList.forEach((item, index) => {
+        this[`type${index + 1}Text`] = item;
+      })
+
+      const { data: type2Data } = await this.getShopClass(2, this.type1Text.id)
+      this.type2Data = type2Data;
+      const { data: type3Data } = await this.getShopClass(2, this.type2Text.id);
+      console.log(goodsLabel);
+      this.type3Data = type3Data.map((item, index) => {
+        if (goodsLabel[index]) {
+          item.selectedId = goodsLabel[index].labelVId;
+        }
+        return item;
+      });
+      // this.versionName =
       // this.goods.groupIds = response.data.groupList
       // response.data.labelList //分类
       this.groupValue = response.data.groupList // 分组
@@ -646,7 +645,10 @@ export default {
     // 添加规格或编辑规格
     handleTypeClick() {
       this.$router.push({
-        path: '/pages/home/addShop/addType'
+        path: '/pages/home/addShop/addType',
+        query: {
+          goodsId: this.$route.query.shopId
+        }
       })
     },
     setTop(name) {
@@ -874,20 +876,23 @@ export default {
     },
     //获取版型或面料等内部选项
     async getNextLevlList(id, name, index) {
-      console.log(id);
+
       // this.toOpen('showType3')
       // this.versionTitle = title
       this.versionId = id
       //get 4级分类
-      const {data} = await this.getShopClass(2, id)
-      this.type4Data = data
-      this.postLabelInfo2[index] = name
-      console.log(this.postLabelInfo2);
+      const {data} = await this.getShopClass(2, id);
+      this.$set(this.type3Data[index], 'type4Data', data);
+      if (this.type3Data[index].selectedId) {
+        this.$set(this.type3Data[index], 'checkedId', this.type3Data[index].selectedId);
+      };
+      this.postLabelInfo2[index] = name;
     },
     //选择的值
     selectItem(item, index) {
       console.log(item);
-      this.select('type3Text', item)
+      this.select('type3Text', item);
+      this.$set(this.type3Data[index], 'checkedId', item.id);
       // this.versionName[index] = item
     },
     selectName(item, index) {
@@ -895,7 +900,8 @@ export default {
       this.versionName[index] = item.name
       this.goodsLabelValueIds[index] = item.id
       // this.labelInfo2[index] = item.name
-      console.log(this.versionName);
+      // console.log(this.versionName);
+      this.$set(this.type3Data[index], 'selectedId', item.id);
       this.closeVersion(item.id)
 
       // console.log(this.goodsLabelValueIds);
@@ -935,7 +941,6 @@ export default {
       }
       this.goods.groupIds = this.shopGroup.groupIds
       //add buyExplan
-      this.goods.buyExplan = this.shopExplan.value
       this.goods.buyExplanId = this.shopExplan.id
       //
 
@@ -953,11 +958,6 @@ export default {
       //   shopId: config.appId,
       //   sessionId: value
       // }
-
-      console.log('goodsLabelValueIds =>' + this.goodsLabelValueIds);
-      console.log(this.versionName.concat(this.postLabelInfo2).toString());
-
-
       const obj = {
         goodsLabelValueIds: this.goodsLabelValueIds.toString(),
         goods: {
@@ -973,9 +973,8 @@ export default {
       obj.name = this.name
       obj.labelInfo = this.goods.labelInfo
       obj.labelInfo2 = [this.goods.labelInfo2].concat(this.versionName).concat(this.postLabelInfo2).join(',');
-      obj.labelInfo3 = this.versionName.toString()
-      obj.isTop = this.isTop
-      console.log('obj=>' + obj)
+      obj.labelInfo3 = this.versionName.toString();
+      obj.isTop = this.isTop;
       if(obj.skuList.length > 0){
         let str = ''
         for(var i=0,l;l=obj.skuList[i++];){
@@ -990,8 +989,7 @@ export default {
         let arr = str.split(',')
         console.log(arr)
         arr = unique(arr)
-        obj.attrIds = arr.filter(item => !!item).join(',')
-        console.log('111')
+        obj.attrIds = arr.filter(item => !!item).join(',');
       }
 
       if(state == 0){
@@ -1093,10 +1091,10 @@ export default {
         this.goods.labelInfo = this.type1Text.name
         console.log('this.goods.labelInfo' + this.goods.labelInfo);
         // 获取2级分类
-        const {data} = await this.getShopClass(2, this.type1Text.id)
-        this.type2Data = data
-        this.type3Data = []
-        console.log(this.type2Data)
+        const { data } = await this.getShopClass(2, this.type1Text.id);
+        console.log(data);
+        this.type2Data = data;
+        this.type3Data = [];
       }
       // 请求一级品类, 获取三级品类, 判断是否有"版型"和"面料"
       if(type == 'showType2') {
@@ -1115,7 +1113,6 @@ export default {
         //get 3级分类
         const {data} = await this.getShopClass(2, this.type2Text.id)
         this.type3Data = data
-        console.log(this.type3Data)
       }
       // if(type == 'showType3') {
       //   this.toClose(type)
@@ -1208,7 +1205,7 @@ export default {
 <style lang="sass" scoped>
 @import '~@/assets/css/mixin'
 .home
-  padding-bottom: 87px;
+  padding-bottom: 149px;
 .van-cell-group
   margin-top: 20px;
   &:first-child
@@ -1394,13 +1391,14 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 90px;
-  line-height: 90px;
-  padding: 39px 70px 44px;
+  height: 149px;
+  // line-height: 90px;
+  padding: 30px 70px;
   background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   p
     flex: 1;
     margin-right: 10px;
@@ -1409,6 +1407,8 @@ export default {
     background: #ccc
     text-align: center
     border-radius: 6px
+    height: 90px;
+    line-height: 90px;
     &:last-child
       margin-right: 0;
   .getUp

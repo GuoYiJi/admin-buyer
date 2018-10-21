@@ -52,5 +52,8 @@ export default {
 
   ADD_GOODS_DETAIL(state, data) {
     state.goodsDetail = data;
+  },
+  UPDATE_GOODS_DETAIL(state, data) {
+    state.goodsDetail = Object.assign({}, state.goodsDetail, data);
   }
 }

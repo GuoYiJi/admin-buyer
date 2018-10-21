@@ -100,7 +100,7 @@ import ibox from "@/components/chooseImage";
 import btn from "@/components/btn";
 import mixin from "@/mixin";
 import config from "@/config";
-import { mapState , mapGetters } from 'vuex'
+import { mapState , mapGetters } from 'vuex';
 export default {
   mixins: [mixin],
   components: {
@@ -168,19 +168,37 @@ export default {
       if (this.selectColor.length > 0 && this.selectTag.length > 0) {
         let imgArr = [];
         let lineArr = [];
+        let _sku = []
+        const { goodsDetail } = this;
+        if (goodsDetail && goodsDetail.sku && goodsDetail.sku.skuList) {
+          _sku = goodsDetail.sku.skuList;
+        }
         for (var i = 0, j; (j = this.selectColor[i++]); ) {
           for (var k = 0, l; (l = this.selectTag[k++]); ) {
+            let oldSku = {};
+            const newSkuCode = `${j},${l}`;
+            _sku.some(item => {
+              if (item.skuCode === newSkuCode) {
+                oldSku = {
+                  id: item.id,
+                  num: item.stock
+                };
+                return true;
+              }
+            });
             const imgObj = {
               id: String(i) + String(k),
               img: ''
             };
             // add imgList
             imgArr.push(imgObj);
+
             const lineObj = {
-              id: String(i) + String(k),
+              id: '',
               color: j,
               tag: l,
-              num: 100
+              num: 100,
+              ...oldSku
             };
             lineArr.push(lineObj);
           }
@@ -203,6 +221,32 @@ export default {
       //     console.log(j)
       this.lineList.splice(id, 1);
       this.imgList.splice(id, 1);
+      let colors = [];
+      let tags = [];
+      this.lineList.forEach(item => {
+        if (!colors.indexOf(item.color)) {
+          colors.push(item.color);
+        }
+        if (!tags.indexOf(item.tag)) {
+          tags.push(item.tag);
+        }
+      })
+      this.selectColor = colors;
+      this.selectTag = tags;
+      this.colorArr = this.colorArr.map(item => {
+
+        if (colors.indexOf(item.name) === -1) {
+          item.select = false;
+        }
+        return item;
+      })
+      this.typeArr = this.typeArr.map(item => {
+        console.log(!tags.indexOf(item.name));
+        if (tags.indexOf(item.name) === -1) {
+          item.select = false;
+        }
+        return item;
+      })
 
       // return
       //   }
@@ -288,17 +332,48 @@ export default {
           skuCode: this.lineList[i - 1].color + "," + this.lineList[i - 1].tag,
           stock: this.lineList[i - 1].num,
           image: j.img,
+          id: this.lineList[i - 1].id,
           attrIds: colorIdFun(this.lineList[i - 1].color) + "," + sizeIdFun(this.lineList[i - 1].tag)
         };
         skuList.push(obj);
       }
-      this.$store.commit("ADDSHOPTYPE", skuList);
-      this.$router.back(-1);
+      if (this.goodsId) {
+        wx.showModal({
+          title: '修改规格',
+          content: '您确定要修改商品规格吗？',
+          success: res => {
+            if (res.confirm) {  
+              this.$API.editShopType({
+                skuList,
+                goodsId: this.goodsId
+              })
+                .then(async res => {
+                  const { code } = res;
+                  if (code === 1) {
+                    const { data } = await this.$API.L_selectGoodsDetail({
+                      goodsId: this.goodsId
+                    })
+                    console.log(data)
+                    this.$store.commit('UPDATE_GOODS_DETAIL', data);
+                    this.$store.commit("ADDSHOPTYPE", skuList);
+                    this.$router.back(-1);
+                  }
+                })
+                .catch(err => {
+                })
+            }
+          }
+        })
+      } else {
+        this.$store.commit("ADDSHOPTYPE", skuList);
+        this.$router.back(-1);
+      }
       // this.toRoute("home/addShop/addShop");
       // console.log(skuList)
     }
   },
   async mounted() {
+    this.goodsId = this.$route.query.goodsId;
     try {
       
       const { goodsDetail } = this;
@@ -306,8 +381,8 @@ export default {
         const { sku } = goodsDetail;
         let imgArr = [];
         let lineArr = [];
+        console.log(sku.skuList);
         sku.skuList.forEach((item, index) => {
-          console.log(item);
           imgArr[index] = {
             ...item,
             img: item.image

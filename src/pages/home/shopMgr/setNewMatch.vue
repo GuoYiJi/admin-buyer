@@ -5,7 +5,7 @@
     <input class="input_title" placeholder="请输入标题" v-model="title"/>
   </div>
   <!-- 添加大图 -->
-  <div class="add_shops">
+  <div class="add_shops" v-if="false">
     <div class="box-wrapper">
       <div class="shop-card" v-if="shopMatch[0]">
         <div class="img_box">
@@ -23,7 +23,7 @@
   </div>
   <!-- 添加小图 -->
   <div class="add_other_shop">
-    <div class="box-wrapper" v-for="(item,idx) in shopMatch" :key="idx" v-if="idx > 0">
+    <div class="box-wrapper" v-for="(item,idx) in shopMatch" :key="idx">
       <div class="shop-cards">
         <div class="img_box">
           <i class="shopImg" :style="{backgroundImage: 'url(' + item.image + ')'}">
@@ -36,7 +36,7 @@
       </div>
       <!-- <i class="cancel_shop" @click="toCancel(idx)"></i> -->
     </div>
-    <div class="box-wrapper" v-if="shopMatch.length < 10">
+    <div class="box-wrapper" v-if="shopMatch.length < 50">
       <div class="shop-cards add_shop" @click="toRoute('home/shopMgr/matchList')">+添加商品</div>
       <!-- <i class="cancel_shop" @click="toCancel(idx)"></i> -->
     </div>
@@ -108,9 +108,9 @@ export default {
           content: '标题字数最多为8个',
           type: 'error',
         })
-      }else if(this.shopMatch.length > 9){
+      }else if(this.shopMatch.length >= 50){
         this.$Toast({
-            content: '最多添加9个商品, 请检查',
+            content: '最多添加50个商品, 请检查',
             type: 'error'
         })
       }else if(this.shopMatch.length === 0){

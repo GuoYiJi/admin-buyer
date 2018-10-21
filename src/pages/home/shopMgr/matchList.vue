@@ -72,6 +72,7 @@ export default {
       status: 0,//0-编辑, 1-添加
       selIds: [],
       state: '',
+      state: 1,
       groupPriceData: [],
     };
   },

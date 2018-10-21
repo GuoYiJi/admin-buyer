@@ -23,6 +23,16 @@ const addShop = [
         'i-switch': '/iview/switch/index'
       }
     }
+  }, {
+    path: '/pages/home/addShop/addShop',
+    config: {
+      'usingComponents': {
+        'i-message': '/iview/message/index',
+        'i-modal': '/iview/modal/index',
+        'i-progress': '/iview/progress/index',
+        'i-switch': '/iview/switch/index'
+      }
+    }
   }
 ]
 module.exports = addShop

@@ -228,7 +228,13 @@ export default {
       pageNumber: 1,
       pageSize: this.pageSize
     }).then(response => {
-      this.shopList = response.data.list
+      this.shopList = response.data.list.map(item => {
+        if (item.matchGoods.length) {
+          let firstGoods = item.matchGoods.splice(0, 1);
+          item.firstGoods = firstGoods[0];
+        }
+        return item;
+      })
     })
   }
 };
@@ -285,7 +291,7 @@ export default {
           height: 100%
           background-repeat: no-repeat
           background-position: center
-          background-size: 100% 100%
+          background-size: cover
       span.title
         width: 100%
         font-size: 30px
@@ -326,7 +332,7 @@ export default {
           height: 100%
           background-repeat: no-repeat
           background-position: center
-          background-size: 100% 100%
+          background-size: cover
       span.title
         width: 100%
         font-size: 26px
