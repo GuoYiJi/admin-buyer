@@ -471,7 +471,10 @@ export default {
       this.azzSessionId =  wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
-      this.appId = config.appId
+
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
+      this.appId = appId
       this.dpName = wx.getStorageSync('dpName')
     }
 };

@@ -12,7 +12,8 @@ const vm = new Vue();
 let isLogin = false;
 let loginLoading = false;
 let loginCbs = [];
-function login(cb) {
+let sessionId;
+function login(cb, params, url) {
   return new Promise((resolve, reject) => {
     loginCbs.push(cb);
     if (loginLoading) {
@@ -41,6 +42,7 @@ function login(cb) {
             success: res => {
               const { authSetting } = res;
               if (!authSetting['scope.userInfo']) {
+                loginCbs = [];
                 wx.reLaunch({
                   url: '/pages/login/wxLogin'
                 })
@@ -49,29 +51,65 @@ function login(cb) {
               } else {
                 wx.getUserInfo({
                   success: res => {
+                    
+                    const account = wx.getAccountInfoSync();
+                    const { miniProgram: { appId } } = account;
+                    loginLoading = true;
                     wx.request({
                       url: TEST_URL + '/api/account/authLogin',
                       data: {
                         code,
-                        shopId: 'wx3a5f4001c0e1d32f',
+                        shopId: appId,
                         encryptedData: res.encryptedData,
-                        iv: res.iv
+                        iv: res.iv,
+                        ...params
                       },
                       header: {'Content-Type': 'application/x-www-form-urlencoded'},
                       method: 'POST',
                       success: function (res) {
-                        wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
-                        isLogin = true;
-                        loginLoading = false;
+
                         wx.hideLoading();
-                        loginCbs.forEach(cb => {
-                          if (typeof cb === 'function') {
-                            cb();
-                          }
-                        })
-                        loginCbs = [];
+                        loginLoading = false;
+                        const { data: { code, desc } } = res;
+                        if (code === 1) {
+                          isLogin = true;
+                          wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
+                          sessionId = res.data.data.sessionId;
+                          console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
+                          loginCbs.forEach(cb => {
+                            if (typeof cb === 'function') {
+                              cb(res);
+                            }
+                          })
+                          loginCbs = [];
+                        } else if (code === -1) {
+                          wx.showModal({
+                            title: '提示',
+                            content: desc,
+                            confirmText: '知道了',
+                            showCancel: false,
+                            success: res => {
+                              wx.redirectTo({
+                                url: '/pages/login/wxLogin'
+                              })
+                            }
+                          })
+                        } else if (code === 0) {
+                          wx.showModal({
+                            title: '提示',
+                            content: desc,
+                            confirmText: '知道了',
+                            showCancel: false,
+                            success: res => {
+                              wx.redirectTo({
+                                url: '/pages/login/wxLogin'
+                              })
+                            }
+                          })
+                        }
                       },
                       fail: function(err) {
+                        console.log('fail', err)
                         loginLoading = false;
                         wx.redirectTo({
                           url: '/pages/login/wxLogin'
@@ -97,6 +135,7 @@ function login(cb) {
         }
       },
       fail: () => {
+        loginCbs = [];
         wx.hideLoading();
         loginLoading = false;
       }
@@ -135,6 +174,9 @@ axios.defaults.adapter = function(config) {
               title: `${msg}`,
               icon: 'none'
             })
+          } else if (code === -1) {
+            console.log('222')
+            wx.hideLoading();
           }
         },
         complete: function() {
@@ -164,11 +206,10 @@ http.interceptors.request.use(async (configs) => {
   // if(wx.getStorage('sessionId')) {
   //   config.data += '&sessionId=' + localStorage.getItem('sessionId')
   // }
-  var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`);
-  if (value) {
-    configs.data += '&sessionId=' + value
-  }
-  configs.data += '&shopId=' + config.appId
+  // sessionId
+  const account = wx.getAccountInfoSync();
+  const { miniProgram: { appId } } = account;
+  configs.data += '&shopId=' + appId
   return configs
 }, err => {
   return Promise.reject(error);
@@ -200,12 +241,18 @@ export default {
   //   })
   // },
   post(url, params = {}, back = true) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
+        console.log('login', params);
         login(async res => {
-          const data = await http.post(url, qs.stringify({...params}))
-          resolve(data)
-        })
+          if (url.indexOf('authLogin') !== -1) {
+            resolve(res);
+          } else {
+            // console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
+            const data = await http.post(url, qs.stringify({...params, sessionId}))
+            resolve(data)
+          }
+        }, params, url)
         // const code = Number(data.data.code)
         // console.log(data)
         // if(code === 1) {

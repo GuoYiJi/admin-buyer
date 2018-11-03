@@ -21,8 +21,10 @@ export default {
     if (value) {
       params.sessionId = value
     }
-    params.shopId = config.appId
-    console.log(options.header)
+
+    const account = wx.getAccountInfoSync();
+    const { miniProgram: { appId } } = account;
+    params.shopId = appId
     return new Promise(async (resolve, reject) => {
       try {
         wx.request({

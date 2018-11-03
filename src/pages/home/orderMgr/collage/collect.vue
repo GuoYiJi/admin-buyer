@@ -147,7 +147,9 @@ export default {
         btn() {
             let wxUrl = this.url 
             let sessionId = this.azzSessionId
-            let appId = this.appId
+
+            const account = wx.getAccountInfoSync();
+            const { miniProgram: { appId } } = account;
             let orderId = this.orderID
             wx.showModal({
                 // title: "提示",
@@ -267,7 +269,10 @@ export default {
       }
       this.azzSessionId =  wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       this.url = config.url+'/api/order/shopClose'
-      this.appId = config.appId
+
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
+      this.appId = appId
       this.orderID = this.$route.query.orderId
       this.dpName = wx.getStorageSync('dpName')
       console.log( this.dpName )

@@ -466,17 +466,25 @@ export default {
     },
     // 确认收货
     sureReund(orderRefundId) {
-      this.$API.L_selectOrderRefundDetail({
+      this.visible4 = false;
+      this.$API.L_sureReund({
         orderRefundId
-      }).then(response => {
-        wx.showToast({
-          title: '已确认收货',
-          icon: 'success'
-        })
-        setTimeout(() => {
-          this.visible4 = false
-        }, 1200)
       })
+        .then(res => {
+          console.log(res);
+          
+          wx.showToast({
+            title: '已确认收货',
+            icon: 'success',
+            icon: 'none'
+          })
+          setTimeout(() => {
+            wx.startPullDownRefresh();
+          }, 1500);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     },
     // 售后订单处理
     dealWithOrderRefund(orderRefundId, state) {
@@ -484,16 +492,27 @@ export default {
         this.$API.L_dealWithOrder({
           orderRefundId,
           state,
-          content: this.content
+          relust: this.content
         }).then(response => {
           wx.showToast({
             title: '已拒绝',
             icon: 'success'
           })
           this.showReason = false
+          wx.startPullDownRefresh();
         })
       } else if (state === 1) {
-        this.visible2 = true
+        wx.showModal({
+          title: '提示',
+          content: '是否同意确认处理该售后订单？',
+          success: res => {
+            if (res.confirm) {
+              this.confirmWithRefund(orderRefundId);
+              // this.visible2 = true
+            }
+          }
+        })
+        // this.visible2 = true
       }
     },
     // 确认同意
@@ -509,6 +528,7 @@ export default {
         })
         this.showReason = false
         this.visible2 = false
+        wx.startPullDownRefresh();
       })
     },
     // 关闭订单
@@ -743,7 +763,6 @@ export default {
     save() {
       let skuIdArr = []
       let vm = this
-      console.log(this.lastSkuList);
       this.lastSkuList.forEach((item, index) => {
         item.forEach((ite, subIndex) => {
           skuIdArr.push({
@@ -753,17 +772,21 @@ export default {
         })
       })
       const sessionId = wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`);
+      
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
       wx.request({
         url: config.url + '/api/order/goods/addChildren',
         method: 'POST',
         dataType: 'json',
         data: {
-          shopId: config.appId,
+          shopId: appId,
           sessionId,
           orderIds: vm.orderId,
           orderDeliver: skuIdArr
         },
         success(res) {
+          console.log('res', res);
           vm.showEditTable = true
           vm.isEdited = true
           // vm.skuList = vm.lastSkuList

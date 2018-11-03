@@ -265,7 +265,10 @@ export default {
       this.azzSessionId =  wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       this.url = config.url+'/api/order/shopClose'
       console.log(this.url)
-      this.appId = config.appId
+      
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
+      this.appId = appId
       this.orderID = this.$route.query.orderId
       this.dpName = wx.getStorageSync('dpName')
       console.log( this.dpName )

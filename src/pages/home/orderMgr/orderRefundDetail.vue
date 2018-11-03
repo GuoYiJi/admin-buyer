@@ -42,15 +42,17 @@
         </div>
       </div>
       <div class="total">
-        共{{goods.countGoodsNum}}件商品, 合计: <strong>{{goods.countGoods}}元</strong>
+        共{{goods.countNum}}件商品, 合计: <strong>{{goods.countPrice}}元</strong>
       </div>
     </div>
   </div>
   <ul class="orderNo">
     <li>买家: {{nick}}</li>
     <li>姓名: {{accountAddress.name}} <i class="phone"></i>{{accountAddress.mobile}}</li>
-    <li>退款原因: {{type}}</li>
+    <li>退款原因: {{reason}}</li>
+    <li>退款说明: {{content}}</li>
     <li>退款金额: {{price}}</li>
+    <li>申请时间：{{ createTime }}</li>
     <li v-if="payTime">支付时间: {{payTime}}</li>
     <li v-if="isPing">拼团时间: {{pingTime}}</li>
     <li v-if="deliverTime">发货时间: {{deliverTime}}</li>
@@ -127,19 +129,34 @@ export default {
     pingTime: '', //拼团时间
     receiptTime: '', //确认收货时间
     price: 0, // 退款金额
-    type: '无', //退款原因
+    type: '', //退款原因
     img1: '',
     img2: '',
     img3: '',
     img4: '',
     img5: '',
     img6: '',
-    content: '无',
+
+    reasonList: [
+      {id: 1, text: '不喜欢/不想要'},
+      {id: 2, text: '未按约定时间发货'},
+      {id: 3, text: '空包裹'},
+      {id: 4, text: '快递/物流未送达'}
+    ],
+    content: '',
     showReason: false,
     visible2: false,
     visible4: false
   },
   computed: {
+    reason() {
+      const index = this.reasonList.findIndex(e => e.id == this.type);
+      if (index !== -1) {
+        return this.reasonList[index].text;
+      } else {
+        return ''
+      }
+    },
     skuList() {
       if (this.goodsList) {
         let arr = []
@@ -162,16 +179,15 @@ export default {
   methods: {
     // 确认收货
     sureReund() {
-      this.L_selectOrderRefundDetail({
-        orderRefundId: this.orderId
+      this.$API.L_sureReund({
+        orderRefundId: this.orderRefundId
       }).then(response => {
         wx.showToast({
           title: '已确认收货',
           icon: 'success'
         })
-        setTimeout(() => {
-          this.$router.back(-1)
-        }, 1000)
+        this.visible4 = false;
+        wx.startPullDownRefresh();
       })
     },
     // 查看售后订单详情
@@ -190,20 +206,31 @@ export default {
         this.$API.L_dealWithOrder({
           orderRefundId: this.orderId,
           state,
-          content: this.content
+          relust: this.content
         }).then(response => {
           wx.showToast({
             title: '已拒绝',
             icon: 'success'
           })
           this.showReason = false
+          wx.startPullDownRefresh();
         })
       } else if (state === 1) {
-        this.visible2 = true
+        wx.showModal({
+          title: '提示',
+          content: '是否同意确认处理该售后订单？',
+          success: res => {
+            if (res.confirm) {
+              this.confirmWithRefund();
+              // this.visible2 = true
+            }
+          }
+        })
       }
     },
     // 确认同意
     confirmWithRefund() {
+      const { orderRefundId } = this;
       this.$API.L_dealWithOrder({
         orderRefundId,
         state: 1,
@@ -213,9 +240,10 @@ export default {
           title: '已同意',
           icon: 'success'
         })
+        wx.startPullDownRefresh();
         this.showReason = false
         this.visible2 = false
-        this.$router.back(-1)
+        // this.$router.back(-1)
       })
     },
     // 拒绝原因
@@ -226,62 +254,82 @@ export default {
       // this.visible1 = !this.visible1
       this[name] = !this[name]
     },
-  },
-  mounted() {
-    if (this.$route.query.orderRefundId) {
-      console.log("请求了售后订单详情");
-      this.orderRefundId = this.$route.query.orderRefundId
-      this.getRefundOrderDetail(this.orderRefundId).then(response => {
-        this.state = response.data.state
-        this.orderId = response.data.id
-        this.refundType = response.data.refundType
-        this.goodsList = response.data.goodsList
-        this.orderRefundNo = response.data.orderRefundNo
-        this.accountAddress = response.data.accountAddress
-        this.createTime = response.data.createTime
-        // this.addressName = response.data.addressName
-        this.nick = response.data.nick
-        // this.addressMobile = response.data.addressMobile
-        this.price = response.data.price
-        if (response.data.img1) {
-          this.img1 = response.data.img1
-        }
-        if (response.data.img2) {
-          this.img2 = response.data.img2
-        }
-        if (response.data.img3) {
-          this.img3 = response.data.img3
-        }
-        if (response.data.img4) {
-          this.img4 = response.data.img4
-        }
-        if (response.data.img5) {
-          this.img5 = response.data.img5
-        }
-        if (response.data.img6) {
-          this.img6 = response.data.img6
-        }
-        if (response.data.accountAddress) {
-          this.orderAddress = response.data.accountAddress
-        }
-        if (response.data.payTime) {
-          this.payTime = response.data.payTime
-        }
-        if (response.data.deliverTime) {
-          this.deliverTime = response.data.deliverTime
-        }
-        if (response.data.receiptTime) {
-          this.receiptTime = response.data.receiptTime
-        }
-        if (response.data.content) {
-          this.type = response.data.result
+    fetch() {
+      return new Promise((resolve, reject) => {
+
+        if (this.$route.query.orderRefundId) {
+          console.log("请求了售后订单详情");
+          this.orderRefundId = this.$route.query.orderRefundId
+          this.getRefundOrderDetail(this.orderRefundId)
+            .then(response => {
+              this.state = response.data.state
+              this.orderId = response.data.id
+              this.refundType = response.data.refundType
+              this.goodsList = response.data.goodsList
+              this.orderRefundNo = response.data.orderRefundNo
+              this.accountAddress = response.data.accountAddress
+              this.createTime = response.data.createTime
+              // this.addressName = response.data.addressName
+              this.nick = response.data.nick
+              // this.addressMobile = response.data.addressMobile
+              this.price = response.data.price
+              console.log('price', response.data.price)
+              if (response.data.img1) {
+                this.img1 = response.data.img1
+              }
+              if (response.data.img2) {
+                this.img2 = response.data.img2
+              }
+              if (response.data.img3) {
+                this.img3 = response.data.img3
+              }
+              if (response.data.img4) {
+                this.img4 = response.data.img4
+              }
+              if (response.data.img5) {
+                this.img5 = response.data.img5
+              }
+              if (response.data.img6) {
+                this.img6 = response.data.img6
+              }
+              if (response.data.accountAddress) {
+                this.orderAddress = response.data.accountAddress
+              }
+              if (response.data.payTime) {
+                this.payTime = response.data.payTime
+              }
+              if (response.data.deliverTime) {
+                this.deliverTime = response.data.deliverTime
+              }
+              if (response.data.receiptTime) {
+                this.receiptTime = response.data.receiptTime
+              }
+              this.content = response.data.content;
+              this.type = response.data.type;
+            })
+            .finally(() => {
+              resolve();
+            })
+        } else {
+          resolve();
         }
       })
     }
+  },
+  
+  async onPullDownRefresh() {
+    await this.fetch();
+    wx.stopPullDownRefresh()
+  },
+  mounted() {
+    this.fetch();
     if (wx.getStorageSync('dpName')) {
       this.shopName = wx.getStorageSync('dpName')
     }
   },
+  onUnload() {
+    Object.assign(this, this.$options.data());
+  }
 }
 </script>
 <style lang="sass" scoped>

@@ -148,12 +148,15 @@ export default {
         });
         // console.log(this.requestData);
         const vm = this
+
+        const account = wx.getAccountInfoSync();
+        const { miniProgram: { appId } } = account;
         wx.request({
           url: vm.url + '/api/shop/ping/addPing',
           data: {
             pingList: vm.requestData,
             sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
-            shopId: config.appId
+            shopId: appId
           },
           method: 'POST',
           header: {
@@ -178,6 +181,9 @@ export default {
     //编辑拼团
     editGroup() {
       const vm = this
+
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
       wx.request({
         url: this.url + '/api/shop/ping/editPing',
         data: {
@@ -189,7 +195,7 @@ export default {
           price: this.price,
           id: this.goodsId,
           sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
-          shopId: config.appId
+          shopId: appId
         },
         method: 'POST',
         header: {

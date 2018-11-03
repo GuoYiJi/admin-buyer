@@ -473,7 +473,8 @@ export default {
     const { data: searchType } = await this.$API.searchType({
       types: '1,2,3,4'
     })
-
+    
+    console.log(searchType)
 
     this.otherData = searchType;
 
@@ -958,6 +959,9 @@ export default {
       //   shopId: config.appId,
       //   sessionId: value
       // }
+      
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
       const obj = {
         goodsLabelValueIds: this.goodsLabelValueIds.toString(),
         goods: {
@@ -967,7 +971,7 @@ export default {
         },
         skuList: this.addShopType,
         sessionId: value,
-        shopId: config.appId,
+        shopId: appId,
       }
 
       obj.name = this.name

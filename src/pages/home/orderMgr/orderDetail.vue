@@ -356,7 +356,8 @@ export default {
   methods: {
     // 页面跳转
     pageTo(url, orderId) {
-      this.$router.push({
+      Object.assign(this, this.$options.data());
+      this.$router.replace({
         path: url,
         query: {
           orderId
@@ -615,18 +616,21 @@ export default {
           })
         })
       })
-      console.log('skuIdArr ==== >', skuIdArr);
+
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
       wx.request({
         url: config.url + '/api/order/goods/addChildren',
         method: 'POST',
         dataType: 'json',
         data: {
-          shopId: config.appId,
+          shopId: appId,
           sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
           orderIds: vm.orderId,
           orderDeliver: skuIdArr
         },
-        success(res) {
+        success: (res) => {
+          console.log(res);
           vm.showEditTable = true
           vm.isEdited = true
           // vm.skuList = vm.lastSkuList
@@ -866,6 +870,10 @@ export default {
     //   this.shopName = wx.getStorageSync('dpName')
     // }
   },
+
+  onUnload() {
+    Object.assign(this, this.$options.data());
+  }
 }
 </script>
 <style lang="sass" scoped>

@@ -391,8 +391,10 @@ export default {
       this.azzSessionId =  wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
       this.url = config.url+'/api/order/addChildren'
       this.addurl = config.url+'/api/order/goods/addChildren'
-      console.log(this.addurl)
-      this.appId = config.appId
+
+      const account = wx.getAccountInfoSync();
+      const { miniProgram: { appId } } = account;
+      this.appId = appId
 
     },
     async mounted() {

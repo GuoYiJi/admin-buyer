@@ -12,7 +12,5 @@ export default {
     // imgSignature: 'qPT/VrFvdktj0HHHNJW1LoBGiSg=',
     imgSignature: 'gp8HdNHTLsNiN7WqjRpDDas38hY=',
     videoPolicy: 'eyJleHBpcmF0aW9uIjoiMjA1MC0wMS0wMVQxMjowMDowMC4wMDBaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsNTM2ODcwOTEyMF1dfQ==',
-    videoSignature: 'gp8HdNHTLsNiN7WqjRpDDas38hY=',
-    //wx config
-    appId: 'wx3a5f4001c0e1d32f'
+    videoSignature: 'gp8HdNHTLsNiN7WqjRpDDas38hY='
 }

@@ -31,15 +31,11 @@ export default {
   },
   methods: {
     async getPhoneNumber(e) {
+      console.log(e, 'getPhoneNumber')
       if (!e.mp.detail.encryptedData) {
         this.handleError("需要同意授权才可以使用噢！");
       } else {
-        const val = await wx.getStorageSync("sessionId");
-        if (val) {
-          return wx.switchTab({
-            url: '/pages/home/home'
-          })
-        }
+        console.log(e.mp.detail);
         this.login(e.mp.detail);
       }
     },
@@ -50,15 +46,14 @@ export default {
       } else {
         this.userInfoBool = true;
         this.userInfo = e.mp.detail;
-        this.login(e.mp.detail);
+        // this.login(e.mp.detail);
       }
     },
     async login(encryptedData) {
-
+      console.log('encryptedData', encryptedData)
       try {
 
         const data = await this.$API.authLogin({
-          code: this.code,
           avatar: this.userInfo.userInfo.avatarUrl,
           nick: this.userInfo.userInfo.nickName,
           // phone: "",
@@ -68,6 +63,7 @@ export default {
           encryptedData: this.userInfo.encryptedData,
           iv: this.userInfo.iv
         });
+        console.log('data', data);
         await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
         wx.setStorageSync('is-login', true);
         await wx.setStorageSync("avatar", data.data.avatar);
@@ -81,28 +77,6 @@ export default {
     }
   },
   async mounted() {
-    wx.login({
-      success: async res => {
-        if (res.code) {
-          this.code = res.code;
-          wx.getUserInfo({
-            success: res => {
-              // console.log(res);
-              this.userInfoBool = true;
-              this.userInfo = res;
-            },
-            fail: err => {
-              // this.userInfoBool = true
-            }
-          });
-        } else {
-          console.log("登录失败！" + res.errMsg);
-        }
-      },
-      fail: () => {
-        self.handleError("授权失败！");
-      }
-    });
   }
 };
 </script>
