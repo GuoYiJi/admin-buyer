@@ -43,6 +43,11 @@ class API extends mix(new ADR(), new SHOPMGR(), new ORDER(), new COUPON()) {
   // 我的新手指南/邀请有奖
   myArticle = params => http.post('/api/article/list', params)
 
+  addPrivilege = params => http.post('api/privilege/addPrivilege', params)
+  selectPrivilege = params => http.post('api/privilege/selectPrivilege', params)
+  delPrivilege = params => http.post('api/privilege/delPrivilege', params)
+  updateState = params => http.post('api/privilege/updateState', params)
+
   // 接口命名加上l前缀，如 l_require = params => http.post('xxx',params)
 }
 

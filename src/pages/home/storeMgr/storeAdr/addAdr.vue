@@ -59,6 +59,7 @@ export default {
   },
   data() {
     return {
+      postcode: '',
       region: [],
       name: "",
       phone: "",
@@ -101,6 +102,7 @@ export default {
         isChoice: this.switch1,
         mobile: this.phone,
         address: this.adrDetail,
+        areaId: this.postcode,
         value: this.region.join(",")
       };
       this.$API.addAdr(params).then(response => {
@@ -112,6 +114,7 @@ export default {
     },
     bindRegionChange(e) {
       this.region = e.mp.detail.value;
+      this.postcode = e.mp.detail.postcode;
     },
     onChange({ mp: { detail } }) {
       this.switch1 = detail.value ? 1 : 0;
@@ -129,7 +132,7 @@ export default {
       this.switch1 = 0;
       this.phone = "";
       this.adrDetail = "";
-      this.region = ["广东省", "广州市", "海珠区"];
+      // this.region = ["广东省", "广州市", "海珠区"];
   },
 };
 </script>

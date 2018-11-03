@@ -43,6 +43,10 @@
         <i class="n_icon n_h7"></i>
         <p>数据统计</p>
       </div>
+      <div class="n_item" @click="toRoute('users/index')">
+        <i class="n_icon n_h8"></i>
+        <p>权限管理</p>
+      </div>
     </div>
   </div>
 </template>
@@ -113,6 +117,8 @@ export default {
     .n_h7
       +bg-img('home/h7.png')
       width: 104px
+    .n_h8
+      +bg-img('home/h8.jpg')
 
 .sale-box
   display: flex

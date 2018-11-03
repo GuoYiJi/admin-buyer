@@ -3,6 +3,9 @@ export default class order {
   // 接口命名加上l前缀，如 l_require = params => http.post('xxx',params)
   // 查询订单   2018-08-18  pql
   L_selectOrderPage = params => http.post('api/order/selectOrderPage', params)
+  goodsAddChildren = params => http.post('api/order/goods/addChildren', params, {
+    headers: { 'content-type': 'application/json' }
+  })
   // 订单详情
   L_selectOrderDetail = params => http.post('api/order/selectOrderDetail', params)
   // 售后列表

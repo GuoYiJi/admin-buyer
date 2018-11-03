@@ -66,6 +66,7 @@ export default {
       switch1: 0,
       type: "add",
       addressId: "",
+      areaId: '',
       editAdr: {}
     };
   },
@@ -107,6 +108,7 @@ export default {
         name: this.name,
         // isChoice: this.switch1,
         mobile: this.phone,
+        areaId: this.areaId,
         address: this.adrDetail,
         value: this.region.join(","),
         addressId: this.addressId
@@ -143,6 +145,7 @@ export default {
     if (this.editAdr) {
       const data = this.editAdr;
       this.addressId = data.id;
+      this.areaId = data.areaId;
       this.name = data.name;
       // this.switch1 = data.isChoice;
       this.phone = data.mobile;

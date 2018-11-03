@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <textarea class="text" v-model="text" maxlength="12" placeholder="请输入简介（最多可输入12个字）"></textarea>
+    <textarea class="text" v-model="text" placeholder="请输入简介"></textarea>
     <div class="footer">
       <p @click="btn">
         <btn :title="'保存'" />

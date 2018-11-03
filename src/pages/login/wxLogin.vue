@@ -59,9 +59,7 @@ export default {
           // phone: "",
           // appId: config.appId,
           encryptedDataPhone: encryptedData.encryptedData,
-          ivPhone: encryptedData.iv,
-          encryptedData: this.userInfo.encryptedData,
-          iv: this.userInfo.iv
+          ivPhone: encryptedData.iv
         });
         console.log('data', data);
         await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
@@ -77,6 +75,9 @@ export default {
     }
   },
   async mounted() {
+  },
+  onUnload() {
+    Object.assign(this, this.$options.data());
   }
 };
 </script>

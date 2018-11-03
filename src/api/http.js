@@ -67,38 +67,53 @@ function login(cb, params, url) {
                       header: {'Content-Type': 'application/x-www-form-urlencoded'},
                       method: 'POST',
                       success: function (res) {
+                        if (res.statusCode === 200) {
 
-                        wx.hideLoading();
-                        loginLoading = false;
-                        const { data: { code, desc } } = res;
-                        if (code === 1) {
-                          isLogin = true;
-                          wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
-                          sessionId = res.data.data.sessionId;
-                          console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
-                          loginCbs.forEach(cb => {
-                            if (typeof cb === 'function') {
-                              cb(res);
-                            }
-                          })
-                          loginCbs = [];
-                        } else if (code === -1) {
+                          wx.hideLoading();
+                          loginLoading = false;
+                          const { data: { code, desc } } = res;
+                          if (code === 1) {
+                            isLogin = true;
+                            wx.setStorageSync('avatar', res.data.data.avatar);
+                            wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
+                            sessionId = res.data.data.sessionId;
+                            console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
+                            loginCbs.forEach(cb => {
+                              if (typeof cb === 'function') {
+                                cb(res);
+                              }
+                            })
+                            loginCbs = [];
+                          } else if (code === -1) {
+                            wx.showModal({
+                              title: '提示',
+                              content: desc,
+                              confirmText: '知道了',
+                              showCancel: false,
+                              success: res => {
+                                wx.redirectTo({
+                                  url: '/pages/login/wxLogin'
+                                })
+                              }
+                            })
+                          } else if (code === 0) {
+                            wx.showModal({
+                              title: '提示',
+                              content: desc,
+                              confirmText: '知道了',
+                              showCancel: false,
+                              success: res => {
+                                wx.redirectTo({
+                                  url: '/pages/login/wxLogin'
+                                })
+                              }
+                            })
+                          }
+                        } else {
                           wx.showModal({
                             title: '提示',
                             content: desc,
-                            confirmText: '知道了',
-                            showCancel: false,
-                            success: res => {
-                              wx.redirectTo({
-                                url: '/pages/login/wxLogin'
-                              })
-                            }
-                          })
-                        } else if (code === 0) {
-                          wx.showModal({
-                            title: '提示',
-                            content: desc,
-                            confirmText: '知道了',
+                            confirmText: '服务器开了小差',
                             showCancel: false,
                             success: res => {
                               wx.redirectTo({
@@ -109,10 +124,20 @@ function login(cb, params, url) {
                         }
                       },
                       fail: function(err) {
+                        wx.hideLoading();
                         console.log('fail', err)
                         loginLoading = false;
-                        wx.redirectTo({
-                          url: '/pages/login/wxLogin'
+
+                        wx.showModal({
+                          title: '提示',
+                          content: '服务器开了小差',
+                          confirmText: '知道了',
+                          showCancel: false,
+                          success: res => {
+                            wx.redirectTo({
+                              url: '/pages/login/wxLogin'
+                            })
+                          }
                         })
                       }
                     })
@@ -120,8 +145,16 @@ function login(cb, params, url) {
                   fail: err => {
                     wx.hideLoading();
                     loginLoading = false;
-                    wx.reLaunch({
-                      url: '/pages/login/wxLogin'
+                    wx.showModal({
+                      title: '提示',
+                      content: desc,
+                      confirmText: '知道了',
+                      showCancel: false,
+                      success: res => {
+                        wx.redirectTo({
+                          url: '/pages/login/wxLogin'
+                        })
+                      }
                     })
                   }
                 });
@@ -143,6 +176,7 @@ function login(cb, params, url) {
   })
 }
 axios.defaults.adapter = function(config) {
+  console.log('dataType', config)
   wx.showLoading({
     title: '加载中',
   })
@@ -175,7 +209,7 @@ axios.defaults.adapter = function(config) {
               icon: 'none'
             })
           } else if (code === -1) {
-            console.log('222')
+            reject(data);
             wx.hideLoading();
           }
         },
@@ -202,18 +236,15 @@ const http = axios.create({
   }
 })
 //拦截器
-http.interceptors.request.use(async (configs) => {
-  // if(wx.getStorage('sessionId')) {
-  //   config.data += '&sessionId=' + localStorage.getItem('sessionId')
-  // }
-  // sessionId
-  const account = wx.getAccountInfoSync();
-  const { miniProgram: { appId } } = account;
-  configs.data += '&shopId=' + appId
-  return configs
-}, err => {
-  return Promise.reject(error);
-})
+// http.interceptors.request.use(async (configs) => {
+//   // if(wx.getStorage('sessionId')) {
+//   //   config.data += '&sessionId=' + localStorage.getItem('sessionId')
+//   // }
+//   // sessionId
+//   return configs
+// }, err => {
+//   return Promise.reject(error);
+// })
 
 //form请求
 const form = axios.create({
@@ -240,17 +271,34 @@ export default {
   //     }
   //   })
   // },
-  post(url, params = {}, back = true) {
+  post(url, params = {}, options = {}) {
     return new Promise(async (resolve, reject) => {
       try {
         console.log('login', params);
+        const account = wx.getAccountInfoSync();
+        const { miniProgram: { appId } } = account;
+        params = {
+          ...params,
+          shopId: appId
+        }
+
         login(async res => {
           if (url.indexOf('authLogin') !== -1) {
             resolve(res);
           } else {
+            params = {
+              ...params,
+              sessionId
+            }
             // console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
-            const data = await http.post(url, qs.stringify({...params, sessionId}))
-            resolve(data)
+            
+            http.post(url, options.headers ? params : qs.stringify({...params}), options)
+              .then(res => {
+                resolve(res)
+              })
+              .catch(err => {
+                reject(err);
+              })
           }
         }, params, url)
         // const code = Number(data.data.code)

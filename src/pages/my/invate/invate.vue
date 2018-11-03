@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img class="top-image" src="http://brpublic.beautifulreading.com/1c4480f68e6b7812a912722321899f26" mode="widthFix" alt="" lazy-load />
+    <rich-text :nodes="nodes"></rich-text>
     <div class="footer">
         <!-- <btn :title="'立即推广'" /> -->
         <button class="icon" open-type="share">立即推广</button>
@@ -10,6 +10,10 @@
 <script>
 import wx from "wx";
 import btn from "@/components/btn";
+import WxParse from '@/plugins/wxParse/wxParse';
+
+import HtmlToJson from '@/plugins/wxParse/html2json.js';
+// const a = HtmlToJson.html2json('<img src="https://huiti-img.oss-cn-shanghai.aliyuncs.com//ueditor/1541217550056.png" style="width:100%; height:auto;"/>');
 export default {
   components: {
     btn
@@ -17,6 +21,22 @@ export default {
   data() {
     return {
       myArticle: "",
+      nodes: [],
+      // nodes: [
+      //   {
+
+      //     name: 'div',
+      //     attrs: {
+      //       class: 'div_class',
+      //       style: 'line-height: 60px; color: red;'
+      //     },
+      //     children: [{
+      //       type: 'text',
+      //       text: 'Hello&nbsp;World!'
+      //     }]
+      //   }
+      // ],
+
       showTime: false
     };
   },
@@ -44,8 +64,17 @@ export default {
   },
   async mounted() {
     var myArticle = await this.$API.myArticle({ type: 1 });
-    console.log(myArticle);
     this.myArticle = myArticle.data;
+    try {
+
+      if (myArticle.code === 1) {
+        console.log(HtmlToJson.html2json(myArticle.data.content))
+        this.nodes = HtmlToJson.html2json(myArticle.data.content).children;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    
   }
 };
 </script>

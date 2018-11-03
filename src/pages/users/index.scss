@@ -1,0 +1,19 @@
+.navbar-b {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.demo-panel {
+  .van-panel__header {
+    &:after {
+      display: none;
+    }
+  }
+}
+.demo-panel .van-panel__footer {
+  text-align: right;
+}
+.demo-panel .van-panel__footer .van-button {
+  margin-left: 10px;
+}

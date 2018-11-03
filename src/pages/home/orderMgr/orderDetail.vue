@@ -475,12 +475,7 @@ export default {
       this.popupsIndex = -1
     },
     ship(orderId) {
-      if (!this.isEdited && this.deliverList && this.deliverList.every(item => item.every(ite => {
-          return ite.deliver === 0
-        }))) {
-        // 如果是未编辑状态
-        this.visible1 = !this.visible1
-      } else if (this.isEdited && this.lastSkuList && this.lastSkuList.every(item => item.every(ite => {
+      if (this.isEdited && this.lastSkuList && this.lastSkuList.every(item => item.every(ite => {
           return ite.deliver === 0
         }))) {
           this.visible1 = !this.visible1
@@ -619,29 +614,40 @@ export default {
 
       const account = wx.getAccountInfoSync();
       const { miniProgram: { appId } } = account;
-      wx.request({
-        url: config.url + '/api/order/goods/addChildren',
-        method: 'POST',
-        dataType: 'json',
-        data: {
-          shopId: appId,
-          sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
-          orderIds: vm.orderId,
-          orderDeliver: skuIdArr
-        },
-        success: (res) => {
-          console.log(res);
-          vm.showEditTable = true
-          vm.isEdited = true
-          // vm.skuList = vm.lastSkuList
-          vm.skuList = JSON.parse(JSON.stringify(vm.lastSkuList))
-          console.log(vm.isEdited);
-        },
-        complete(result) {
+      wx.showLoading();
+      this.$API.goodsAddChildren({
+        orderIds: vm.orderId,
+        orderDeliver: skuIdArr
+      })
+        .then(res => {
+          const { data, code, desc } = res;
+          if (code === 1) {
+            console.log(res);
+            vm.showEditTable = true
+            vm.isEdited = true
+            // vm.skuList = vm.lastSkuList
+            vm.skuList = JSON.parse(JSON.stringify(vm.lastSkuList))
+            console.log(vm.isEdited);
+          } else {
+            wx.showToast({
+              title: desc,
+              icon: 'none',
+              duration: 1500
+            })
+          }
+        })
+        .catch(err => {
+
+          wx.showToast({
+            title: '编辑失败',
+            icon: 'none'
+          })
+        })
+        .finally(() => {
+          wx.hideLoading();
           vm.showPopups = false
           vm.popupsIndex = -1
-        }
-      })
+        })
     },
     toggleModal(name) {
       console.log("点击事件执行");
@@ -669,7 +675,7 @@ export default {
                   color: goodsItem.skuCode.split(',')[0].toString(),
                   size: goodsItem.skuCode.split(',')[1].toString(),
                   num: goodsItem.num,
-                  deliver: 0,
+                  deliver: goodsItem.num,
                   remain: goodsItem.remainNum,
                   skuId: goodsItem.skuId
                 })

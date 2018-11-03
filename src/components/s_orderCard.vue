@@ -230,6 +230,14 @@
     共{{orderItem.orderGoods.length}}款{{orderGoodsNum}}件商品, 合计：<span>{{orderItem.paid}}元</span>
   </div> -->
   <!-- 子订单列表 -->
+
+  <div class="order-details" v-if="orderItem.layer !== -1 && orderItem.isHasChildren">
+    
+    <div class="buyer">
+      收货人: {{orderItem.shopAddress ? orderItem.shopAddress.name : '未设置收货人'}} 丨 手机号: {{orderItem.shopAddress ? orderItem.shopAddress.mobile : '未知号码'}}
+    </div>
+  </div>
+  
   <ul class="childOrder" v-if="orderItem.layer !== -1 && orderItem.isHasChildren">
     <li v-for="(childOrder, childOrderIndex) in orderItem.children" :key="childOrderIndex" @click="pageTo('/pages/home/orderMgr/orderdetail', childOrder.id, false)">
       子订单编号({{ childOrder.state === 1 ? '等待支付'
@@ -646,12 +654,7 @@ export default {
       this.popupsIndex = -1
     },
     ship(orderId) {
-      if (!this.isEdited && this.deliverList && this.deliverList.every(item => item.every(ite => {
-          return ite.deliver === 0
-        }))) {
-        // 如果是未编辑状态
-        this.visible1 = !this.visible1
-      } else if (this.isEdited && this.lastSkuList && this.lastSkuList.every(item => item.every(ite => {
+      if (this.isEdited && this.lastSkuList && this.lastSkuList.every(item => item.every(ite => {
           return ite.deliver === 0
         }))) {
         this.visible1 = !this.visible1
@@ -771,41 +774,61 @@ export default {
           })
         })
       })
-      const sessionId = wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`);
-      
-      const account = wx.getAccountInfoSync();
-      const { miniProgram: { appId } } = account;
-      wx.request({
-        url: config.url + '/api/order/goods/addChildren',
-        method: 'POST',
-        dataType: 'json',
-        data: {
-          shopId: appId,
-          sessionId,
-          orderIds: vm.orderId,
-          orderDeliver: skuIdArr
-        },
-        success(res) {
-          console.log('res', res);
-          vm.showEditTable = true
-          vm.isEdited = true
-          // vm.skuList = vm.lastSkuList
-          vm.skuList = JSON.parse(JSON.stringify(vm.lastSkuList))
-          vm.showPopups = false
-          vm.popupsIndex = -1
-        },
-        fail(err) {
+
+      wx.showLoading();
+      this.$API.goodsAddChildren({
+        orderIds: vm.orderId,
+        orderDeliver: skuIdArr
+      })
+        .then(res => {
+          const { data, code, desc } = res;
+          console.log(res);
+
+          if (code === 1) {
+            vm.showEditTable = true
+            vm.isEdited = true
+            // vm.skuList = vm.lastSkuList
+            vm.skuList = JSON.parse(JSON.stringify(vm.lastSkuList))
+            vm.showPopups = false
+            vm.popupsIndex = -1
+          } else {
+            wx.showToast({
+              title: desc,
+              icon: 'none',
+              duration: 1500
+            })
+          }
+        })
+        .catch(err => {
+
           console.log('err', err);
           wx.showToast({
             title: '编辑失败',
             icon: 'none'
           })
-        },
-        complete(result) {
-          // vm.showPopups = false
-          // vm.popupsIndex = -1
-        }
-      })
+        })
+        .finally(() => {
+          wx.hideLoading();
+        })
+      // wx.request({
+      //   url: config.url + '/api/order/goods/addChildren',
+      //   method: 'POST',
+      //   dataType: 'json',
+      //   data: {
+      //     shopId: appId,
+      //     orderIds: vm.orderId,
+      //     orderDeliver: skuIdArr
+      //   },
+      //   success(res) {
+      //   },
+      //   fail(err) {
+      //   },
+      //   complete(result) {
+      //     wx.hideLoading();
+      //     // vm.showPopups = false
+      //     // vm.popupsIndex = -1
+      //   }
+      // })
     },
     cancelExpress() {
       this.showLogistics = false
@@ -909,7 +932,7 @@ export default {
               color: skuItem.skuCode.split(',')[0].toString(),
               size: skuItem.skuCode.split(',')[1].toString(),
               num: skuItem.num,
-              deliver: 0,
+              deliver: skuItem.num,
               remain: skuItem.remainNum,
               skuId: skuItem.skuId
             })
