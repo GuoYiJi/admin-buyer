@@ -1,0 +1,2 @@
+@import "/static/css/vendor.wxss";
+.navbar-b.data-v-3d5281fe{position:fixed;left:0;right:0;bottom:0}.demo-panel .van-panel__header.data-v-3d5281fe:after{display:none}.demo-panel .van-panel__footer.data-v-3d5281fe{text-align:right}.demo-panel .van-panel__footer .van-button.data-v-3d5281fe{margin-left:10rpx}

@@ -62,9 +62,7 @@ export default {
           ivPhone: encryptedData.iv
         });
         console.log('data', data);
-        await wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, data.data.sessionId);
         wx.setStorageSync('is-login', true);
-        await wx.setStorageSync("avatar", data.data.avatar);
         // this.toRoute("home/home");
         wx.switchTab({
           url: '/pages/home/home'

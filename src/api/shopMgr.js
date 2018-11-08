@@ -1,11 +1,16 @@
 import http from './http'
 import jsonHttp from './jsonHttp'
+import qs from 'qs'
 export default class shopMgr {
   //shopMgr
-  addShop = params => jsonHttp.post('api/goods/add', params)
+  addShop = params => http.post('api/goods/add', params, {
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  })
   addShopTag = params => http.post('api/label/data/addTag', params)
 
-  editShop = params => jsonHttp.post('api/goods/edit', params)
+  editShop = params => http.post('api/goods/edit', params, {
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+  })
   deleteGoods = params => jsonHttp.post('api/goods/deleteGoods', params, {
     header: {'Content-Type': 'application/x-www-form-urlencoded'}
   });
@@ -15,7 +20,7 @@ export default class shopMgr {
 
   addShopType = params => http.post('api/goods/addKeu', params)
   delShopType = params => http.post('api/goods/deleteKeu', params)
-  editShopType = params => jsonHttp.post('api/goods/editKeu', params)
+  editShopType = params => http.post('api/goods/editKeu', params)
 
   editGroups = params => http.post('api/goods/changeGroups', params)
   changeGroups2 = params => http.post('api/goods/changeGroups2', params)

@@ -915,7 +915,12 @@ export default {
 
     // 请求
     async save(state){
-      var value = await wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`)
+      wx.getStorage({
+        key: `${process.env.NODE_ENV}_sessionId`,
+        success: res => {
+          console.log(res, 'res');
+        }
+      })
       // if(this.goods.name.split('').length > 18) {
       //   this.handleError('标题最多不能超过18个字符')
       // }
@@ -970,7 +975,6 @@ export default {
           state: this.hasEditGoods ? this.goods.state : state
         },
         skuList: this.addShopType,
-        sessionId: value,
         shopId: appId,
       }
 

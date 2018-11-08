@@ -65,7 +65,9 @@
     "pages/my/newPoint/pointDetail",
     "pages/my/setting/setting",
     "pages/my/setting/bindPhone",
-    "pages/my/setting/changePhone"
+    "pages/my/setting/changePhone",
+    "pages/users/index",
+    "pages/users/add/index"
   ],
   "window": {
     "backgroundTextStyle": "black",

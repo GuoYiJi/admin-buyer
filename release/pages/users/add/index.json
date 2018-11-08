@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "添加权限",
+  "usingComponents": {
+    "zan-tab": "/zan-weapp/dist/tab/index",
+    "i-message": "/iview/message/index"
+  }
+}

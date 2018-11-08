@@ -54,15 +54,15 @@
             <th>颜色</th>
             <th>码数</th>
             <th>总件数</th>
-            <th>待发件数</th>
             <th>剩余待发</th>
+            <th>发货数</th>
           </tr>
           <tr v-for="(deliver, deliverIndex) in deliverList[goodsIndex]" :key="deliverIndex">
             <td>{{deliver.color}}</td>
             <td>{{deliver.size}}</td>
             <td>{{deliver.num}}</td>
-            <td>{{deliver.deliver}}</td>
             <td>{{deliver.remain}}</td>
+            <td>{{deliver.deliver}}</td>
           </tr>
         </table>
       </div>
@@ -73,15 +73,15 @@
             <th>颜色</th>
             <th>码数</th>
             <th>总件数</th>
-            <th>待发件数</th>
             <th>剩余待发</th>
+            <th>发货数</th>
           </tr>
           <tr v-for="(skuItem, skuIndex) in skuList[goodsIndex]" :key="skuIndex">
             <td>{{skuItem.color}}</td>
             <td>{{skuItem.size}}</td>
             <td>{{skuItem.num}}</td>
-            <td>{{skuItem.deliver}}</td>
             <td>{{skuItem.remain}}</td>
+            <td>{{skuItem.deliver}}</td>
           </tr>
         </table>
       </div>
@@ -95,13 +95,15 @@
             <th>颜色</th>
             <th>码数</th>
             <th>总件数</th>
-            <th class="col-2">待发件数</th>
             <th>剩余待发</th>
+            <th class="col-2">发货数</th>
           </tr>
           <tr v-for="(skuItem, skuIndex) in lastSkuList[goodsIndex]" :key="skuIndex">
             <td>{{skuItem.color}}</td>
             <td>{{skuItem.size}}</td>
             <td>{{skuItem.num}}</td>
+
+            <td>{{skuItem.remain}}</td>
             <td class="col-2">
               <button @click="cut(goodsIndex, skuIndex)" :disabled="skuItem.deliver === 0">-</button>
               <!-- <input type="number" v-model="skuItem.deliver" :min="0" :max="skuItem.remain"> -->
@@ -109,7 +111,6 @@
               <!-- <i-input-number :value="skuItem.deliver" :min="0" :max="skuItem.remain" :step="2" @change="handleChange2" /> -->
               <button @click="add(goodsIndex, skuIndex)" :disabled="skuItem.deliver === skuItem.remain">+</button>
             </td>
-            <td>{{skuItem.remain}}</td>
           </tr>
         </table>
         <div class="btn-group">

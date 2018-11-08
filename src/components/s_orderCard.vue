@@ -121,8 +121,8 @@
           <th>颜色</th>
           <th>码数</th>
           <th>总件数</th>
-          <th>待发件数</th>
           <th>剩余待发</th>
+          <th>发货数</th>
         </tr>
         <tr v-for="(deliver, deliverIndex) in deliverList[orderGoodIndex]" :key="deliverIndex">
           <td>{{deliver.color}}</td>
@@ -140,15 +140,15 @@
           <th>颜色</th>
           <th>码数</th>
           <th>总件数</th>
-          <th>待发件数</th>
           <th>剩余待发</th>
+          <th>发货数</th>
         </tr>
         <tr v-for="(skuItem, skuIndex) in skuList[orderGoodIndex]" :key="skuIndex">
           <td>{{skuItem.color}}</td>
           <td>{{skuItem.size}}</td>
           <td>{{skuItem.num}}</td>
-          <td>{{skuItem.deliver}}</td>
           <td>{{skuItem.remain}}</td>
+          <td>{{skuItem.deliver}}</td>
         </tr>
       </table>
     </div>
@@ -159,13 +159,14 @@
           <th>颜色</th>
           <th>码数</th>
           <th>总件数</th>
-          <th class="col-2">待发件数</th>
           <th>剩余待发</th>
+          <th class="col-2">发货数</th>
         </tr>
         <tr v-for="(skuItem, skuIndex) in lastSkuList[orderGoodIndex]" :key="skuIndex">
           <td>{{skuItem.color}}</td>
           <td>{{skuItem.size}}</td>
           <td>{{skuItem.num}}</td>
+          <td>{{skuItem.remain}}</td>
           <td class="col-2">
             <button @click="cut(orderGoodIndex, skuIndex)" :disabled="skuItem.deliver === 0">-</button>
             <!-- <input type="number" v-model="skuItem.deliver" :min="0" :max="skuItem.remain"> -->
@@ -173,7 +174,6 @@
             <!-- <i-input-number :value="skuItem.deliver" :min="0" :max="skuItem.remain" :step="2" @change="handleChange2" /> -->
             <button @click="add(orderGoodIndex, skuIndex)" :disabled="skuItem.deliver === skuItem.remain">+</button>
           </td>
-          <td>{{skuItem.remain}}</td>
         </tr>
       </table>
       <div class="btn-group">
@@ -200,6 +200,13 @@
       </div>
     </div> -->
   <!-- 订单款式, 件数, 金额, 收货人等信息 -->
+
+  <div class="order-details" v-if="orderItem.state == 5 && !isRefund && !orderItem.children.length">
+    
+    <div class="buyer">
+      收货人: {{orderItem.shopAddress ? orderItem.shopAddress.name : '未设置收货人'}} 丨 手机号: {{orderItem.shopAddress ? orderItem.shopAddress.mobile : '未知号码'}}
+    </div>
+  </div>
   <div class="order-details" v-if="orderItem.state !== 5 && orderItem.isHasChildren !== 1&& !isRefund">
     <div class="detail">
       <div class="num">
