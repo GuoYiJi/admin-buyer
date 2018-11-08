@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "使用设置",
-  "usingComponents": {
-    "i-switch": "/iview/switch/index"
-  }
-}

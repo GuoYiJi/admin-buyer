@@ -1,2 +1,0 @@
-@import "/static/css/vendor.wxss";
-.create.data-v-26a6f657{position:fixed;bottom:0;left:0;right:0;padding:80rpx 75rpx}.single_box .line.data-v-26a6f657{display:flex;align-items:center;height:109rpx;background:#fff;padding-left:50rpx;margin-bottom:10rpx}.single_box .line.data-v-26a6f657:first-of-type{margin:10rpx 0}.single_box .line ._p.data-v-26a6f657{margin-left:20rpx}

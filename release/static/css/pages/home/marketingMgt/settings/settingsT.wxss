@@ -1,2 +1,0 @@
-@import "/static/css/vendor.wxss";
-.nav.data-v-de52fe6c{height:110rpx;background:#fff;display:flex;line-height:110rpx}.nav .text.data-v-de52fe6c{display:inline-block;flex:5;padding-left:20rpx}.nav .settings.data-v-de52fe6c{display:inline-block;flex:1}.nav .settings .settings_text.data-v-de52fe6c{display:inline-block;margin-left:30rpx;margin-top:20rpx}

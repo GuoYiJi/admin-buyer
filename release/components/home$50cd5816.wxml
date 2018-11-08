@@ -1,1 +1,0 @@
-<template name="home$50cd5816"><view class="_div data-v-3208210e nav"><view class="_div data-v-3208210e coupon" bindtap="handleProxy" data-eventid="{{'0'}}" data-comkey="{{$k}}"><view class="_i data-v-3208210e img"></view> <view class="_p data-v-3208210e text">优惠券</view></view></view></template>

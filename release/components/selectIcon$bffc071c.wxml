@@ -1,1 +1,0 @@
-<template name="selectIcon$bffc071c"><view class="_div data-v-6d3c2922 select-icon-wrapper"><view class="_i data-v-6d3c2922 select-icon {{[isSelected ? 'active' : '']}}"></view></view></template>

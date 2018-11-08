@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "创建搭配",
-  "usingComponents": {
-    "i-toast": "/iview/toast/index"
-  }
-}

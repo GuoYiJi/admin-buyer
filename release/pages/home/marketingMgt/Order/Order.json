@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "订单金额",
-  "usingComponents": {
-    "i-switch": "/iview/switch/index"
-  }
-}
