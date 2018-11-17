@@ -14,6 +14,8 @@
 import wx from "wx";
 import mixin from "@/mixin";
 import config from "@/config";
+import LoginSDK from '@/api/LoginSDK';
+const loginSDK = new LoginSDK();
 export default {
   mixins: [mixin],
   components: {},
@@ -52,20 +54,13 @@ export default {
     async login(encryptedData) {
       console.log('encryptedData', encryptedData)
       try {
-
-        const data = await this.$API.authLogin({
-          avatar: this.userInfo.userInfo.avatarUrl,
-          nick: this.userInfo.userInfo.nickName,
-          // phone: "",
-          // appId: config.appId,
+        loginSDK.login({
           encryptedDataPhone: encryptedData.encryptedData,
           ivPhone: encryptedData.iv
-        });
-        console.log('data', data);
-        wx.setStorageSync('is-login', true);
-        // this.toRoute("home/home");
-        wx.switchTab({
-          url: '/pages/home/home'
+        }, e => {
+          wx.reLaunch({
+            url: '/pages/home/home'
+          })
         })
       } catch (err) {
         

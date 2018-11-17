@@ -40,6 +40,14 @@ export default {
     },
     shop: {
       type: Object,
+    },
+    propGroupPrice: {
+      type: String,
+      default: ''
+    },
+    checked: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -98,6 +106,14 @@ export default {
 
     }
 
+  },
+  mounted() {
+    if (this.checked) {
+      this.check = true;
+    }
+    if (this.propGroupPrice) {
+      this.groupPrice = this.propGroupPrice;
+    }
   }
 }
 </script>

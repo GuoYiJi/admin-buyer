@@ -1,10 +1,17 @@
+<style lang="scss">
+  .isPullDownRefresh {
+    .top-nav {
+      position: relative !important;
+    }
+  }
+</style>
 <template>
-  <div class="home" :style="{ 'padding-top': topContainerHeight + 'px' }">
-    <div class="search-box" id="topContainer">
-      <div class="input">
+  <div class="home" :class="{ 'isPullDownRefresh': isPullDownRefresh }" :style="{ 'padding-top': (isPullDownRefresh ? 0 : topContainerHeight) + 'px' }">
+    <div class="search-box" id="topContainer" :style="{ position: isPullDownRefresh ? 'relative' : 'fixed' }">
+      <!-- <div class="input">
         <p class="search-icon"><i class="search"></i></p>
         <p class="input-box" @click="toRoute('shopMgr/search')">请搜索商品</p>
-      </div>
+      </div> -->
       <div class="zan-tab-container">
         <zan-tab
           :list="navData"
@@ -76,6 +83,7 @@ export default {
   },
   data() {
     return {
+      isPullDownRefresh: false,
       // selectedId: 2,
       selectedId: 2,
       tag: 6,
@@ -126,7 +134,12 @@ export default {
     EventBus.$emit('onReachBottom');
   },
   onPullDownRefresh() {
-    EventBus.$emit('onPullDownRefresh');
+    this.isPullDownRefresh = true;
+    EventBus.$emit('onPullDownRefresh', () => {
+      this.isPullDownRefresh = false;
+      console.log('stopPullDownRefresh')
+      wx.stopPullDownRefresh();
+    });
   },
   mounted() {
     const query = wx.createSelectorQuery()

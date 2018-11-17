@@ -4,12 +4,16 @@ export default {
     EventBus.$on('onReachBottom', () => {
       this.lower();
     })
-    EventBus.$on('onPullDownRefresh', () => {
-      console.log(1)
+    EventBus.$on('onPullDownRefresh', (cb) => {
+      this.canLoad = true;
+      this.shopNum = 0;
+      this.shopList = [];
+      this.lower();
     })
   },
   onShow() {
     if (wx.getStorageSync('is-update-goods')) {
+      wx.removeStorageSync('is-update-goods');
       this.canLoad = true;
       this.shopNum = 0;
       this.shopList = [];

@@ -2,15 +2,46 @@
 <div class="home">
   <!-- 公共头部 -->
   <div class="header-box">
-    <div class="search-box" v-show="showSearch">
+    <div class="weui-search-bar" id="searchBar" v-if="false">
+      <div class="weui-search-bar__form">
+          <div class="weui-search-bar__box">
+              <i class="weui-icon-search"></i>
+              <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
+              <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+          </div>
+          <label class="weui-search-bar__label" id="searchText" style="transform-origin: 0px 0px 0px; opacity: 1; transform: scale(1, 1);">
+              <i class="weui-icon-search"></i>
+              <span>搜索</span>
+          </label>
+      </div>
+      <a href="javascript:" class="weui-search-bar__cancel-btn" @click="">搜索</a>
+    </div>
+
+    <view class="weui-search-bar" v-show="showSearch">
+        <view class="weui-search-bar__form">
+            <view class="weui-search-bar__box">
+                <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+                <input type="text" class="weui-search-bar__input" placeholder="请搜索订单号、收货人姓名、手机号" :value="inputVal" @input="inputTyping"  />
+                <view class="weui-icon-clear" v-if="inputVal.length > 0" @click="clearInput">
+                    <icon type="clear" size="14"></icon>
+                </view>
+            </view>
+            <label class="weui-search-bar__label" :hidden="inputShowed" @click="showInput">
+                <icon class="weui-icon-search" type="search" size="14"></icon>
+                <view class="weui-search-bar__text" @click="handleSearchConfirm">搜索</view>
+            </label>
+        </view>
+        <view class="weui-search-bar__cancel-btn" :hidden="!inputShowed" @click="handleSearchConfirm">搜索</view>
+    </view>
+<!--     <div class="search-box" v-show="showSearch">
       <div class="input">
         <p class="search-icon"><i class="search"></i></p>
-        <p class="input-box" @click="toRoute('shopMgr/searchOrder')">请搜索订单号、收货人姓名、手机号</p>
+        <input class="input-box" placeholder="请搜索订单号、收货人姓名、手机号" confirm-type="search" @confirm="handleSearchConfirm" />
       </div>
-    </div>
+    </div> -->
     <div class="nav">
       <div class="list">
-        <span
+        <div
             v-for="(item,idx) in navData"
             :key="idx"
             class="item"
@@ -18,7 +49,8 @@
             @click="handleNav(item.id, item.state)"
           >
           {{item.text}}
-        </span>
+          <span v-if="item.count > 0">{{ item.count > 99 ? '99+' : item.count }}</span>
+        </div>
         <div class="line" :style="{left: (tag-1)*20 + '%'}"></div>
       </div>
       <ul class="top-nav">
@@ -41,65 +73,93 @@
   <!-- 全部订单 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-if="tag == 1">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 代付款 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 2">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 拼单 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 3">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" v-if="!!orderItem.ping" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 待发货 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 4">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 已发货 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 5">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 已完成 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 6">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 已关闭 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 7">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 售后 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 8">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
   <!-- 取消 -->
   <div @scrolltolower="lower" @scrolltoupper="upper" v-else-if="tag == 9">
     <div class="white-block"></div>
-    <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
-      <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
-    </div>
+    <block v-if="orderList.length">
+      
+      <div class="card-body" v-for="(orderItem, orderItemIndex) in orderList" :key="orderItemIndex">
+        <orderCard :orderItem="orderItem" @spliceShopList="spliceShopList"></orderCard>
+      </div>
+    </block>
+    <zan-loadmore type="text" text="暂无数据" v-else />
   </div>
 </div>
 </template>
@@ -135,6 +195,8 @@ export default {
   },
   data() {
     return {
+      inputVal: '',
+      inputShowed: true,
       tag: 1, // tag栏, 订单状态
       nav: 1, // 排序栏, 排序方式
       orderList: [], // 请求的订单列表List
@@ -152,46 +214,55 @@ export default {
       navData: [{
           id: 1,
           state: '',
-          text: "全部订单"
+          text: "全部订单",
+          count: 0
         },
         {
           id: 2,
           state: 1,
-          text: "待付款"
+          text: "待付款",
+          count: 0
         },
         {
           id: 3,
           state: 9,
-          text: "拼单中"
+          text: "拼单中",
+          count: 0
         },
         {
           id: 4,
           state: 5,
-          text: "待发货"
+          text: "待发货",
+          count: 0
         },
         {
           id: 5,
           state: 6,
-          text: "已发货"
+          text: "已发货",
+          count: 0
         },
         {
           id: 6,
           state: 7,
-          text: "已完成"
+          text: "已完成",
+          count: 0
         },
         {
           id: 7,
           state: 8,
-          text: "已关闭"
+          text: "已关闭",
+          count: 0
         },
         {
           id: 8,
-          text: "售后"
+          text: "售后",
+          count: 0
         },
         {
           id: 9,
           state: 2,
-          text: "已取消"
+          text: "已取消",
+          count: 0
         },
       ],
     };
@@ -216,6 +287,24 @@ export default {
     // deep:true
   },
   methods: {
+
+    showInput: function () {
+      this.inputShowed = true;
+    },
+    hideInput: function () {
+      this.inputVal = false;
+      this.inputShowed = false;
+    },
+    clearInput: function () {
+      this.inputVal = '';
+      this.handleNav(this.tag, this.state, this.inputVal);
+    },
+    inputTyping: function (e) {
+      this.inputVal = e.mp.detail.value;
+    },
+    handleSearchConfirm(e) {
+      this.handleNav(this.tag, this.state, this.inputVal);
+    },
     // 删除shopList下标
     spliceShopList() {
       console.log("父组件事件触发");
@@ -230,7 +319,7 @@ export default {
       // this.shopList.splice()
     },
     // 切换订单状态查询列表
-    handleNav(tag, state = 0) {
+    handleNav(tag, state = 0, keyword) {
       this.showSearch = true
       this.tag = tag;
       this.state = state
@@ -240,6 +329,7 @@ export default {
       if (this.tag === 1) {
         console.log("查询了全部订单");
         this.$API.L_selectOrderPage({
+          keyword,
           orderType: 1, //默认综合排序
           pageNumber: this.pageNumber,
           pageSize: this.pageSize
@@ -251,7 +341,7 @@ export default {
       }
       // 查询售后订单
       if (this.tag === 8) {
-        console.log("查询了售后订单");
+
         this.$API.L_selectOrderRefund({
           pageNumber: this.pageNumber,
           pageSize: 10,
@@ -309,6 +399,7 @@ export default {
         pageNumber: this.pageNumber,
         pageSize: this.pageSize,
         orderType: this.orderType,
+        state: this.state
       })
     },
     // 上拉刷新
@@ -399,8 +490,45 @@ export default {
   onReachBottom() {
     this.lower();
   },
+  async onShow() {
+    try {
+      this.navData.forEach((tab, index) => {
+        let promise;
+        if (tab.id === 8) {
+          promise = this.$API.L_selectOrderRefund;
+        } else {
+          promise = this.$API.L_selectOrderPage;
+        }
+        promise({ pageNumber: 1, pageSize: 1, state: tab.state })
+          .then(res => {
+            this.$set(this.navData[index], 'count', res.data.totalRow)
+          })
+      })
+      // const prePayment = await this.$API.L_selectOrderPage({ isPing: 0, state: 1 })
+      // const delivery = await this.$API.L_selectOrderPage({ isPing: 0, state: 5 })
+      // const receive = await this.$API.L_selectOrderPage({ isPing: 0, state: 6 })
+      // const successCount = await this.$API.L_selectOrderPage({ isPing: 0, state: 7 })
+      // try {
+
+      //   this.$API.afterService({ pageSize: 10, pageNumber: 1 })
+      //     .then(res => {
+      //       const { data: { totalRow } } = res;
+      //       this.refund = totalRow;
+      //     })
+      // } catch (err) {
+      //   console.log(err)
+      // }
+      
+      // // 获取待收货，待发货，待付款订单的个数
+      // this.prePayment = prePayment.data.totalRow
+      // this.delivery = delivery.data.totalRow
+      // this.receive = receive.data.totalRow
+      // this.successCount = successCount.data.totalRow
+    } catch (err) {
+      console.log('err', err)
+    }
+  },
   mounted() {
-    console.log("onShow 执行");
     this.$API.selectWarehouse({
       orderId: this.orderID,
     }).then(response => {
@@ -505,7 +633,6 @@ export default {
         color: #EE7527!important
   .list
     width: 100%
-    height: 80px
     font-size: 26px
     color: #000
     background: #f5f5f5
@@ -514,8 +641,26 @@ export default {
     display: flex
     align-items: center
     .item
+      position: relative;
       flex: 0 0 20%
       box-sizing: border-box
+      height: 80px
+      line-height: 80px
+      span
+        position: absolute;
+        right: -8px;
+        top: 0;
+        z-index: 100;
+        min-width: 40px;
+        padding: 0 10px;
+        background-color: #f5222d;
+        color: #fff;
+        font-size: 20px;
+        line-height: 40px;
+        white-space: nowrap;
+        box-sizing: border-box;
+        border-radius: 20px;
+
   .line
     display: block
     height: 4px;/*no*/

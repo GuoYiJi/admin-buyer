@@ -51,4 +51,7 @@ export default class order {
   s_addChildren = params => http.post('api/order/goods/addChildren', params)
   // 查看物流信息
   s_getOrderRefundDetail = params => http.post('api/order/refund/orderRefundDetail', params)
+
+  // 直接退款
+  shopRefund = params => http.post('api/order/refund/shopRefund', params)
 }

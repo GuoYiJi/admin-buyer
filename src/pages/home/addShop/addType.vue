@@ -46,14 +46,17 @@
             <p class="title">选择颜色</p>
             <p class="confirm" @click="comfirmType('showColor')">确定</p>
           </div>
-          <div class="content content_tag">
-            <div class="tag_item"
-              v-for="(item,index) in colorArr" :key="index"
-              @click="selects(index,'colorArr')">
-              <i class="select" :class="[item.select && 'select-active']"></i>
-              <p>{{item.name}}</p>
+
+          <scroll-view scroll-y style="max-height: 80vh;">
+            <div class="content content_tag">
+              <div class="tag_item"
+                v-for="(item,index) in colorArr" :key="index"
+                @click="selects(index,'colorArr')">
+                <i class="select" :class="[item.select && 'select-active']"></i>
+                <p>{{item.name}}</p>
+              </div>
             </div>
-          </div>
+          </scroll-view>
         </div>
       </div>
 
@@ -65,26 +68,29 @@
           <p class="title">选择尺码</p>
           <p class="confirm" @click="comfirmType('showTag')">确定</p>
         </div>
-        <div class="content content_tag">
-          <div class="tag_item"
-            v-for="(item,index) in typeArr" :key="index"
-            @click="selects(index,'typeArr')">
-            <i class="select" :class="{ 'select-active': item.select }"></i>
-            <p>{{item.name}}</p>
+        <scroll-view scroll-y style="max-height: 80vh;">
+          
+          <div class="content content_tag">
+            <div class="tag_item"
+              v-for="(item,index) in typeArr" :key="index"
+              @click="selects(index,'typeArr')">
+              <i class="select" :class="{ 'select-active': item.select }"></i>
+              <p>{{item.name}}</p>
+            </div>
+            <!-- <div class="tag_item">
+              <i class="select"></i>
+              <p>标签2标签1</p>
+            </div>
+            <div class="tag_item">
+              <i class="select"></i>
+              <p>标签1标签1</p>
+            </div>
+            <div class="tag_item">
+              <i class="select"></i>
+              <p>标签1标签1</p>
+            </div> -->
           </div>
-          <!-- <div class="tag_item">
-            <i class="select"></i>
-            <p>标签2标签1</p>
-          </div>
-          <div class="tag_item">
-            <i class="select"></i>
-            <p>标签1标签1</p>
-          </div>
-          <div class="tag_item">
-            <i class="select"></i>
-            <p>标签1标签1</p>
-          </div> -->
-        </div>
+        </scroll-view>
       </div>
       </div>
 

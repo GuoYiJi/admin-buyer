@@ -166,6 +166,7 @@
       <i v-for="(pingU, pingUserIndex) in pingUser" :key="pingUserIndex" :style="{backgroundImage: 'url(' + pingU.head + ')'}" v-if="pingUserIndex < 3"></i>
     </div>
     <button v-if="state === 5" @click="ship(orderId)">发货</button>
+    <button :style="{ marginLeft: '20px' }" v-if="state === 5" @click="shopRefund(orderId)">取消订单</button>
     <button v-if="state === 6 && isHasChildren !== 1" @click="pageTo('/pages/home/orderMgr/logisticsDetail', orderId)">查看物流</button>
     <button v-if="state === 4">确认收货</button>
     <!-- <button v-if="state === 0">同意</button>
@@ -355,6 +356,43 @@ export default {
     }
   },
   methods: {
+    shopRefund(orderId) {
+      if (this.isHasChildren) {
+
+        wx.showModal({
+          title: '退款提示',
+          content: '该订单已发出部分商品，请把剩余商品发货后再联系买家申请退款。',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+      } else {
+
+        wx.showModal({
+          title: '取消订单',
+          content: '是否直接取消订单退款？',
+          success: res => {
+            if (res.confirm) {
+              this.$API.shopRefund({
+                orderId
+              })
+                .then(res => {
+                  wx.showToast({
+                    title: res.desc,
+                    icon: 'none',
+                    duration: 3000
+                  })
+                  if (res.code === 1) {
+                    setTimeout(() => {
+                      wx.startPullDownRefresh();
+                    }, 2500)
+                  } else {
+                  }
+                })
+            }
+          }
+        })
+      }
+    },
     // 页面跳转
     pageTo(url, orderId) {
       Object.assign(this, this.$options.data());

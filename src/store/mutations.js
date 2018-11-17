@@ -28,6 +28,9 @@ export default {
   DELETE_ROUNPPRICE: (state, value) => {
     state.shopSelectList = value
   },
+  ADD_ROUNPPRICE(state, list) {
+    state.shopSelectList = [].concat(list);
+  },
 
   PUSTROUNPPRICE: (state, value) => {
     state.shopSelectList.push(value)

@@ -269,6 +269,7 @@
     <button class="style-big" v-if="orderItem.isPing === 1 && orderItem.layer === -1" @click="pageTo('/pages/home/orderMgr/groupItemDetail', orderItem.pingOrderId, false)">查看子拼团</button>
     <button class="style2" v-if="orderItem.state === 6 && (orderItem.isPing !== 1 || orderItem.layer !== -1)" @click="pageTo('/pages/home/orderMgr/logisticsDetail', orderItem.id, false)">查看物流</button>
     <button class="style2" v-if="orderItem.state === 5 && (orderItem.isPing !== 1 || orderItem.layer !== -1)" @click="ship(orderItem.id)">发货</button>
+    <button class="style2" v-if="orderItem.state === 5 && (orderItem.isPing !== 1 || orderItem.layer !== -1)" @click="shopRefund(orderItem.id, orderItem)">退款</button>
     <button class="style3" v-if="isRefund && orderItem.state === 0" @click="dealWithOrderRefund(orderItem.id, 1)">同意</button>
     <button class="style2" v-if="isRefund && orderItem.state === 0" @click="toggleReason()">拒绝</button>
     <button class="style2" v-if="isRefund && orderItem.state === 4" @click="toggleModal('visible4')">确认收货</button>
@@ -460,7 +461,7 @@ export default {
     },
     enoughPeopleNum() {
       if (this.orderItem.state === 9) {
-        return this.orderItem.ping.num - this.orderItem.pingUser.length
+        return this.orderItem.ping && (this.orderItem.ping.num - this.orderItem.pingUser.length)
       }
     },
   },
@@ -507,7 +508,7 @@ export default {
         this.$API.L_dealWithOrder({
           orderRefundId,
           state,
-          relust: this.content
+          result: this.content
         }).then(response => {
           wx.showToast({
             title: '已拒绝',
@@ -703,7 +704,6 @@ export default {
       this.isEdited = false
     },
     cut(pIndex, index) {
-      console.log(this.orderItem.orderGoods[pIndex].skuList[index].skuId);
       this.$set(this.lastSkuList[pIndex], index, {
         deliver: this.lastSkuList[pIndex][index].deliver -= 1,
         color: this.lastSkuList[pIndex][index].color,
@@ -722,6 +722,44 @@ export default {
         remain: this.lastSkuList[pIndex][index].remain,
         skuId: this.orderItem.orderGoods[pIndex].skuList[index].skuId
       })
+    },
+
+    // 待发货直接退款
+    shopRefund(orderId, item) {
+      if (item.isHasChildren) {
+        wx.showModal({
+          title: '退款提示',
+          content: '该订单已发出部分商品，请把剩余商品发货后再联系买家申请退款。',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+      } else {
+
+        wx.showModal({
+          title: '取消订单',
+          content: '是否直接取消订单退款？',
+          success: res => {
+            if (res.confirm) {
+              this.$API.shopRefund({
+                orderId
+              })
+                .then(res => {
+                  wx.showToast({
+                    title: res.desc,
+                    icon: 'none',
+                    duration: 3000
+                  })
+                  if (res.code === 1) {
+                    setTimeout(() => {
+                      wx.startPullDownRefresh();
+                    }, 2500)
+                  } else {
+                  }
+                })
+            }
+          }
+        })
+      }
     },
     cancel(pIndex) {
       // this.$set(this.skuList[pIndex], pIndex, {

@@ -151,31 +151,29 @@ export default {
 
         const account = wx.getAccountInfoSync();
         const { miniProgram: { appId } } = account;
-        wx.request({
-          url: vm.url + '/api/shop/ping/addPing',
-          data: {
-            pingList: vm.requestData,
-            sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
-            shopId: appId
-          },
-          method: 'POST',
-          header: {
-            'content-type': 'application/json' // 默认值
-          },
-          success(res) {
-            console.log(res.data);
-            if (res.data.code == 1) {
+        this.$API.s_createGroup({
+          pingList: vm.requestData
+        })
+          .then(res => {
+            if (res.code == 1) {
               vm.$Toast({
                 content: '创建拼团成功',
                 duration: 1000,
                 type: 'success'
               })
               setTimeout(() => {
+                wx.setStorageSync('is-update-goods', true);
                 vm.$router.back(-1);
+
               }, 1000)
+            } else {
+              wx.showToast({
+                title: res.desc,
+                icon: 'none',
+                duration: 1500
+              })
             }
-          }
-        })
+          })
       }
     },
     //编辑拼团
@@ -184,36 +182,34 @@ export default {
 
       const account = wx.getAccountInfoSync();
       const { miniProgram: { appId } } = account;
-      wx.request({
-        url: this.url + '/api/shop/ping/editPing',
-        data: {
-          num: this.personNum,
-          startTime: this.setDate,
-          endTime: this.setEndDate,
-          limitNum: this.limitNum,
-          limitTimes: this.limitTimes,
-          price: this.price,
-          id: this.goodsId,
-          sessionId: wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`),
-          shopId: appId
-        },
-        method: 'POST',
-        header: {
-          'content-type': 'application/x-www-form-urlencoded' // 默认值
-        },
-        success(res) {
-          console.log(res.data);
-          wx.showToast({
-            title: '编辑成功',
-            icon: 'success'
-          })
-          if (res.data.code === 1) {
+      this.$API.editGroup({
+
+        num: this.personNum,
+        startTime: this.setDate,
+        endTime: this.setEndDate,
+        limitNum: this.limitNum,
+        limitTimes: this.limitTimes,
+        price: this.price,
+        id: this.goodsId
+      })
+        .then(res => {
+          if (res.code === 1) {
+            wx.showToast({
+              title: '编辑成功',
+              icon: 'success'
+            })
+
             setTimeout(() => {
               vm.$router.back(-1);
             }, 1200)
+          } else {
+            wx.showToast({
+              title: res.desc,
+              icon: 'none',
+              duration: 1500
+            })
           }
-        }
-      })
+        })
     },
     bindDateChange(e) {
       console.log('picker发送选择改变，携带值为', e.mp.detail.value)

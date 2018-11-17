@@ -19,7 +19,7 @@
               <span class="price"><strong>售价:￥{{item.firstGoods.sellPrice}}</strong>利润:￥{{item.firstGoods.profit}}</span>
             </div>
             <div class="footer">
-              <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title)">编辑</button>
+              <button class="edit" @click="toEdit('/pages/home/shopMgr/groupSetting', item.matchGoods, item.id, item.title, item.firstGoods)">编辑</button>
               <button class="down" @click="showModal('visible2', item.id)">下架</button>
             </div>
           </div>
@@ -111,10 +111,10 @@ export default {
     cancelModal(name) {
       this[name] = false
     },
-    toEdit(url, matchGoodsList, id, title) {
+    toEdit(url, matchGoodsList, id, title, firstGoods) {
       this.$store.commit('ADDMATCH', [])
-      console.log(matchGoodsList);
-      matchGoodsList.forEach(item => {
+      console.log([firstGoods].concat(matchGoodsList));
+      [firstGoods].concat(matchGoodsList).forEach(item => {
         this.$store.commit('PUSHMATCH', {
           delivery: item.delivery,//货期
           goodsId: item.goodsId,//商品ID

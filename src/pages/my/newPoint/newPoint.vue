@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="top">
-      <image src="http://hd.wallpaperswide.com/thumbs/european_architecture-t2.jpg" mode="aspectFit" />
+      <image :src="image.image" mode="aspectFit" />
     </div>
     <div class="center">
       <div class="title_box" v-for="(item, index) in myArticleList" :key="index">
@@ -24,21 +24,23 @@ export default {
   data() {
     return {
       myArticleList: [],
+      image: {},
       colorList: ['#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9', '#e6ebe0','#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9', '#e6ebe0', '#ed6a5a', '#f4f1bb', '#9bc1bc', '#5ca4a9']
     };
   },
   methods: {
     toRoute(content) {
+      wx.setStorageSync('pointDetailData', content);
       this.$router.push({
         path: "/pages/my/newPoint/pointDetail",
         query: { content }
       });
     }
   },
-
-  async mounted() {
+  async onShow() {
     var myArticle = await this.$API.myArticle({ type: 0 });
-    this.myArticleList = myArticle.data;
+    this.myArticleList = myArticle.data.oneList;
+    this.image = myArticle.data.image;
     console.log(myArticle.data);
   }
 };

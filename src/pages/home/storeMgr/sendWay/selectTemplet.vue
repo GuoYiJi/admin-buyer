@@ -8,7 +8,10 @@
             </div>
             <div class="adr">
               <i class="select" :class="[templateId == item.id && 'active'] " ></i>
-              <p class="adr-text" v-for="(itemzz,indexzz) in item.area" :key="indexzz">运送到{{itemzz.areaName}}；售件{{itemzz.firstPirce}}kg，运费{{itemzz.secondPrice}}元</p>
+              <p class="adr-text" v-for="(itemzz,indexzz) in item.area" :key="indexzz" v-if="item.more || indexzz < 3">
+              {{itemzz.areaName}}首件{{itemzz.firstPrice}}元，续件{{itemzz.secondPrice}}元/件</p>
+              <div v-if="!item.more" @click.stop="handleMoreClick(idxx)">查看更多</div>
+              <div v-else @click.stop="handleMoreClick(idxx)">收起</div>
             </div>
         </div>
       </div>
@@ -32,6 +35,9 @@ export default {
     };
   },
   methods: {
+    handleMoreClick(index) {
+      this.$set(this.areaIdAll[index], 'more', !this.areaIdAll[index].more);
+    },
     selectAct(id){
       this.clickToggle = !this.clickToggle
       if(this.clickToggle) {
@@ -74,10 +80,11 @@ export default {
 .content
   padding-bottom: 100px
 .save
-  // position: absolute
+  position: fixed
   bottom: 0
   left: 0
   right: 0
+  z-index: 10;
   color: #fff
   background: #F67C2F
   height: 98px

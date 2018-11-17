@@ -116,9 +116,10 @@ export default {
     async comfirmDel(name) {
       this.visible2 = false;
       let state = 0
-      await this.$API.switchShop({
-        goodsIds: this.shop.id,
-        state
+      await this.$API.updateDisGoods({
+        goodsId: this.shop.id,
+        isDis: 0,
+        disPrice: 0
       })
       this.show = false;
       this.$success('下架成功');

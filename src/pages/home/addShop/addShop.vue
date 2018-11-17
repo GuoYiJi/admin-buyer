@@ -264,15 +264,15 @@
           <p class="confirm" @click="confirmMarket()">确定</p>
         </div>
         <div class="box-select">
-          <div class="s_item first">
+          <scroll-view scroll-y style="max-height: 10vh;" class="s_item first">
             <p :class="[selectFMarket.id == item.id && 'active']" v-for="(item,idx) in mktFirstData" :key="idx" @click="getMarketData(1,item)">{{item.name}}</p>
-          </div>
-          <div class="s_item second">
+          </scroll-view>
+          <scroll-view scroll-y style="max-height: 10vh;" class="s_item second">
             <p :class="[(selectSMarket.id == item.id && selectSMarket.id )  && 'active']"  v-for="(item,idx) in mktSecondData" :key="idx" @click="getMarketData(2,item)">{{item.name}}</p>
-          </div>
-          <div class="s_item third">
+          </scroll-view>
+          <scroll-view scroll-y style="max-height: 10vh;" class="s_item third">
             <p :class="[(selectTMarket.id && selectTMarket.id == item.id) && 'active']"  v-for="(item,idx) in mktThirdData" :key="idx" @click="confirmMarket(item)">{{item.name}}</p>
-          </div>
+          </scroll-view>
         </div>
       </div>
     </div>

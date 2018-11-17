@@ -14,7 +14,7 @@
         <div class="scroll-box">
           <div class="box">
             <p v-for="(shop,index) in shopList" :key="index" >
-              <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" />
+              <scard ref="scard" :edit="edit" :key="index" :shop="shop" @switchSel="switchSel" @setGroupPrice="setGroupPrice" :propGroupPrice="getSelectItem(shop).groupPrice" :checked="getSelectItem(shop).checked" />
             </p>
           </div>
           <div class="loading" v-if="canLoad">
@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="footer">
-      <p class="save" @click="confirm">确定{{groupNum}}</p>
+      <p class="save" @click="confirm">确定{{getSelecteds.length}}</p>
       <!-- <p class="save" @click="toRoute('home/shopMgr/collage/collageMsg')">确定{{groupNum}}</p> -->
     </div>
     <i-drawer mode="right" :visible="showRight1" @close="toggleRight1">
@@ -48,8 +48,17 @@ export default {
     selsearch
   },
   computed: {
-    groupNum(){
-      return this.selIds.length > 0 ? '('+ this.selIds.length +')' : ''
+    getSelecteds(){
+      const newList = Array.from(new Set(this.selecteds.filter(e => !!e.bool).map(e => e.id)));
+      let _arr = [];
+      newList.forEach(id => {
+        const index = this.selecteds.findIndex(e => e.id === id);
+        if (index !== -1) {
+          _arr.push(this.selecteds[index]);
+        }
+      })
+
+      return _arr;
       // return this.$SETGROUNPPRICE.length > 0 ? ``
     },
     ...mapState(["shopSelectList"])
@@ -82,31 +91,50 @@ export default {
     };
   },
   methods: {
-    confirm(){
-      this.selecteds.forEach(item => {
-        const { id, groupPrice, bool } = item;
-        if(bool){
-          if(this.selIds && this.selIds.some(item => item == id)) {
-            const start = this.selIds.indexOf(id)
-            this.selIds[start] = id;
-            this.groupPriceData[start] = groupPrice;
-            this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
-          }else {
-            this.selIds.push(id);
-            this.groupPriceData.push(groupPrice)
-            this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
-          }
-          // console.log(this.groupPriceData);
-        }else {
-          const start = this.selIds.indexOf(id)
-          this.selIds.splice(start, 1)
-          this.groupPriceData.splice(start, 1)
-          // console.log(this.groupPriceData);
-          this.$store.commit('SPLICEROUNPPRICE', start);
+    getSelectItem(item) {
+      const index = this.getSelecteds.findIndex(e => e.id === item.id);
+      if (index !== - 1) {
+        return {
+          ...this.getSelecteds[index],
+          checked: true
         }
-        // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
-        console.log(this.shopSelectList);
-      })
+      }
+      return {
+      };
+    },
+    confirm(){
+      // this.getSelecteds.forEach(item => {
+
+      // })
+      this.$store.commit('ADD_ROUNPPRICE', this.getSelecteds.map(e => {
+        return {
+          ...e
+        }
+      }));
+      // this.selecteds.forEach(item => {
+      //   const { id, groupPrice, bool } = item;
+      //   if(bool){
+      //     if(this.selIds && this.selIds.some(item => item == id)) {
+      //       const start = this.selIds.indexOf(id)
+      //       this.selIds[start] = id;
+      //       this.groupPriceData[start] = groupPrice;
+      //       this.$store.commit('SETROUNPPRICE', start, {id, groupPrice});
+      //     }else {
+      //       this.selIds.push(id);
+      //       this.groupPriceData.push(groupPrice)
+      //       this.$store.commit('PUSTROUNPPRICE', {id, groupPrice});
+      //     }
+      //     // console.log(this.groupPriceData);
+      //   }else {
+      //     const start = this.selIds.indexOf(id)
+      //     this.selIds.splice(start, 1)
+      //     this.groupPriceData.splice(start, 1)
+      //     // console.log(this.groupPriceData);
+      //     this.$store.commit('SPLICEROUNPPRICE', start);
+      //   }
+      //   // this.$store.commit('SETGROUNPPRICE', [this.selIds, this.groupPriceData])
+      //   console.log(this.shopSelectList);
+      // })
       this.$router.back(-1);
     },
     async handleTag(tag){
@@ -205,15 +233,26 @@ export default {
     this.lower();
   },
   async mounted() {
-    console.log(this.shopList)
     this.shopNum = 0;
     const listData = await this.getNextPage({ob: 1,state: this.state});
-    this.shopList = listData.data.list;
+    this.shopList = listData.data.list.map(item => {
+      this.shopSelectList.some(e => {
+        if (e.id === item.id) {
+          item.checked = true;
+          item.groupPrice = e.groupPrice;
+        }
+      })
+      this.selecteds = this.shopSelectList.map(e => ({...e, bool: true}));
+      return item;
+    });
     if (listData.data.list.length < this.pageSize) {
       this.canLoad = false;
     }
 
   },
+  onUnload() {
+    Object.assign(this, this.$options.data());
+  }
 
 };
 </script>
@@ -238,7 +277,7 @@ export default {
 .box
   padding: 2% 0 50px 0%
 .home
-  height: 100%
+  padding-bottom: 100px;
 
 .scroll-box
   // padding: 10px 0

@@ -2,6 +2,7 @@ const route = [{
     path: '/pages/home/shopMgr/shopMgr',
     config: {
       navigationBarTitleText: '商品管理',
+      enablePullDownRefresh: false,
       'usingComponents': {
         'zan-tab': '/zan-weapp/dist/tab/index',
         'i-drawer': '/iview/drawer/index',

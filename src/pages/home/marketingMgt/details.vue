@@ -40,7 +40,7 @@
     </form>
     <div class="btn">
       <button class="btn_1" @click="updateCoupon()">保存</button>
-      <button class="btn_2" v-if="state == 0" @click="changeState()">使失效</button>
+      <button class="btn_2" v-if="state == 1" @click="changeState()">使失效</button>
     </div>
   </div>
 </template>

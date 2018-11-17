@@ -8,175 +8,10 @@ import axios from 'axios'
 import Vue from 'vue'
 import qs from 'qs'
 import wx from 'wx'
+import LoginSDK from './LoginSDK';
+const loginSDK = new LoginSDK();
 const vm = new Vue();
-let isLogin = false;
-let loginLoading = false;
-let loginCbs = [];
-let sessionId;
-function login(cb, params, url) {
-  return new Promise((resolve, reject) => {
-    loginCbs.push(cb);
-    if (loginLoading) {
-      return;
-    }
-    const _flag = wx.getStorageSync(`${process.env.NODE_ENV}_is-login`);
-    if (isLogin || _flag) {
-      wx.setStorageSync(`${process.env.NODE_ENV}_is-login`);
-      loginCbs.forEach(cb => {
-        if (typeof cb === 'function') {
-          cb();
-        }
-      })
-      loginCbs = [];
-      return;
-    }
-    wx.showLoading({
-      title: '登录中'
-    })
-    loginLoading = true;
-    wx.login({
-      success: async res => {
-        const { code } = res;
-        if (code) {
-          wx.getSetting({
-            success: res => {
-              const { authSetting } = res;
-              if (!authSetting['scope.userInfo']) {
-                loginCbs = [];
-                wx.reLaunch({
-                  url: '/pages/login/wxLogin'
-                })
-                loginLoading = false;
-                wx.hideLoading();
-              } else {
-                wx.getUserInfo({
-                  success: res => {
-                    
-                    const account = wx.getAccountInfoSync();
-                    const { miniProgram: { appId } } = account;
-                    loginLoading = true;
-                    wx.request({
-                      url: TEST_URL + '/api/account/authLogin',
-                      data: {
-                        code,
-                        shopId: appId,
-                        encryptedData: res.encryptedData,
-                        iv: res.iv,
-                        ...params
-                      },
-                      header: {'Content-Type': 'application/x-www-form-urlencoded'},
-                      method: 'POST',
-                      success: function (res) {
-                        if (res.statusCode === 200) {
-
-                          wx.hideLoading();
-                          loginLoading = false;
-                          const { data: { code, desc } } = res;
-                          if (code === 1) {
-                            isLogin = true;
-                            wx.setStorageSync('avatar', res.data.data.avatar);
-                            wx.setStorageSync(`${process.env.NODE_ENV}_sessionId`, res.data.data.sessionId);
-                            sessionId = res.data.data.sessionId;
-                            console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
-                            loginCbs.forEach(cb => {
-                              if (typeof cb === 'function') {
-                                cb(res);
-                              }
-                            })
-                            loginCbs = [];
-                          } else if (code === -1) {
-                            wx.showModal({
-                              title: '提示',
-                              content: desc,
-                              confirmText: '知道了',
-                              showCancel: false,
-                              success: res => {
-                                wx.redirectTo({
-                                  url: '/pages/login/wxLogin'
-                                })
-                              }
-                            })
-                          } else if (code === 0) {
-                            wx.showModal({
-                              title: '提示',
-                              content: desc,
-                              confirmText: '知道了',
-                              showCancel: false,
-                              success: res => {
-                                wx.redirectTo({
-                                  url: '/pages/login/wxLogin'
-                                })
-                              }
-                            })
-                          }
-                        } else {
-                          wx.showModal({
-                            title: '提示',
-                            content: desc,
-                            confirmText: '服务器开了小差',
-                            showCancel: false,
-                            success: res => {
-                              wx.redirectTo({
-                                url: '/pages/login/wxLogin'
-                              })
-                            }
-                          })
-                        }
-                      },
-                      fail: function(err) {
-                        wx.hideLoading();
-                        console.log('fail', err)
-                        loginLoading = false;
-
-                        wx.showModal({
-                          title: '提示',
-                          content: '服务器开了小差',
-                          confirmText: '知道了',
-                          showCancel: false,
-                          success: res => {
-                            wx.redirectTo({
-                              url: '/pages/login/wxLogin'
-                            })
-                          }
-                        })
-                      }
-                    })
-                  },
-                  fail: err => {
-                    wx.hideLoading();
-                    loginLoading = false;
-                    wx.showModal({
-                      title: '提示',
-                      content: desc,
-                      confirmText: '知道了',
-                      showCancel: false,
-                      success: res => {
-                        wx.redirectTo({
-                          url: '/pages/login/wxLogin'
-                        })
-                      }
-                    })
-                  }
-                });
-              }
-            },
-            fail: () => {
-              wx.hideLoading();
-              loginLoading = false;
-            }
-          })
-        }
-      },
-      fail: () => {
-        loginCbs = [];
-        wx.hideLoading();
-        loginLoading = false;
-      }
-    });
-  })
-}
 axios.defaults.adapter = function(config) {
-  console.log('dataType', config)
   wx.showLoading({
     title: '加载中',
   })
@@ -190,28 +25,44 @@ axios.defaults.adapter = function(config) {
         method: config.method,
         dataType: config.dataType,
         success: function(data) {
-          // return data
-          // console.log(data.data.desc)
-          const code = Number(data.data.code)
-          if (code === 1) {
-            //  data.data
-            // console.log('这是请求')
-            resolve(data.data)
-            // return data.data
-          } else if (code === 2) {
-            wx.reLaunch({
-              url: '/pages/login/wxLogin'
-            })
-          } else if (code === 0) {
-            const msg = data.data.desc
+          console.log('data', data)
+          if (data.statusCode === 200) {
+            // return data
+            // console.log(data.data.desc)
+            const code = Number(data.data.code)
+            if (code === 1) {
+              //  data.data
+              // console.log('这是请求')
+              resolve(data.data)
+              // return data.data
+            } else if (code === 2) {
+              loginSDK._redirectLogin();
+            } else if (code === 0) {
+              const msg = data.data.desc
+              wx.showToast({
+                title: `${msg}`,
+                icon: 'none'
+              })
+            } else if (code === -1) {
+              wx.hideLoading();
+              reject(data);
+            }
+          } else {
             wx.showToast({
-              title: `${msg}`,
-              icon: 'none'
+              title: '网络出错',
+              icon: 'none',
+              duration: 3000
             })
-          } else if (code === -1) {
-            reject(data);
-            wx.hideLoading();
           }
+        },
+        fail: res => {
+          console.log('fail', res);
+          wx.showToast({
+            title: '网络出错',
+            icon: 'none',
+            duration: 3000
+          })
+          reject();
         },
         complete: function() {
           wx.hideLoading()
@@ -274,33 +125,31 @@ export default {
   post(url, params = {}, options = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log('login', params);
-        const account = wx.getAccountInfoSync();
-        const { miniProgram: { appId } } = account;
-        params = {
-          ...params,
-          shopId: appId
-        }
-
-        login(async res => {
-          if (url.indexOf('authLogin') !== -1) {
-            resolve(res);
-          } else {
-            params = {
-              ...params,
-              sessionId
-            }
-            // console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
-            
-            http.post(url, options.headers ? params : qs.stringify({...params}), options)
-              .then(res => {
-                resolve(res)
-              })
-              .catch(err => {
-                reject(err);
-              })
+        loginSDK.isLogin(res => {
+          console.log(res);
+          const { user: { sessionId, appId } } = res;
+          params = {
+            shopId: appId,
+            sessionId,
+            ...params
           }
-        }, params, url)
+          // console.log(wx.getStorageSync(`${process.env.NODE_ENV}_sessionId`), '`${process.env.NODE_ENV}_sessionId`')
+          
+          http.post(url, options.headers ? params : qs.stringify({...params}), options)
+            .then(res => {
+              resolve(res)
+            })
+            .catch(err => {
+              reject(err);
+            })
+        })
+
+        // login(async res => {
+        //   if (url.indexOf('authLogin') !== -1) {
+        //     resolve(res);
+        //   } else {
+        //   }
+        // }, params, url)
         // const code = Number(data.data.code)
         // console.log(data)
         // if(code === 1) {

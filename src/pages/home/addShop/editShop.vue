@@ -204,28 +204,31 @@
           <!-- 点击请求 关闭弹窗 -->
           <!-- <p class="confirm" @click="confirmType('showType1')">确定</p> -->
           <!-- @click="select('type1Text', item)" -->
-          <p class="confirm" v-if="clickNum === 0"></p>
+          <p class="confirm" v-if="clickNum === 0" style="opacity: 0;"></p>
           <p class="confirm" v-else @click="reSelect()">重选</p>
         </div>
-        <!-- 一级分类 -->
-        <ul class="content" v-if="clickNum == 0">
-          <li class="item"
-            v-for="(item,idx) in type1Data"
-            @click="confirmType('showType1', item)"
-            :class="{ active: type1Text.id == item.id }"
-            :key="idx">{{item.name}}
-          </li>
-        </ul>
-        <!-- 二级分类 -->
-        <ul class="content" v-else>
-          <li class="item"
-            v-for="(item,idx) in type2Data"
-            v-if="clickNum !== 0"
-            @click="toSelect('type2Text',item)"
-            :class="[type2Text.id == item.id && 'active']"
-            :key="idx">{{item.name}}
-          </li>
-        </ul>
+        <scroll-view scroll-y style="max-height: 80vh;">
+          
+          <!-- 一级分类 -->
+          <ul class="content" v-if="clickNum == 0">
+            <li class="item"
+              v-for="(item,idx) in type1Data"
+              @click="confirmType('showType1', item)"
+              :class="{ active: type1Text.id == item.id }"
+              :key="idx">{{item.name}}
+            </li>
+          </ul>
+          <!-- 二级分类 -->
+          <ul class="content" v-else>
+            <li class="item"
+              v-for="(item,idx) in type2Data"
+              v-if="clickNum !== 0"
+              @click="toSelect('type2Text',item)"
+              :class="[type2Text.id == item.id && 'active']"
+              :key="idx">{{item.name}}
+            </li>
+          </ul>
+        </scroll-view>
         <button class="ok" v-show="clickNum !== 0" @click="confirmType('showType2')">确定</button>
       </div>
     </div>
@@ -278,19 +281,22 @@
           <p class="title">选择商品标签</p>
           <p class="confirm" @click="confirmOther('showTag')">确定</p>
         </div>
-        <div class="content content_tag">
-          <!-- <div class="tag_item" @click="select('tagText','标签1标签2')">
-            <i class="select" :class="[tagText == '标签1标签2' && 'select-active']"></i>
-            <p>标签1标签2</p>
-          </div> -->
-          <div class="tag_item"
-          v-for="(item,idx) in tagData"
-          @click="selectTagIds('tagIds',item)"
-          :key="idx">
-            <i class="select" :class="item.select && 'select-active'"></i>
-            <p>{{item.name}}</p>
+        <scroll-view scroll-y style="max-height: 70vh;">
+          
+          <div class="content content_tag">
+            <!-- <div class="tag_item" @click="select('tagText','标签1标签2')">
+              <i class="select" :class="[tagText == '标签1标签2' && 'select-active']"></i>
+              <p>标签1标签2</p>
+            </div> -->
+            <div class="tag_item"
+            v-for="(item,idx) in tagData"
+            @click="selectTagIds('tagIds',item)"
+            :key="idx">
+              <i class="select" :class="item.select && 'select-active'"></i>
+              <p>{{item.name}}</p>
+            </div>
           </div>
-        </div>
+        </scroll-view>
         <div class="add_line">
           <input class="add_input" v-model="addTagText" placeholder="请输入"/>
           <p class="add_btn" @click="addTag">添加</p>
@@ -307,15 +313,15 @@
           <p class="confirm" @click="confirmMarket()">确定</p>
         </div>
         <div class="box-select">
-          <div class="s_item first">
+          <scroll-view scroll-y style="max-height: 80vh;" class="s_item first">
             <p :class="[selectFMarket.id == item.id && 'active']" v-for="(item,idx) in mktFirstData" :key="idx" @click="getMarketData(1,item)">{{item.name}}</p>
-          </div>
-          <div class="s_item second">
+          </scroll-view>
+          <scroll-view scroll-y style="max-height: 80vh;" class="s_item second">
             <p :class="[(selectSMarket.id == item.id && selectSMarket.id )  && 'active']"  v-for="(item,idx) in mktSecondData" :key="idx" @click="getMarketData(2,item)">{{item.name}}</p>
-          </div>
-          <div class="s_item third">
+          </scroll-view>
+          <scroll-view scroll-y style="max-height: 80vh;" class="s_item third">
             <p :class="[(selectTMarket.id && selectTMarket.id == item.id) && 'active']"  v-for="(item,idx) in mktThirdData" :key="idx" @click="confirmMarket(item)">{{item.name}}</p>
-          </div>
+          </scroll-view>
         </div>
       </div>
     </div>
@@ -660,15 +666,7 @@ export default {
       this.goods.isTop = 1;
     },
     selectTop(type) {
-      this.$API.selectTopGoods()
-        .then(res => {
-          if (res.data) {
-            this.topTips = true
-          } else {
-            console.log(type);
-            this.$set(this.goods, 'isTop', type);
-          }
-        })
+      this.$set(this.goods, 'isTop', type);
     },
     onChange({ mp: { detail } }) {
       if (this.isTopBool == false) {
@@ -1334,8 +1332,8 @@ export default {
     display: flex
     .add_btn
       padding: 20px 40px
-      color: #fff
-      background: #FE703E
+      background-color: #fff
+      color: #FE703E
       border-radius: 4px
       font-size: 28px
       margin-left: 20px
@@ -1358,7 +1356,8 @@ export default {
     .cancel
       color: #999
     .confirm
-      color: #F67C2F
+      background: #F67C2F
+      color: #fff
     .title
       font-size: 32px
   button.ok

@@ -16,8 +16,8 @@
       </ul>
     </div> -->
     <div>
-      <div class="box" v-for="(tabItem, tabIndex) in tab.list" :key="tabIndex" v-show="tabIndex === tag">
-        <p v-for="(shop,index) in tabItem.data" :key="shop.id">
+      <div class="box" v-for="(tabItem, tabIndex) in tab.list" :key="tabIndex" v-if="tabIndex === tag">
+        <p v-for="(shop,index) in tabItem.data" :key="shop.id" v-if="shop.ping">
           <groupCard ref="scard" :key="index" :shop="shop" @switchSel="switchSel" @deleteItem="deleteItem" @openEdit="openEdit" />
         </p>
         <div class="white-block"></div>
@@ -90,12 +90,8 @@ export default {
   methods: {
     deleteItem(id) {
       console.log('id=====', id);
-      let newArr = this.shopList
-      newArr.forEach((item, index) => {
-        if (item.id === id) {
-          this.shopList.splice(index, 1)
-        }
-      })
+      const newList = this.shopList.filter(e => e.id !== id);
+      this.$set(this.tab.list[this.tag], 'data', newList);
     },
     //选择操作
     switchSel(goodsId, bool, shop) {
@@ -123,12 +119,13 @@ export default {
         this.searchShop({...params, state, ob: 0, pageNumber, pageSize: 10})
           .then(res => {
             const { data: { list, lastPage } } = res;
-            this.tab.list.splice(this.tag, 1, {
+            this.$set(this.tab.list, this.tag, {
               ...currentTab,
               lastPage,
               pageNumber: currentTab.pageNumber + 1,
               data: this.tab.list[this.tag].data.concat(list)
             })
+            console.log(this.tab.list)
           })
           .finally(() => {
             this.$set(this.tab.list[this.tag], 'loading', false);
@@ -190,7 +187,6 @@ export default {
     },
   },
   async mounted() {
-    console.log(123312);
     this.getNextPage();
   },
   async onShow() {

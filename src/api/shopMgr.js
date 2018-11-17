@@ -4,14 +4,14 @@ import qs from 'qs'
 export default class shopMgr {
   //shopMgr
   addShop = params => http.post('api/goods/add', params, {
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    headers: {'Content-Type': 'application/json'}
   })
   addShopTag = params => http.post('api/label/data/addTag', params)
 
   editShop = params => http.post('api/goods/edit', params, {
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    headers: {'Content-Type': 'application/json'}
   })
-  deleteGoods = params => jsonHttp.post('api/goods/deleteGoods', params, {
+  deleteGoods = params => http.post('api/goods/deleteGoods', params, {
     header: {'Content-Type': 'application/x-www-form-urlencoded'}
   });
   //  delShop = params => http.post('',params)
@@ -20,7 +20,9 @@ export default class shopMgr {
 
   addShopType = params => http.post('api/goods/addKeu', params)
   delShopType = params => http.post('api/goods/deleteKeu', params)
-  editShopType = params => http.post('api/goods/editKeu', params)
+  editShopType = params => http.post('api/goods/editKeu', params, {
+    headers: {'Content-Type': 'application/json'}
+  })
 
   editGroups = params => http.post('api/goods/changeGroups', params)
   changeGroups2 = params => http.post('api/goods/changeGroups2', params)
@@ -36,7 +38,9 @@ export default class shopMgr {
 
   // group 拼团
   s_getShopGroup = params => http.post('api/shop/ping/selectPingGoods', params)
-  // s_createGroup = params => http.post('api/shop/ping/addPing', params)
+  s_createGroup = params => http.post('api/shop/ping/addPing', params, {
+    headers: {'Content-Type': 'application/json'}
+  })
   s_getCanGroup = params => http.post('api/shop/ping/selectCanPingGoods', params)
 
   //搭配
@@ -56,10 +60,15 @@ export default class shopMgr {
   editMatchGoods = params => http.post('api/goods/editMatchGoods', params)
 
   // 编辑拼团
-  editGroup = params => http.post('api/shop/ping/editPing', params)
+  editGroup = params => http.post('api/shop/ping/editPing', params, {
+    header: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  })
 
   //创建折扣商品
   addDisGoods = params => http.post('api/goods/addDisGoods', params)
+  deletePing = params => http.post('api/shop/ping/deletePing', params)
   //修改折扣价格
   updateDisGoods = params => http.post('api/goods/updateDisGoods', params)
 

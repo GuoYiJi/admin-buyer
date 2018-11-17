@@ -27,9 +27,9 @@ export default {
   computed: {
     isGetPay() {
       if(this.switch1) {
-        return '1'
-      }else {
         return '0'
+      }else {
+        return '1'
       }
     }
   },
@@ -65,11 +65,8 @@ export default {
     // 查询"物流到付"状态
     getIsGetPay() {
       this.$API.selectWarehouse({}).then(response => {
-        if(response.data.isGetPay) {
-          this.isGetPay = response.data.isGetPay
-        }else {
-          this.isGetPay = false
-        }
+        this.isGetPay = response.data.isGetPay !== 1;
+        this.switch1 = response.data.isGetPay !== 1;
       })
     }
   },

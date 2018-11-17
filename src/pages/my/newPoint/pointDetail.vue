@@ -1,20 +1,26 @@
 <template>
   <div class="home">
-    <div class="content">{{content}}</div>
+    <div class="content">
+      <rich-text :nodes="nodes"></rich-text>
+    </div>
   </div>
 </template>
 <script>
+import HtmlToJson from '@/plugins/wxParse/html2json.js';
 export default {
   components: {},
   data() {
     return {
-      content: ''
+      content: '',
+      nodes: []
     };
   },
   methods: {},
   mounted() {
-    if(this.$route.query.content) {
-      this.content = this.$route.query.content
+    const content = wx.getStorageSync('pointDetailData');
+    if(content) {
+      this.nodes = HtmlToJson.html2json(content).children;
+      this.content = content
     }
   }
 };

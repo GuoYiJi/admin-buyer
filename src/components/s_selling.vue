@@ -180,35 +180,46 @@ export default {
       // return this.$API.getAdr(obj);
     },
     lower(e) {
-      if (!this.canLoad) {
-        wx.showToast({
-          title: '没有更多数据了',
-          icon: 'none',
-          duration: 1500
-        })
-        return
-      }
-      if (this.showLoad) return;
-      this.showLoad = true
-      wx.showLoading({
-        title: '加载中',
-      })
-      const vm = this;
-      this.getNextPage({
-        ob: this.type,
-        state: this.state
-      }).then(response => {
-        vm.shopList = vm.shopList.concat(response.data.list);
-        response.data.list.forEach((item, index) => {
-          this.selIds.push('-1')
-        })
-        if (response) {
-          vm.showLoad = false
+      return new Promise((resolve) => {
+        if (!this.canLoad) {
+          wx.showToast({
+            title: '没有更多数据了',
+            icon: 'none',
+            duration: 1500
+          })
+          return
         }
-        if (vm.shopList.length === response.data.totalRow) {
-          vm.canLoad = false
+        if (this.showLoad) return;
+        this.showLoad = true
+        wx.showLoading({
+          title: '加载中',
+        })
+        const vm = this;
+        try {
+
+          this.getNextPage({
+            ob: this.type,
+            state: this.state
+          })
+            .then(response => {
+              vm.shopList = vm.shopList.concat(response.data.list);
+              response.data.list.forEach((item, index) => {
+                this.selIds.push('-1')
+              })
+              if (response) {
+                vm.showLoad = false
+              }
+              if (vm.shopList.length === response.data.totalRow) {
+                vm.canLoad = false
+              }
+              wx.hideLoading()
+            })
+            .finally(() => {
+              resolve();
+            })
+        } catch (err) {
+          console.log(err);
         }
-        wx.hideLoading()
       })
     },
     async comSearch(searchParams) {

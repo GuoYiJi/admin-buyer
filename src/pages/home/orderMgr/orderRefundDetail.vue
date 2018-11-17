@@ -206,7 +206,7 @@ export default {
         this.$API.L_dealWithOrder({
           orderRefundId: this.orderId,
           state,
-          relust: this.content
+          result: this.content
         }).then(response => {
           wx.showToast({
             title: '已拒绝',

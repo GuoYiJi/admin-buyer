@@ -45,15 +45,20 @@
                 <span @click="toClose('more2')" v-else>点击收起</span>
               </p>
             </div>
-            <div class="item">
+            <div class="item" v-if="stall3Data.length">
               <p class="i_title">档口</p>
               <ul class="s_item_box">
                 <li class="s_item"
                 @click="select('sel3',item)"
                 :class="sel3.id == item.id && 'active_search'"
                 v-for="(item,idx) in stall3Data"
+                v-if="more3 || idx < 6"
                 :key="idx">{{item.name}}</li>
               </ul>
+              <p class="more" v-if="stall3Data.length > 0" >
+                <span @click="toOpen('more3')" v-if="!more3">查看更多 <i class="goback"></i></span>
+                <span @click="toClose('more3')" v-else>点击收起</span>
+              </p>
             </div>
             <div class="item">
               <p class="i_title">货期</p>
@@ -73,9 +78,9 @@
                 :class="sel5.id == item.id && 'active_search'"
                 v-for="(item,idx) in priceData"
                 :key="idx">{{item.name}}</li> -->
-                <li class="s_item" ><input class="input_p" type="number"  v-model="price1" placeholder="最低价"/></li>
+                <li class="s_item" ><input class="input_p" type="digit"  v-model="price1" placeholder="最低价"/></li>
                 <i>——</i>
-                <li class="s_item" ><input class="input_p" type="number"  v-model="price2" placeholder="最高价"/></li>
+                <li class="s_item" ><input class="input_p" type="digit"  v-model="price2" placeholder="最高价"/></li>
               </ul>
             </div>
           </div>
@@ -95,6 +100,7 @@ export default {
       //search
       more1: false,
       more2: false,
+      more3: false,
       more1Data: [],
       more2Data: [],
       classData: [],
@@ -125,6 +131,7 @@ export default {
         series: 2,
         pid: id
       })
+      console.log('dankou', data)
       this.stall3Data = data
     },
     selStall(name,val){

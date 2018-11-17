@@ -182,9 +182,8 @@ export default {
       this[name] = false
       let state = 0
       if(this.act != '下架') state = 1
-      await this.$API.switchShop({
-        goodsIds: this.shop.id,
-        state: state
+      await this.$API.deletePing({
+        pingId: this.shop.ping.id
       })
       this.show = false
       this.$success(this.act + '成功！')

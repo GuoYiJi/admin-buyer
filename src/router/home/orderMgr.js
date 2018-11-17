@@ -11,6 +11,7 @@ const orderMgr = [{
                 // 'i-radio': '/iview/radio/index',
                 'i-modal': '/iview/modal/index',
                 'i-message': '/iview/message/index',
+                'zan-loadmore': '/zan-weapp/dist/loadmore/index'
             }
         }
     },
